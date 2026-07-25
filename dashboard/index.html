@@ -617,6 +617,15 @@ function ownVehicle(){
   return v.find(x=>x.is_player) || v.find(x=>String(x.number)===String(CFG.ownCarNumber)) || null;
 }
 function paceOf(id){ return S.pace.find(p=>p.vehicle_id===id) || null; }
+function bestOf(p, v){
+  // Echte Session-Bestzeit (mBestLapTime aus dem Scoring = v.best_lap) hat Vorrang
+  // vor der aus erfassten Runden gerechneten (p.best_lap): letztere kennt nur
+  // Runden seit Client-Start und ist daher nie schneller als die echte. Minimum
+  // beider gueltigen Werte, damit auch bei fehlendem Scoring-Wert die schnellste
+  // bekannte Zeit steht.
+  const c=[p&&p.best_lap, v&&v.best_lap].filter(x=>typeof x==="number"&&x>0);
+  return c.length?Math.min(...c):null;
+}
 function classes(){
   const set=[...new Set(fieldVehicles().map(v=>v.car_class||"?"))];
   const order=["HYPERCAR","LMH","LMDH","LMP2","LMP3","LMGT3","GTE","GT3"];
@@ -877,7 +886,7 @@ function renderTower(){
       <td style="color:var(--muted)">${(v.car||"").replace(/^#\d+\s*/,"")}</td>
       <td class="num">${v.laps??"—"}</td>
       <td class="num">${fmtLap(p?.last_lap ?? v.last_lap)}</td>
-      <td class="num turqc">${fmtLap(p?.best_lap ?? v.best_lap)}</td>
+      <td class="num turqc">${fmtLap(bestOf(p,v))}</td>
       <td class="num">${avg5?fmtLap(avg5):"—"}</td>
       <td class="num">${v.class_position===1?"—":fmtGap(v.class_behind_next)}</td>
       <td class="num">${v.class_position===1?"—":fmtGap(v.class_behind_leader)}</td>
@@ -1060,7 +1069,7 @@ const TRK = (()=>{
   })();
 
   let raf=null,DPR=1,cw=0,ch=0;
-  let breadcrumb=[],refId=null,mode=null;
+  let breadcrumb=[],refId=null,mode=null,brkNext=false;
   const eased={};
 
   function resize(){ DPR=Math.min(2,Math.max(1,window.devicePixelRatio||1));
@@ -1082,21 +1091,38 @@ const TRK = (()=>{
     });
   }
 
+  function trimTrail(maxLen){
+    // Spur auf gut eine Runde begrenzen. Ohne das legen sich viele Umlaeufe
+    // leicht versetzt uebereinander -> das Band wirkt doppelt/dreifach.
+    let tot=0;
+    for(let i=breadcrumb.length-1;i>0;i--){
+      tot+=Math.hypot(breadcrumb[i].x-breadcrumb[i-1].x,breadcrumb[i].z-breadcrumb[i-1].z);
+      if(tot>maxLen){ breadcrumb.splice(0,i); if(breadcrumb[0])breadcrumb[0].gap=true; return; }
+    }
+  }
+
   function feedBreadcrumb(cars){
     if(mode!=="world"||!cars.length) return;
     // Referenz fuer die Streckenspur: das EIGENE Auto. Es faehrt lueckenlos die
-    // ganze Runde ab und wechselt nie die Identitaet. Der fruehere "Fuehrende"
-    // wechselte staendig und setzte die Spur zurueck -> es entstand kein Band.
+    // ganze Runde ab und wechselt nie die Identitaet.
     if(refId==null){ const own=cars.find(c=>c.is_player);
                      refId=(own||cars.find(c=>c.place===1)||cars[0]).id; }
     let c=cars.find(v=>v.id===refId);
     if(!c) return;   // Referenzauto kurz nicht im Feld -> warten, NICHT zuruecksetzen
-    const last=breadcrumb[breadcrumb.length-1];
-    if(!last){ breadcrumb.push({x:c.x,z:c.z});return; }
-    const d=Math.hypot(c.x-last.x,c.z-last.z);
     const len=(S.field&&S.field.track_length_m)||13626;
-    if(d>len*0.5) return;                 // Sprung (Reset) verwerfen
-    if(d>4){ breadcrumb.push({x:c.x,z:c.z}); if(breadcrumb.length>6000)breadcrumb.shift(); }
+    // In der Boxengasse KEINE Spur sammeln: die Boxlinie weicht von der Rennlinie
+    // ab und zog sonst eine Querstrebe quer durchs Band. Der naechste Streckenpunkt
+    // startet einen neuen Subpath (gap), wird also nicht mit der Box verbunden.
+    if(c.in_pits){ brkNext=true; return; }
+    const last=breadcrumb.length?breadcrumb[breadcrumb.length-1]:null;
+    if(!last){ breadcrumb.push({x:c.x,z:c.z,gap:true}); return; }
+    const d=Math.hypot(c.x-last.x,c.z-last.z);
+    if(d>len*0.25) brkNext=true;          // grosser Sprung (Reset/Teleport) -> trennen
+    if(d>4){
+      breadcrumb.push({x:c.x,z:c.z,gap:brkNext}); brkNext=false;
+      if(breadcrumb.length>6000)breadcrumb.shift();
+      trimTrail(len*1.2);
+    }
   }
 
   function step(){
@@ -1125,17 +1151,31 @@ const TRK = (()=>{
 
   function smooth(fit,pts,close){
     if(pts.length<2) return;
-    ctx.beginPath(); ctx.moveTo(fit.X(pts[0].x),fit.Y(pts[0].z));
-    for(let i=1;i<pts.length-1;i++){ const mx=(pts[i].x+pts[i+1].x)/2,mz=(pts[i].z+pts[i+1].z)/2;
-      ctx.quadraticCurveTo(fit.X(pts[i].x),fit.Y(pts[i].z),fit.X(mx),fit.Y(mz)); }
-    const last=pts[pts.length-1]; ctx.lineTo(fit.X(last.x),fit.Y(last.z));
-    if(close) ctx.closePath();
+    ctx.beginPath();
+    let i=0;
+    while(i<pts.length){
+      let j=i+1; while(j<pts.length&&!pts[j].gap) j++;   // Segment bis zum naechsten gap
+      const seg=pts.slice(i,j);
+      if(seg.length>=2){
+        ctx.moveTo(fit.X(seg[0].x),fit.Y(seg[0].z));
+        for(let k=1;k<seg.length-1;k++){ const mx=(seg[k].x+seg[k+1].x)/2,mz=(seg[k].z+seg[k+1].z)/2;
+          ctx.quadraticCurveTo(fit.X(seg[k].x),fit.Y(seg[k].z),fit.X(mx),fit.Y(mz)); }
+        const last=seg[seg.length-1]; ctx.lineTo(fit.X(last.x),fit.Y(last.z));
+        if(close&&j>=pts.length) ctx.closePath();
+      }
+      i=j;
+    }
     ctx.stroke();
   }
 
   function draw(cars){
     ctx.clearRect(0,0,cv.width,cv.height);
-    const fit=fitOf(cars); if(!fit) return;
+    // Boxenautos raus aus der Streckendarstellung: sie liegen neben der Rennlinie
+    // (Boxengasse) und werden separat in einer Leiste unten gesammelt. Damit
+    // verzerren sie auch das Auto-Fit nicht mehr.
+    const onTrack=cars.filter(c=>!c.in_pits);
+    const inPit=cars.filter(c=>c.in_pits);
+    const fit=fitOf(onTrack); if(!fit){ drawPitlane(inPit); return; }
     const r=Math.max(13*DPR,fit.s*10), wRoad=r*2.4, wEdge=wRoad+8*DPR;
     const ribbon = mode==="synth" ? LOOP.LINE.map(p=>({x:p[0],z:p[1]})) : breadcrumb;
     const closed = mode==="synth";
@@ -1145,18 +1185,44 @@ const TRK = (()=>{
       ctx.globalAlpha=1;ctx.strokeStyle="#23272f";ctx.lineWidth=wRoad;smooth(fit,ribbon,closed);
       ctx.strokeStyle="#333944";ctx.lineWidth=Math.max(1,1.4*DPR);ctx.setLineDash([7*DPR,12*DPR]);smooth(fit,ribbon,closed);ctx.setLineDash([]);
     }
-    for(const c of cars){
+    for(const c of onTrack){
       const x=fit.X(c.x),y=fit.Y(c.z),col=classColor(c.car_class);
-      ctx.globalAlpha=c.in_pits?.35:1;
+      ctx.globalAlpha=1;
       if(c.under_yellow){ctx.beginPath();ctx.arc(x,y,r+4*DPR,0,7);ctx.strokeStyle=cssv("--amber");ctx.lineWidth=2.4*DPR;ctx.stroke();}
       if(c.is_player){ctx.beginPath();ctx.arc(x,y,r+6*DPR,0,7);ctx.strokeStyle="#fff";ctx.lineWidth=2.6*DPR;ctx.stroke();}
       ctx.beginPath();ctx.arc(x,y,r,0,7);ctx.fillStyle=col;ctx.fill();
       ctx.lineWidth=1.5*DPR;ctx.strokeStyle="rgba(0,0,0,.6)";ctx.stroke();
-      ctx.globalAlpha=c.in_pits?.5:1;
       ctx.fillStyle="#0a0b0d";ctx.font="700 "+Math.round(r*0.82)+"px "+cssv("--mono");
       ctx.textAlign="center";ctx.textBaseline="middle";ctx.fillText(String(c.number),x,y+0.5*DPR);
     }
     ctx.globalAlpha=1;
+    drawPitlane(inPit);
+  }
+
+  function drawPitlane(list){
+    if(!list.length) return;
+    const n=list.length, pad=14*DPR, avail=cv.width-2*pad;
+    let r=12*DPR, gap=r*2+6*DPR;
+    // Bei vielen Boxenautos Radius schrumpfen, damit alles in eine Reihe passt.
+    if(n*gap>avail){ gap=avail/n; r=Math.max(6*DPR,gap/2-3*DPR); }
+    const y=cv.height-pad-r;
+    ctx.globalAlpha=1;ctx.fillStyle=cssv("--muted");
+    ctx.font="700 "+Math.round(9*DPR)+"px "+cssv("--mono");
+    ctx.textAlign="left";ctx.textBaseline="alphabetic";
+    ctx.fillText("BOXENGASSE",pad,y-r-6*DPR);
+    ctx.globalAlpha=.10;ctx.fillStyle=cssv("--muted");
+    ctx.fillRect(pad-6*DPR,y-r-3*DPR,Math.min(avail+12*DPR,n*gap+6*DPR),r*2+6*DPR);
+    ctx.globalAlpha=1;
+    let x=pad+r;
+    for(const c of list){
+      const col=classColor(c.car_class);
+      ctx.beginPath();ctx.arc(x,y,r,0,7);ctx.globalAlpha=.6;ctx.fillStyle=col;ctx.fill();
+      ctx.globalAlpha=1;ctx.lineWidth=1.4*DPR;ctx.strokeStyle="rgba(0,0,0,.6)";ctx.stroke();
+      if(c.is_player){ctx.beginPath();ctx.arc(x,y,r+3*DPR,0,7);ctx.strokeStyle="#fff";ctx.lineWidth=2*DPR;ctx.stroke();}
+      ctx.fillStyle="#0a0b0d";ctx.font="700 "+Math.round(r*0.8)+"px "+cssv("--mono");
+      ctx.textAlign="center";ctx.textBaseline="middle";ctx.fillText(String(c.number),x,y+0.5*DPR);
+      x+=gap;
+    }
   }
 
   function hud(cars){
