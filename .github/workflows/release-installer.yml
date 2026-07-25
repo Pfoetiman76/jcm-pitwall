@@ -14,8 +14,8 @@ jobs:
   windows:
     runs-on: windows-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
         with: { python-version: '3.12' }
 
       - name: PyInstaller
@@ -38,10 +38,24 @@ jobs:
           --paths client --hidden-import tkinter
           client/einrichter.py
 
-      - name: Installer bauen
-        run: |
-          & "$env:ProgramFiles(x86)\Inno Setup 6\ISCC.exe" installer\setup.iss
+      # NEU: Inno Setup ist auf dem Runner nicht vorinstalliert -> selbst holen.
+      - name: Inno Setup installieren
+        run: choco install innosetup --no-progress -y
         shell: pwsh
+
+      # ISCC danach robust suchen (fester Pfad war der alte Fehler).
+      - name: Installer bauen
+        shell: pwsh
+        run: |
+          $kandidaten = @(
+            "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe",
+            "$env:ProgramFiles\Inno Setup 6\ISCC.exe"
+          )
+          $iscc = $kandidaten | Where-Object { Test-Path $_ } | Select-Object -First 1
+          if (-not $iscc) { $iscc = (Get-Command ISCC.exe -ErrorAction SilentlyContinue).Source }
+          if (-not $iscc) { throw "ISCC.exe nicht gefunden - Inno Setup Installation fehlgeschlagen?" }
+          Write-Host "Nutze ISCC: $iscc"
+          & "$iscc" installer\setup.iss
 
       - name: An das Release haengen
         uses: softprops/action-gh-release@v2
