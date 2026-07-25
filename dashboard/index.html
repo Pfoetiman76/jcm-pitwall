@@ -1084,8 +1084,13 @@ const TRK = (()=>{
 
   function feedBreadcrumb(cars){
     if(mode!=="world"||!cars.length) return;
-    if(refId==null){ refId=(cars.find(c=>c.place===1)||cars[0]).id; }
-    let c=cars.find(v=>v.id===refId); if(!c){ c=cars.find(v=>v.place===1)||cars[0];refId=c.id;breadcrumb=[]; }
+    // Referenz fuer die Streckenspur: das EIGENE Auto. Es faehrt lueckenlos die
+    // ganze Runde ab und wechselt nie die Identitaet. Der fruehere "Fuehrende"
+    // wechselte staendig und setzte die Spur zurueck -> es entstand kein Band.
+    if(refId==null){ const own=cars.find(c=>c.is_player);
+                     refId=(own||cars.find(c=>c.place===1)||cars[0]).id; }
+    let c=cars.find(v=>v.id===refId);
+    if(!c) return;   // Referenzauto kurz nicht im Feld -> warten, NICHT zuruecksetzen
     const last=breadcrumb[breadcrumb.length-1];
     if(!last){ breadcrumb.push({x:c.x,z:c.z});return; }
     const d=Math.hypot(c.x-last.x,c.z-last.z);
@@ -1107,7 +1112,7 @@ const TRK = (()=>{
   }
 
   function fitOf(cars){
-    const pts = mode==="synth" ? LOOP.LINE.map(p=>({x:p[0],z:p[1]})) : (breadcrumb.length>20?breadcrumb:cars);
+    const pts = mode==="synth" ? LOOP.LINE.map(p=>({x:p[0],z:p[1]})) : (breadcrumb.length>10?breadcrumb:cars);
     if(!pts.length) return null;
     let minX=1e18,maxX=-1e18,minZ=1e18,maxZ=-1e18;
     for(const p of pts){ if(p.x<minX)minX=p.x;if(p.x>maxX)maxX=p.x;if(p.z<minZ)minZ=p.z;if(p.z>maxZ)maxZ=p.z; }
@@ -1134,7 +1139,7 @@ const TRK = (()=>{
     const r=Math.max(13*DPR,fit.s*10), wRoad=r*2.4, wEdge=wRoad+8*DPR;
     const ribbon = mode==="synth" ? LOOP.LINE.map(p=>({x:p[0],z:p[1]})) : breadcrumb;
     const closed = mode==="synth";
-    if(ribbon.length>20){
+    if(ribbon.length>10){
       ctx.lineJoin="round";ctx.lineCap="round";
       ctx.strokeStyle="#000";ctx.globalAlpha=.6;ctx.lineWidth=wEdge;smooth(fit,ribbon,closed);
       ctx.globalAlpha=1;ctx.strokeStyle="#23272f";ctx.lineWidth=wRoad;smooth(fit,ribbon,closed);
