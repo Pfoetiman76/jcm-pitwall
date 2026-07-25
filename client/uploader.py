@@ -109,7 +109,7 @@ class SupabaseClient:
         try:
             out = self.upsert(table, rows, on_conflict)
             self.online = True
-            return out
+            return out[0] if isinstance(out, list) and out else out
         except urllib.error.HTTPError as exc:
             detail = ""
             try:

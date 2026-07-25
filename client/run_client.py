@@ -205,12 +205,17 @@ class PitwallClient:
 
         payload["session_id"] = self.session_id
         payload["driver_id"] = self.driver_id
-        lap_row = self.db.safe_insert("laps", payload, spool_kind="lap")
+        # Upsert statt Insert: bei Client-Neustart / Andocken an dieselbe Session
+        # kommt dieselbe Runde erneut -> unique(session_id,lap_num) warf sonst 409,
+        # die Runde ging verloren und stint_telemetry wurde uebersprungen.
+        lap_row = self.db.safe_upsert("laps", payload,
+                                      on_conflict="session_id,lap_num", spool_kind="lap")
         if not lap_row:
             return
         telemetry["lap_id"] = lap_row["id"]
         telemetry["session_id"] = self.session_id
-        self.db.safe_insert("stint_telemetry", telemetry, spool_kind="telemetry")
+        self.db.safe_upsert("stint_telemetry", telemetry,
+                            on_conflict="lap_id", spool_kind="telemetry")
         self.laps_sent += 1
 
     # ----------------------------------------------------------------
@@ -387,8 +392,8 @@ class PitwallClient:
 
     def _replay(self, kind: str, payload: dict, spooled: bool = True):
         table = "laps" if kind == "lap" else "stint_telemetry"
-        out = self.db.insert(table, payload)
-        return out
+        conflict = "session_id,lap_num" if kind == "lap" else "lap_id"
+        return self.db.upsert(table, payload, conflict)
 
 
 def main():
