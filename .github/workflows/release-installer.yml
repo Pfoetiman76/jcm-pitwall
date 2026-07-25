@@ -1,0 +1,59 @@
+name: Installer bauen
+
+# Tag setzen -> fertiger Installer haengt am Release.
+#   git tag v1.0.0 && git push origin v1.0.0
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: '3.12' }
+
+      - name: PyInstaller
+        run: pip install --upgrade pyinstaller
+
+      - name: Fahrer-Fenster bauen
+        run: >
+          pyinstaller --noconfirm --onefile --windowed
+          --name JCM-Pitwall
+          --distpath dist --workpath build --specpath build
+          --paths client --collect-submodules pyLMUSharedMemory
+          --hidden-import tkinter
+          client/pitwall.py
+
+      - name: Einrichter bauen
+        run: >
+          pyinstaller --noconfirm --onefile --windowed
+          --name JCM-Pitwall-Einrichter
+          --distpath dist --workpath build --specpath build
+          --paths client --hidden-import tkinter
+          client/einrichter.py
+
+      - name: Installer bauen
+        run: |
+          & "$env:ProgramFiles(x86)\Inno Setup 6\ISCC.exe" installer\setup.iss
+        shell: pwsh
+
+      - name: An das Release haengen
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            installer/Output/*.exe
+            dist/JCM-Pitwall.exe
+            dist/JCM-Pitwall-Einrichter.exe
+          body: |
+            **Installer für alle** — Fahrer wie Einrichter dieselbe Datei.
+
+            Beim ersten Start fragt das Fahrer-Fenster nach dem Team-Code.
+            Den erzeugt Marcel im Einrichter unter „3 · Verteilen".
+
+            Es sind keine Zugangsdaten im Installer.

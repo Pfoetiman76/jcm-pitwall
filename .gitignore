@@ -1,0 +1,22 @@
+# Zugangsdaten - duerfen NIEMALS ins Repo
+client/pitwall_config.json
+dashboard/config.js
+
+# Fertiges Fahrerpaket: enthaelt den service_role-Schluessel
+Fahrerpaket/
+JCM-Pitwall-Fahrerpaket.zip
+*.zip
+
+# Laufzeitdateien des Clients
+client/pitwall_spool.jsonl
+client/current_session.txt
+client/pitwall_client.log
+
+# Build-Ergebnisse
+dist/
+build/
+installer/Output/
+*.spec
+
+__pycache__/
+*.pyc

@@ -1,0 +1,61 @@
+name: Kommandostand veroeffentlichen
+
+on:
+  push:
+    branches: [main]
+    paths: ['dashboard/**', '.github/workflows/deploy-dashboard.yml']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+
+      # Eine versehentlich eingecheckte config.js wird nie veroeffentlicht.
+      # Die richtige entsteht hier aus den Repository-Secrets - so steht
+      # kein Schluessel im Repo, aber jeder Fahrer sieht sofort Daten.
+      - name: Zugangsdaten einsetzen
+        env:
+          URL: ${{ secrets.PITWALL_SUPABASE_URL }}
+          KEY: ${{ secrets.PITWALL_ANON_KEY }}
+        run: |
+          rm -f dashboard/config.js
+          if [ -z "$URL" ] || [ -z "$KEY" ]; then
+            echo "::warning::Secrets PITWALL_SUPABASE_URL / PITWALL_ANON_KEY fehlen."
+            echo "Der Kommandostand startet dann in der Demo-Ansicht."
+            exit 0
+          fi
+          cat > dashboard/config.js <<CONFIG
+          window.PITWALL_CONFIG = {
+            supabaseUrl: "$URL",
+            supabaseKey: "$KEY",
+            sessionId: "",
+            refreshMs: 5000,
+            stintMinutes: 65,
+            tyreFloorPct: 20,
+            brakeLoadWarn: 1500,
+            brakeLoadCrit: 3000,
+            ownCarNumber: "76"
+          };
+          CONFIG
+          echo "config.js erzeugt."
+
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dashboard
+      - id: deployment
+        uses: actions/deploy-pages@v4

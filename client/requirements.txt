@@ -1,0 +1,7 @@
+# Der Client kommt mit der Standardbibliothek aus.
+#
+# Le Mans Ultimate: pyLMUSharedMemory liegt bereits im Ordner client/
+# (MIT-Lizenz, TinyPedal-Projekt) - nichts zu installieren.
+#
+# rFactor 2: dafuer wird zusaetzlich pyRfactor2SharedMemory gebraucht,
+#   https://github.com/TonyWhitley/pyRfactor2SharedMemory
