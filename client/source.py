@@ -267,6 +267,10 @@ class SharedMemorySource:
             driver = _decode(v.mDriverName)
             vehicles.append({
                 "id": v.mID,
+                # Weltposition fuer die Streckenkarte (Schirm 4); None-sicher,
+                # falls ein Build mPos nicht liefert -> Karte nutzt dann lap_dist.
+                "x": getattr(getattr(v, "mPos", None), "x", None),
+                "z": getattr(getattr(v, "mPos", None), "z", None),
                 "driver": driver,
                 "car": name,
                 "car_class": _decode(v.mVehicleClass),
