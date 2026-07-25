@@ -158,6 +158,21 @@ input[type=number]{width:92px}
 
 @media (max-width:1180px){.top,.three,.two,.tower-grid{grid-template-columns:1fr}}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+/* ---------- Schirm 4: Streckenkarte ---------- */
+.trackstage{position:relative;margin-top:18px;height:calc(100vh - 160px);min-height:520px;
+  background:var(--panel);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+#trk-map{display:block;width:100%;height:100%}
+.trk-legend{position:absolute;left:14px;bottom:12px;display:flex;gap:15px;align-items:center;
+  background:rgba(20,22,26,.72);border:1px solid var(--line);border-radius:9px;padding:7px 12px;
+  font-family:var(--mono);font-size:12px;backdrop-filter:blur(3px)}
+.trk-legend .k{display:flex;align-items:center;gap:7px;color:var(--muted)}
+.trk-legend .k b{width:11px;height:11px;border-radius:50%;display:inline-block}
+.trk-hud{position:absolute;right:14px;bottom:12px;text-align:right;font-family:var(--mono);font-size:12px;
+  color:var(--muted);background:rgba(20,22,26,.72);border:1px solid var(--line);border-radius:9px;padding:7px 12px;backdrop-filter:blur(3px)}
+.trk-hud b{color:var(--ink)}
+.trk-note{position:absolute;left:50%;top:12px;transform:translateX(-50%);font-family:var(--mono);font-size:11px;
+  color:var(--amber);background:rgba(20,22,26,.85);border:1px solid var(--line);border-radius:20px;padding:4px 12px;white-space:nowrap}
+
 </style>
 </head>
 <body>
@@ -172,6 +187,7 @@ input[type=number]{width:92px}
       <button role="tab" id="tab-overview"  aria-selected="true"  data-screen="overview"><b>1</b>Übersicht</button>
       <button role="tab" id="tab-tower"     aria-selected="false" data-screen="tower"><b>2</b>Zeiten</button>
       <button role="tab" id="tab-weather"   aria-selected="false" data-screen="weather"><b>3</b>Wetter</button>
+      <button role="tab" id="tab-track"     aria-selected="false" data-screen="track"><b>4</b>Strecke</button>
     </div>
     <div class="headmeta">
       <div><div class="k">Strecke</div><div class="v" id="m-track">—</div></div>
@@ -363,6 +379,18 @@ input[type=number]{width:92px}
       <div class="rowline"><span>Reifendruck-Hinweis</span><b id="w-press">—</b></div>
       <p class="note">Die Nässeschwellen sind Erfahrungswerte für LMU: unter 10 % läuft der Slick, 10 bis 40 % ist Intermediate-Fenster, darüber Regenreifen. Entscheidend bleibt, was der Fahrer meldet — die Zahl ist ein Streckenmittel und sagt nichts über die eine nasse Stelle in Indianapolis.</p>
     </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     SCHIRM 4 — STRECKE
+     ============================================================ -->
+<section class="screen" id="s-track">
+  <div class="trackstage">
+    <canvas id="trk-map"></canvas>
+    <div class="trk-note" id="trk-note" style="display:none"></div>
+    <div class="trk-legend" id="trk-legend"></div>
+    <div class="trk-hud" id="trk-hud"></div>
   </div>
 </section>
 
@@ -667,6 +695,7 @@ function render(){
   if(S.screen==="overview"){ renderRing(); renderTiles(); renderFuel(); renderTyres(); renderBrakes(); renderDrivers(); renderLaps(); }
   if(S.screen==="tower"){ renderClassbar(); renderTower(); renderPitExit(); }
   if(S.screen==="weather"){ renderWeather(); }
+  if(S.screen==="track"){ renderTrack(); }
 }
 
 /* --- Ring --- */
@@ -995,8 +1024,162 @@ function drawWeatherChart(){
   line("track_temp_c",Y,"#ff6a13",2.4);
 }
 
+/* ---------- Schirm 4: Live-Streckenkarte ----------
+   Quelle: S.field.vehicles (dieselbe wie die Zeitentabelle).
+   Liegen x/z (mPos) vor -> echte Streckenform. Sonst werden dieselben
+   Autos ueber ihre lap_dist auf einer Ersatz-Schleife platziert, damit
+   der Schirm sofort konsistent ist. */
+const TRK = (()=>{
+  const cv=$("trk-map"), ctx=cv.getContext("2d");
+  const cssv=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+  function classColor(c){
+    const k=String(c||"").toUpperCase();
+    if(k.includes("HYPER")||k==="LMH"||k==="LMDH") return cssv("--orange");
+    if(k.includes("LMP2")||k==="P2")               return cssv("--violet");
+    if(k.includes("GT"))                            return cssv("--turq");
+    return cssv("--muted");
+  }
+
+  // Ersatz-Schleife: geschlossene Bahn, Punkt je Rundenbruchteil
+  const LOOP=(()=>{
+    const C=[[0,0],[1500,60],[3400,-140],[4200,-1100],[3600,-2050],[2300,-2250],[1700,-1500],
+             [900,-1700],[200,-2500],[-700,-2300],[-1000,-1300],[-600,-600],[-1200,-100],[-700,700],[300,600]];
+    const cr=(p0,p1,p2,p3,t)=>{const t2=t*t,t3=t2*t;return[
+      .5*((2*p1[0])+(-p0[0]+p2[0])*t+(2*p0[0]-5*p1[0]+4*p2[0]-p3[0])*t2+(-p0[0]+3*p1[0]-3*p2[0]+p3[0])*t3),
+      .5*((2*p1[1])+(-p0[1]+p2[1])*t+(2*p0[1]-5*p1[1]+4*p2[1]-p3[1])*t2+(-p0[1]+3*p1[1]-3*p2[1]+p3[1])*t3)];};
+    const L=[],n=C.length;
+    for(let i=0;i<n;i++){const a=C[(i-1+n)%n],b=C[i],c=C[(i+1)%n],d=C[(i+2)%n];
+      for(let s=0;s<24;s++)L.push(cr(a,b,c,d,s/24));}
+    const cum=[0];let tot=0;
+    for(let i=1;i<L.length;i++){tot+=Math.hypot(L[i][0]-L[i-1][0],L[i][1]-L[i-1][1]);cum.push(tot);}
+    const total=tot+Math.hypot(L[0][0]-L[L.length-1][0],L[0][1]-L[L.length-1][1]);cum.push(total);
+    return {LINE:L,total,at(f){let d=(((f%1)+1)%1)*total,lo=0,hi=cum.length-1;
+      while(lo<hi){const m=(lo+hi)>>1;if(cum[m]<d)lo=m+1;else hi=m;}
+      const i=Math.max(1,lo),a=cum[i-1],b=cum[i],k=(d-a)/Math.max(1e-6,b-a);
+      const p=L[(i-1)%L.length],q=L[i%L.length];return [p[0]+(q[0]-p[0])*k,p[1]+(q[1]-p[1])*k];}};
+  })();
+
+  let raf=null,DPR=1,cw=0,ch=0;
+  let breadcrumb=[],refId=null,mode=null;
+  const eased={};
+
+  function resize(){ DPR=Math.min(2,Math.max(1,window.devicePixelRatio||1));
+    cw=cv.clientWidth;ch=cv.clientHeight; cv.width=Math.floor(cw*DPR);cv.height=Math.floor(ch*DPR); }
+
+  function targets(){
+    const vs=(S.field&&S.field.vehicles)||[];
+    const withXZ=vs.filter(v=>Number.isFinite(v.x)&&Number.isFinite(v.z));
+    const m=withXZ.length>=3?"world":"synth";
+    if(m!==mode){ mode=m;breadcrumb=[];refId=null;for(const k in eased)delete eased[k]; }
+    const len=(S.field&&S.field.track_length_m)||13626;
+    const srcv=m==="world"?withXZ:vs;
+    return srcv.map(v=>{
+      let x,z;
+      if(m==="world"){ x=+v.x;z=+v.z; } else { const p=LOOP.at((v.lap_dist||0)/len);x=p[0];z=p[1]; }
+      const own=v.is_player===true||String(v.number)===String(CFG.ownCarNumber);
+      return {id:v.id,number:v.number,car_class:v.car_class||"?",x,z,
+              in_pits:!!v.in_pits,under_yellow:!!v.under_yellow,is_player:own,place:v.place};
+    });
+  }
+
+  function feedBreadcrumb(cars){
+    if(mode!=="world"||!cars.length) return;
+    if(refId==null){ refId=(cars.find(c=>c.place===1)||cars[0]).id; }
+    let c=cars.find(v=>v.id===refId); if(!c){ c=cars.find(v=>v.place===1)||cars[0];refId=c.id;breadcrumb=[]; }
+    const last=breadcrumb[breadcrumb.length-1];
+    if(!last){ breadcrumb.push({x:c.x,z:c.z});return; }
+    const d=Math.hypot(c.x-last.x,c.z-last.z);
+    const len=(S.field&&S.field.track_length_m)||13626;
+    if(d>len*0.5) return;                 // Sprung (Reset) verwerfen
+    if(d>4){ breadcrumb.push({x:c.x,z:c.z}); if(breadcrumb.length>6000)breadcrumb.shift(); }
+  }
+
+  function step(){
+    const tg=targets(); feedBreadcrumb(tg);
+    const ids=new Set();
+    for(const t of tg){ ids.add(t.id);
+      const e=eased[t.id];
+      if(!e){ eased[t.id]={x:t.x,z:t.z,car_class:t.car_class,number:t.number,in_pits:t.in_pits,under_yellow:t.under_yellow,is_player:t.is_player}; }
+      else{ e.x+=(t.x-e.x)*0.14;e.z+=(t.z-e.z)*0.14;
+            e.car_class=t.car_class;e.number=t.number;e.in_pits=t.in_pits;e.under_yellow=t.under_yellow;e.is_player=t.is_player; } }
+    for(const k in eased) if(!ids.has(+k)) delete eased[k];
+    return Object.values(eased);
+  }
+
+  function fitOf(cars){
+    const pts = mode==="synth" ? LOOP.LINE.map(p=>({x:p[0],z:p[1]})) : (breadcrumb.length>20?breadcrumb:cars);
+    if(!pts.length) return null;
+    let minX=1e18,maxX=-1e18,minZ=1e18,maxZ=-1e18;
+    for(const p of pts){ if(p.x<minX)minX=p.x;if(p.x>maxX)maxX=p.x;if(p.z<minZ)minZ=p.z;if(p.z>maxZ)maxZ=p.z; }
+    const w=cv.width,h=cv.height,pad=Math.min(w,h)*0.08+24*DPR;
+    const sx=Math.max(1,maxX-minX),sz=Math.max(1,maxZ-minZ);
+    const s=Math.min((w-2*pad)/sx,(h-2*pad)/sz);
+    const ox=(w-s*sx)/2,oz=(h-s*sz)/2;
+    return {X:x=>ox+(x-minX)*s,Y:z=>h-(oz+(z-minZ)*s),s};
+  }
+
+  function smooth(fit,pts,close){
+    if(pts.length<2) return;
+    ctx.beginPath(); ctx.moveTo(fit.X(pts[0].x),fit.Y(pts[0].z));
+    for(let i=1;i<pts.length-1;i++){ const mx=(pts[i].x+pts[i+1].x)/2,mz=(pts[i].z+pts[i+1].z)/2;
+      ctx.quadraticCurveTo(fit.X(pts[i].x),fit.Y(pts[i].z),fit.X(mx),fit.Y(mz)); }
+    const last=pts[pts.length-1]; ctx.lineTo(fit.X(last.x),fit.Y(last.z));
+    if(close) ctx.closePath();
+    ctx.stroke();
+  }
+
+  function draw(cars){
+    ctx.clearRect(0,0,cv.width,cv.height);
+    const fit=fitOf(cars); if(!fit) return;
+    const r=Math.max(13*DPR,fit.s*10), wRoad=r*2.4, wEdge=wRoad+8*DPR;
+    const ribbon = mode==="synth" ? LOOP.LINE.map(p=>({x:p[0],z:p[1]})) : breadcrumb;
+    const closed = mode==="synth";
+    if(ribbon.length>20){
+      ctx.lineJoin="round";ctx.lineCap="round";
+      ctx.strokeStyle="#000";ctx.globalAlpha=.6;ctx.lineWidth=wEdge;smooth(fit,ribbon,closed);
+      ctx.globalAlpha=1;ctx.strokeStyle="#23272f";ctx.lineWidth=wRoad;smooth(fit,ribbon,closed);
+      ctx.strokeStyle="#333944";ctx.lineWidth=Math.max(1,1.4*DPR);ctx.setLineDash([7*DPR,12*DPR]);smooth(fit,ribbon,closed);ctx.setLineDash([]);
+    }
+    for(const c of cars){
+      const x=fit.X(c.x),y=fit.Y(c.z),col=classColor(c.car_class);
+      ctx.globalAlpha=c.in_pits?.35:1;
+      if(c.under_yellow){ctx.beginPath();ctx.arc(x,y,r+4*DPR,0,7);ctx.strokeStyle=cssv("--amber");ctx.lineWidth=2.4*DPR;ctx.stroke();}
+      if(c.is_player){ctx.beginPath();ctx.arc(x,y,r+6*DPR,0,7);ctx.strokeStyle="#fff";ctx.lineWidth=2.6*DPR;ctx.stroke();}
+      ctx.beginPath();ctx.arc(x,y,r,0,7);ctx.fillStyle=col;ctx.fill();
+      ctx.lineWidth=1.5*DPR;ctx.strokeStyle="rgba(0,0,0,.6)";ctx.stroke();
+      ctx.globalAlpha=c.in_pits?.5:1;
+      ctx.fillStyle="#0a0b0d";ctx.font="700 "+Math.round(r*0.82)+"px "+cssv("--mono");
+      ctx.textAlign="center";ctx.textBaseline="middle";ctx.fillText(String(c.number),x,y+0.5*DPR);
+    }
+    ctx.globalAlpha=1;
+  }
+
+  function hud(cars){
+    const pits=cars.filter(c=>c.in_pits).length;
+    $("trk-hud").innerHTML="<b>"+cars.length+"</b> Fahrzeuge \u00b7 <b>"+pits+"</b> in der Box<br>Karte skaliert automatisch";
+    const classes=[...new Set(cars.map(c=>c.car_class))];
+    $("trk-legend").innerHTML=classes.map(c=>'<span class="k"><b style="background:'+classColor(c)+'"></b>'+c+"</span>").join("")
+      +'<span class="k"><b style="background:#fff"></b>Eigenes Auto</span>';
+    const note=$("trk-note");
+    if(mode==="synth"){ note.style.display="block";
+      note.textContent="Positionen aus Rundendistanz \u2014 echte Streckenform, sobald der Client x/z sendet"; }
+    else note.style.display="none";
+  }
+
+  function loop(){
+    if(S.screen!=="track"){ raf=null; return; }
+    if(cv.clientWidth!==cw||cv.clientHeight!==ch) resize();
+    const cars=step(); draw(cars); hud(cars);
+    raf=requestAnimationFrame(loop);
+  }
+  function render(){ if(cv.clientWidth===0) return; if(cw===0) resize(); if(!raf) loop(); }
+  window.addEventListener("resize",()=>{ if(S.screen==="track") resize(); });
+  return { render };
+})();
+function renderTrack(){ TRK.render(); }
+
 /* ---------- Schirme, Status, Steuerung ---------- */
-const SCREENS={overview:"uebersicht",tower:"zeiten",weather:"wetter"};
+const SCREENS={overview:"uebersicht",tower:"zeiten",weather:"wetter",track:"strecke"};
 function showScreen(name){
   if(!SCREENS[name]) name="overview";
   S.screen=name;
@@ -1037,6 +1220,7 @@ document.addEventListener("keydown",e=>{
   if(e.key==="1") showScreen("overview");
   if(e.key==="2") showScreen("tower");
   if(e.key==="3") showScreen("weather");
+  if(e.key==="4") showScreen("track");
   if(e.key.toLowerCase()==="f") toggleFull();
 });
 function toggleFull(){ if(document.fullscreenElement) document.exitFullscreen(); else document.documentElement.requestFullscreen?.(); }
