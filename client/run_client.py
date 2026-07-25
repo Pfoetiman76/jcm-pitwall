@@ -245,8 +245,8 @@ class PitwallClient:
         if new_laps:
             for row in new_laps:
                 row["session_id"] = self.session_id
-            self.db.safe_insert("opponent_laps?on_conflict=session_id,vehicle_id,lap_num",
-                                new_laps, spool_kind=None)
+            self.db.safe_upsert("opponent_laps", new_laps,
+                                on_conflict="session_id,vehicle_id,lap_num")
 
         if now >= self._next_field:
             self._next_field = now + self.field_every
@@ -392,6 +392,16 @@ class PitwallClient:
 
 
 def main():
+    # stdout/stderr zeilenweise flushen. Sonst puffert vor allem die onefile-EXE
+    # im Block: der Client laeuft und laedt hoch, aber die [Runde]-/Session-Zeilen
+    # erreichen das Fahrer-Fenster nie -> es bleibt faelschlich auf "warte auf
+    # Telemetrie" tuerkis stehen. None-sicher fuer den windowed-Fall (stdout=None).
+    for _stream in (sys.stdout, sys.stderr):
+        try:
+            _stream.reconfigure(line_buffering=True)
+        except Exception:
+            pass
+
     ap = argparse.ArgumentParser(description="JCM Pitwall Fahrer-Client")
     ap.add_argument("--demo", action="store_true", help="ohne Sim, simuliertes Rennen")
     ap.add_argument("--speedup", type=float, default=30.0, help="Zeitraffer im Demo-Modus")
