@@ -27,6 +27,11 @@ from pathlib import Path
 import tkinter as tk
 from tkinter import ttk, messagebox
 
+try:
+    import updater
+except Exception:
+    updater = None
+
 HERE = Path(__file__).resolve().parent
 IS_FROZEN = getattr(sys, "frozen", False)
 BASE = Path(sys.executable).parent if IS_FROZEN else HERE
@@ -178,6 +183,9 @@ class App:
         self._check_ready()
         root.after(120, self._pump)
         root.protocol("WM_DELETE_WINDOW", self._on_close)
+        # Beim Start einmal auf Updates pruefen (im Hintergrund, blockiert nie).
+        if updater is not None:
+            threading.Thread(target=self._check_update, daemon=True).start()
 
     # ----------------------------------------------------------------
     def _build(self):
@@ -186,11 +194,16 @@ class App:
         box = tk.Frame(head, bg=BG); box.pack(side="left", anchor="w")
         tk.Label(box, text="JCM PITWALL", bg=BG, fg=INK,
                  font=("Bahnschrift Condensed", 26, "bold")).pack(anchor="w")
-        tk.Label(box, text="FAHRER-CLIENT", bg=BG, fg=MUTED,
+        ver = f"  ·  v{updater.VERSION}" if updater else ""
+        tk.Label(box, text="FAHRER-CLIENT" + ver, bg=BG, fg=MUTED,
                  font=("Segoe UI", 8)).pack(anchor="w")
         tk.Button(head, text="Team-Code", command=lambda: self.ask_team_code(False),
                   bg=PANEL, fg=MUTED, relief="flat", font=("Segoe UI", 9),
                   cursor="hand2").pack(side="right", ipadx=10, ipady=4)
+
+        # Update-Banner (leer/unsichtbar, bis ein Update gefunden wird)
+        self.update_bar = tk.Frame(self.root, bg=BG)
+        self.update_bar.pack(fill="x", padx=22)
 
         # Fahrerauswahl
         card = tk.Frame(self.root, bg=PANEL, highlightbackground=LINE, highlightthickness=1)
@@ -329,6 +342,81 @@ class App:
         self._set_state("wait", "Starte … warte auf Telemetrie aus dem Spiel")
         self._write(f"--- Start als {name} ---")
         threading.Thread(target=self._supervise, args=(name,), daemon=True).start()
+
+    # --- Selbst-Update ----------------------------------------------
+    def _check_update(self):
+        try:
+            info = updater.check()
+        except Exception:
+            info = None
+        if info:
+            self.root.after(0, lambda: self._show_update_bar(info))
+
+    def _show_update_bar(self, info):
+        for w in self.update_bar.winfo_children():
+            w.destroy()
+        self.update_bar.configure(bg=AMBER)
+        self.update_bar.pack_configure(pady=(8, 0))
+        row = tk.Frame(self.update_bar, bg=AMBER); row.pack(fill="x", padx=12, pady=7)
+        tk.Label(row, text=f"Update v{info['version']} verfügbar", bg=AMBER, fg="#12100e",
+                 font=("Segoe UI", 10, "bold")).pack(side="left")
+        tk.Button(row, text="Aktualisieren", command=lambda: self._do_update(info),
+                  bg="#12100e", fg=AMBER, relief="flat", font=("Segoe UI", 9, "bold"),
+                  cursor="hand2").pack(side="right", ipadx=8, ipady=3)
+
+    def _do_update(self, info):
+        if self.running:
+            messagebox.showinfo("Update", "Bitte erst STOPP drücken — während der "
+                                "Aufzeichnung wird nicht aktualisiert.")
+            return
+        if not messagebox.askyesno(
+                "Update",
+                f"Jetzt auf v{info['version']} aktualisieren?\n\n"
+                "Die neue Version wird geladen, die App schließt sich kurz und "
+                "startet neu. Nicht während eines laufenden Rennens machen."):
+            return
+        threading.Thread(target=self._run_update, args=(info,), daemon=True).start()
+
+    def _run_update(self, info):
+        url = info.get("asset_url") or ""
+        if not url:
+            import webbrowser
+            webbrowser.open(info.get("url") or "")
+            self.root.after(0, lambda: messagebox.showinfo(
+                "Update", f"v{info['version']} ist verfügbar, aber kein direkt ladbares "
+                "Asset gefunden. Ich habe die Release-Seite geöffnet."))
+            return
+        dest = updater.staged_path(bool(info.get("is_installer")))
+        self.root.after(0, lambda: self.status.configure(text="Update lädt … 0 %"))
+
+        def prog(done, total):
+            pct = int(done * 100 / total) if total else 0
+            self.root.after(0, lambda: self.status.configure(text=f"Update lädt … {pct} %"))
+        try:
+            updater.download_asset(url, str(dest), progress_cb=prog)
+        except Exception as exc:
+            self.root.after(0, lambda: messagebox.showerror(
+                "Update", f"Download fehlgeschlagen:\n{exc}"))
+            self.root.after(0, lambda: self.status.configure(text="Bereit"))
+            return
+        if updater.apply_update(dest, bool(info.get("is_installer"))):
+            self.root.after(0, self._close_for_update)
+        else:
+            self.root.after(0, lambda: messagebox.showinfo(
+                "Update", "Automatischer Tausch nur in der EXE-Version. Die geladene "
+                f"Datei liegt bereit:\n{dest}"))
+            self.root.after(0, lambda: self.status.configure(text="Bereit"))
+
+    def _close_for_update(self):
+        try:
+            self.want_restart = False
+            self.running = False
+            if self.proc and self.proc.poll() is None:
+                self._graceful_stop(self.proc)
+        except Exception:
+            pass
+        self.root.destroy()
+        os._exit(0)
 
     def stop(self):
         self.want_restart = False
