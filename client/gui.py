@@ -404,16 +404,12 @@ class App:
                 "Update", f"Download fehlgeschlagen:\n{exc}"))
             self.root.after(0, lambda: self.status.configure(text="Bereit"))
             return
-        # NEU:
-        is_installer = bool(info.get("is_installer"))
-        
-        # Versuchen über updater.py anzuwenden, ODER direkt hier starten:
+# NEU (ab Zeile 407):
+       is_installer = bool(info.get("is_installer"))
+
         if is_installer:
-            # 1. Inno Setup Installer starten
-            subprocess.Popen([str(dest), "/SILENT", "/CLOSEAPPLICATIONS"])
-            # 2. App sofort schließen, damit Inno Setup die Dateien überschreiben kann
-            self.root.after(0, self._close_for_update)
-        elif updater.apply_update(dest, False):
+            self.root.after(0, lambda: self._execute_installer_and_exit(dest))
+        elif updater and updater.apply_update(dest, False):
             self.root.after(0, self._close_for_update)
         else:
             self.root.after(0, lambda: messagebox.showinfo(
@@ -431,6 +427,29 @@ class App:
             pass
         self.root.destroy()
         os._exit(0)
+def _close_for_update(self):
+        try:
+            self.want_restart = False
+            self.running = False
+            if self.proc and self.proc.poll() is None:
+                self._graceful_stop(self.proc)
+        except Exception:
+            pass
+        self.root.destroy()
+        os._exit(0)
+
+    def _execute_installer_and_exit(self, installer_path):
+        import os
+        import subprocess
+
+        # 1. Installer im Hintergrund starten
+        try:
+            os.startfile(str(installer_path), arguments="/SILENT /CLOSEAPPLICATIONS")
+        except Exception:
+            subprocess.Popen([str(installer_path), "/SILENT", "/CLOSEAPPLICATIONS"], shell=True)
+
+        # 2. App schließen, damit Inno Setup freie Bahn hat
+        self._close_for_update()
 
     def stop(self):
         self.want_restart = False
