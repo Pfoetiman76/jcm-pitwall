@@ -404,14 +404,23 @@ class App:
                 "Update", f"Download fehlgeschlagen:\n{exc}"))
             self.root.after(0, lambda: self.status.configure(text="Bereit"))
             return
-        if updater.apply_update(dest, bool(info.get("is_installer"))):
+        # NEU:
+        is_installer = bool(info.get("is_installer"))
+        
+        # Versuchen über updater.py anzuwenden, ODER direkt hier starten:
+        if is_installer:
+            # 1. Inno Setup Installer starten
+            subprocess.Popen([str(dest), "/SILENT", "/CLOSEAPPLICATIONS"])
+            # 2. App sofort schließen, damit Inno Setup die Dateien überschreiben kann
+            self.root.after(0, self._close_for_update)
+        elif updater.apply_update(dest, False):
             self.root.after(0, self._close_for_update)
         else:
             self.root.after(0, lambda: messagebox.showinfo(
                 "Update", "Automatischer Tausch nur in der EXE-Version. Die geladene "
                 f"Datei liegt bereit:\n{dest}"))
             self.root.after(0, lambda: self.status.configure(text="Bereit"))
-
+            
     def _close_for_update(self):
         try:
             self.want_restart = False
