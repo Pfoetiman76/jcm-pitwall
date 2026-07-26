@@ -7,7 +7,9 @@
 ; Deshalb darf dieses Setup auch oeffentlich liegen.
 
 #define AppName "JCM Pitwall"
-#define AppVersion "1.0.0"
+#ifndef AppVersion
+  #define AppVersion "1.0.0"
+#endif
 #define Publisher "JCM Motorsport"
 
 [Setup]

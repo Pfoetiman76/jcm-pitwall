@@ -59,7 +59,7 @@ class PitwallClient:
         self._box_puffer = []
         self.laps_sent = 0
         self.field = FieldTracker()
-        self.field_every = 5.0        # Sekunden zwischen Feld-Upserts
+        self.field_every = 2.0        # Sekunden zwischen Feld-Upserts (frischer aufs Dashboard)
         self.weather_every = 60.0     # Sekunden zwischen Wetter-Zeilen
         self._next_field = 0.0
         self._next_weather = 0.0
@@ -163,13 +163,20 @@ class PitwallClient:
         if self.rest is not None and self.rest.wearables.get("hat_werte"):
             w = self.rest.wearables
             rest_pct = w["brake_left_pct"]
+            susp = w.get("suspension") or []
+            # Suspension je Ecke (Roh 0=neu..1=hin -> Schaden in %) fuer die
+            # Schadenskarte; suspension_max_pct bleibt fuer Abwaertskompatibilitaet.
+            sp = [None if (i >= len(susp) or susp[i] is None) else round(susp[i] * 100, 2)
+                  for i in range(4)]
             telemetry.update({
                 "brake_pad_fl": rest_pct[0], "brake_pad_fr": rest_pct[1],
                 "brake_pad_rl": rest_pct[2], "brake_pad_rr": rest_pct[3],
                 "aero_damage_pct": None if w.get("aero_damage") is None
                                    else round(w["aero_damage"] * 100, 2),
-                "suspension_max_pct": (round(max(x for x in w["suspension"] if x is not None) * 100, 2)
-                                       if any(x is not None for x in w["suspension"]) else None),
+                "suspension_fl": sp[0], "suspension_fr": sp[1],
+                "suspension_rl": sp[2], "suspension_rr": sp[3],
+                "suspension_max_pct": (round(max(x for x in susp if x is not None) * 100, 2)
+                                       if any(x is not None for x in susp) else None),
             })
 
         lt = payload.get("lap_time")
@@ -205,12 +212,17 @@ class PitwallClient:
 
         payload["session_id"] = self.session_id
         payload["driver_id"] = self.driver_id
-        lap_row = self.db.safe_insert("laps", payload, spool_kind="lap")
+        # Upsert statt Insert: bei Client-Neustart / Andocken an dieselbe Session
+        # kommt dieselbe Runde erneut -> unique(session_id,lap_num) warf sonst 409,
+        # die Runde ging verloren und stint_telemetry wurde uebersprungen.
+        lap_row = self.db.safe_upsert("laps", payload,
+                                      on_conflict="session_id,lap_num", spool_kind="lap")
         if not lap_row:
             return
         telemetry["lap_id"] = lap_row["id"]
         telemetry["session_id"] = self.session_id
-        self.db.safe_insert("stint_telemetry", telemetry, spool_kind="telemetry")
+        self.db.safe_upsert("stint_telemetry", telemetry,
+                            on_conflict="lap_id", spool_kind="telemetry")
         self.laps_sent += 1
 
     # ----------------------------------------------------------------
@@ -245,8 +257,8 @@ class PitwallClient:
         if new_laps:
             for row in new_laps:
                 row["session_id"] = self.session_id
-            self.db.safe_insert("opponent_laps?on_conflict=session_id,vehicle_id,lap_num",
-                                new_laps, spool_kind=None)
+            self.db.safe_upsert("opponent_laps", new_laps,
+                                on_conflict="session_id,vehicle_id,lap_num")
 
         if now >= self._next_field:
             self._next_field = now + self.field_every
@@ -387,11 +399,21 @@ class PitwallClient:
 
     def _replay(self, kind: str, payload: dict, spooled: bool = True):
         table = "laps" if kind == "lap" else "stint_telemetry"
-        out = self.db.insert(table, payload)
-        return out
+        conflict = "session_id,lap_num" if kind == "lap" else "lap_id"
+        return self.db.upsert(table, payload, conflict)
 
 
 def main():
+    # stdout/stderr zeilenweise flushen. Sonst puffert vor allem die onefile-EXE
+    # im Block: der Client laeuft und laedt hoch, aber die [Runde]-/Session-Zeilen
+    # erreichen das Fahrer-Fenster nie -> es bleibt faelschlich auf "warte auf
+    # Telemetrie" tuerkis stehen. None-sicher fuer den windowed-Fall (stdout=None).
+    for _stream in (sys.stdout, sys.stderr):
+        try:
+            _stream.reconfigure(line_buffering=True)
+        except Exception:
+            pass
+
     ap = argparse.ArgumentParser(description="JCM Pitwall Fahrer-Client")
     ap.add_argument("--demo", action="store_true", help="ohne Sim, simuliertes Rennen")
     ap.add_argument("--speedup", type=float, default=30.0, help="Zeitraffer im Demo-Modus")

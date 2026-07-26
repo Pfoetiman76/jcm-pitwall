@@ -55,7 +55,8 @@ jobs:
           if (-not $iscc) { $iscc = (Get-Command ISCC.exe -ErrorAction SilentlyContinue).Source }
           if (-not $iscc) { throw "ISCC.exe nicht gefunden - Inno Setup Installation fehlgeschlagen?" }
           Write-Host "Nutze ISCC: $iscc"
-          & "$iscc" installer\setup.iss
+          $version = $env:GITHUB_REF_NAME -replace '^v',''
+& "$iscc" "/DAppVersion=$version" installer\setup.iss
 
       - name: An das Release haengen
         uses: softprops/action-gh-release@v2

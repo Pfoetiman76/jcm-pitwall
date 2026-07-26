@@ -352,17 +352,24 @@ class App:
         attempts = 0
         while self.want_restart:
             try:
+                # PYTHONUNBUFFERED zwingt auch den re-exec'ten Client (EXE ruft
+                # sich als sys.executable --run-client auf) in den ungepufferten
+                # Modus - zweiter Riegel gegen das haengende "warte auf Telemetrie".
+                env = dict(os.environ, PYTHONUNBUFFERED="1")
                 self.proc = subprocess.Popen(
                     self._command(name), cwd=str(HERE),
                     stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
                     text=True, bufsize=1, encoding="utf-8", errors="replace",
+                    env=env,
                     creationflags=getattr(subprocess, "CREATE_NO_WINDOW", 0),
                 )
             except Exception as exc:
                 self.queue.put(f"!! Start fehlgeschlagen: {exc}")
                 self.queue.put("!!STATE!!err!!Python oder Client nicht gefunden")
                 return
-            for line in self.proc.stdout:
+            # iter(readline, "") statt "for line in stdout": der File-Iterator
+            # macht read-ahead und haelt Zeilen zurueck, bis sein Puffer voll ist.
+            for line in iter(self.proc.stdout.readline, ""):
                 if not self.want_restart:
                     break
                 self.queue.put(line)

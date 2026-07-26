@@ -97,3 +97,30 @@ class SupabaseClient:
                 self._spool(spool_kind, row)
             print(f"[upload] {table} fehlgeschlagen ({exc}) -> gespoolt")
             return None
+
+    def safe_upsert(self, table: str, rows, on_conflict: str, spool_kind: Optional[str] = None):
+        """Upsert mit merge-duplicates. Wichtig: ein HTTP-Fehler (doppelte Zeile,
+        fehlende Spalte/Constraint) kippt den Online-Status NICHT - der Server ist
+        ja erreichbar. Sonst meldete ein einzelner opponent_laps-Fehler dem
+        Fahrer-Fenster faelschlich 'Kein Netz'. Nur echte Netzfehler = offline.
+        Bei HTTP-Fehlern wird Code + Antworttext geloggt (400 = Constraint fehlt,
+        dann sql/09 einspielen; 409 sollte mit merge-duplicates nicht mehr kommen).
+        """
+        try:
+            out = self.upsert(table, rows, on_conflict)
+            self.online = True
+            return out[0] if isinstance(out, list) and out else out
+        except urllib.error.HTTPError as exc:
+            detail = ""
+            try:
+                detail = exc.read().decode("utf-8")[:200]
+            except Exception:
+                pass
+            print(f"[upload] {table} abgelehnt (HTTP {exc.code}) {detail}")
+            return None
+        except (urllib.error.URLError, TimeoutError, OSError) as exc:
+            self.online = False
+            if spool_kind:
+                self._spool(spool_kind, rows)
+            print(f"[upload] {table} kein Netz ({exc}) -> gespoolt")
+            return None
