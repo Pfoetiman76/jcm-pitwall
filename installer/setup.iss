@@ -8,7 +8,7 @@
 
 #define AppName "JCM Pitwall"
 #ifndef AppVersion
-  #define AppVersion "1.0.0"
+  #define AppVersion "1.0.2"
 #endif
 #define Publisher "JCM Motorsport"
 
