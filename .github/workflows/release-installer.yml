@@ -56,7 +56,7 @@ jobs:
           if (-not $iscc) { throw "ISCC.exe nicht gefunden - Inno Setup Installation fehlgeschlagen?" }
           Write-Host "Nutze ISCC: $iscc"
           $version = $env:GITHUB_REF_NAME -replace '^v',''
-& "$iscc" "/DAppVersion=$version" installer\setup.iss
+          & "$iscc" "/DAppVersion=$version" installer\setup.iss
 
       - name: An das Release haengen
         uses: softprops/action-gh-release@v2
