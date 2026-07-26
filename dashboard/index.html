@@ -13,6 +13,11 @@
   --body:"Segoe UI",Inter,system-ui,-apple-system,sans-serif;
   --mono:"Cascadia Mono",Consolas,"SF Mono",ui-monospace,monospace;
 }
+/* Heller Modus: nur die Neutraltoene kippen, Akzentfarben bleiben. */
+body.light{
+  --bg:#eceef1; --panel:#ffffff; --panel-2:#f2f4f7; --line:#d7dbe1;
+  --ink:#1a1d23; --muted:#5f6670;
+}
 *{box-sizing:border-box}
 html,body{margin:0;padding:0}
 body{
@@ -218,6 +223,7 @@ input[type=number]{width:92px}
       <span class="dot" id="dot"></span><span id="statustext">Verbinde …</span>
       <button class="btn sm" id="btn-pop" title="Diesen Schirm in einem eigenen Fenster öffnen">Zweiter Schirm</button>
       <button class="btn sm" id="btn-full" title="Vollbild (Taste F)">Vollbild</button>
+      <button class="btn sm" id="btn-theme" title="Hell/Dunkel umschalten">Hell</button>
       <button class="btn sm" id="btn-rt" title="Zwischen Realtime-Push und Standard-Polling umschalten">Realtime</button>
       <button class="btn sm" id="btn-setup" aria-expanded="false">Verbindung</button>
     </div>
@@ -498,6 +504,13 @@ async function rest(path){
 // ---------- Realtime: field_state per WebSocket-Push (per Schalter) ----------
 let rtChannel=null, rtActive=false, curSid=null;
 let rtEnabled=true; try{ rtEnabled = localStorage.getItem("pw_rt")!=="0"; }catch(e){}
+
+// ---------- Heller/Dunkler Modus (per Schalter, gemerkt) ----------
+let lightMode=false; try{ lightMode = localStorage.getItem("pw_theme")==="light"; }catch(e){}
+function applyTheme(){
+  document.body.classList.toggle("light", lightMode);
+  const b=$("btn-theme"); if(b) b.textContent = lightMode ? "Dunkel" : "Hell";
+}
 
 function ensureRealtime(sid){
   if(rtChannel || !rtEnabled || !CFG.supabaseUrl || !CFG.supabaseKey || !sid) return;
@@ -1575,6 +1588,12 @@ $("btn-connect").addEventListener("click",()=>{
   $("setup").classList.remove("open"); start("live");
 });
 $("btn-demo").addEventListener("click",()=>{ $("setup").classList.remove("open"); start("demo"); });
+$("btn-theme").addEventListener("click",()=>{
+  lightMode=!lightMode;
+  try{ localStorage.setItem("pw_theme", lightMode?"light":"dark"); }catch(e){}
+  applyTheme();
+});
+applyTheme();   // gemerkten Modus beim Laden anwenden
 $("btn-pitauto").addEventListener("click",()=>{
   if(S.pitLossMeasured!=null){ $("in-pitloss").value=S.pitLossMeasured.toFixed(1); renderPitExit(); }
 });
