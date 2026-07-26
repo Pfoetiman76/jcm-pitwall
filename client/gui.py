@@ -32,6 +32,11 @@ try:
 except Exception:
     updater = None
 
+try:
+    from version import VERSION
+except Exception:
+    VERSION = "1.0.0"
+
 HERE = Path(__file__).resolve().parent
 IS_FROZEN = getattr(sys, "frozen", False)
 BASE = Path(sys.executable).parent if IS_FROZEN else HERE

@@ -8,7 +8,7 @@
 
 #define AppName "JCM Pitwall"
 #ifndef AppVersion
-  #define AppVersion "1.0.2"
+  #define AppVersion "1.0.8"
 #endif
 #define Publisher "JCM Motorsport"
 
@@ -24,14 +24,13 @@ Compression=lzma2
 SolidCompression=yes
 WizardStyle=modern
 
-; Ohne Administratorrechte - erspart den UAC-Dialog und damit die
-; haeufigste Stelle, an der jemand abbricht.
+; Ohne Administratorrechte - erspart den UAC-Dialog
 PrivilegesRequired=lowest
 DisableProgramGroupPage=yes
 ArchitecturesInstallIn64BitMode=x64compatible
 UninstallDisplayIcon={app}\JCM-Pitwall.exe
 
-; Automatisches Schliessen laufender Anwendungs-Prozesse vor dem Überschreiben
+; Laufende EXEs beim Drüberinstallieren automatisch beenden
 CloseApplications=yes
 CloseApplicationsFilter=*.exe
 RestartApplications=no
@@ -49,7 +48,7 @@ Name: "client"; Description: "Fahrer-Fenster"; Types: fahrer einrichter voll; Fl
 Name: "admin";  Description: "Einrichter (Datenbank, Fahrer, Team-Code)"; Types: einrichter voll
 
 [Files]
-; Durch Umstellung auf --onedir werden ganze Ordnerstrukturen kopiert
+; Ordnerinhalte aus --onedir kopieren
 Source: "..\dist\JCM-Pitwall\*";            DestDir: "{app}"; Components: client; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "..\dist\JCM-Pitwall-Einrichter\*"; DestDir: "{app}"; Components: admin;  Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "..\ANLEITUNG_FAHRER.md";             DestDir: "{app}"; DestName: "Anleitung.txt"; Components: client; Flags: ignoreversion
@@ -67,6 +66,4 @@ Name: "desktopicon"; Description: "Verknüpfung auf dem Desktop anlegen"; GroupD
 Filename: "{app}\JCM-Pitwall.exe"; Description: "JCM Pitwall jetzt starten"; Flags: nowait postinstall skipifsilent; Components: client
 
 [UninstallDelete]
-; Die Konfiguration im Benutzerprofil bleibt bewusst stehen, damit der
-; Team-Code nach einer Neuinstallation nicht nochmal gebraucht wird.
 Type: dirifempty; Name: "{app}"

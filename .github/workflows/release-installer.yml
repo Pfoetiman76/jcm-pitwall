@@ -1,15 +1,12 @@
 name: Installer bauen
 
-# Zwei Wege, denselben Installer zu bauen:
-#   1) Tag pushen  ->  git tag v1.0.0 && git push origin v1.0.0
-#   2) Manuell     ->  Actions-Tab -> "Run workflow" -> Version eintragen (z.B. 1.0.0)
 on:
   push:
     tags: ['v*']
   workflow_dispatch:
     inputs:
       version:
-        description: 'Version ohne v-Prefix, z.B. 1.0.0'
+        description: 'Version ohne v-Prefix, z.B. 1.0.8'
         required: true
         type: string
 
@@ -24,7 +21,7 @@ jobs:
       - uses: actions/setup-python@v6
         with: { python-version: '3.12' }
 
-      # Version + Tag EINMAL zentral bestimmen.
+      # 1. Version + Tag EINMAL zentral bestimmen
       - name: Version bestimmen
         id: ver
         shell: pwsh
@@ -40,10 +37,18 @@ jobs:
           "tag=$tag"         | Out-File $env:GITHUB_OUTPUT -Append
           Write-Host "Version: $version  |  Tag: $tag"
 
+      # 2. Version direkt in Python-Code injizieren, damit die GUI sie kennt
+      - name: Version in Python injizieren
+        shell: pwsh
+        run: |
+          $ver = "${{ steps.ver.outputs.version }}"
+          "VERSION = '$ver'" | Out-File -FilePath client/version.py -Encoding utf8
+          Write-Host "version.py aktualisiert auf VERSION = '$ver'"
+
       - name: PyInstaller
         run: pip install --upgrade pyinstaller
 
-      # Build umgestellt auf --onedir (verhindert _MEI-Temp-Entpack-Fehler)
+      # 3. Builds auf --onedir umgestellt (keine _MEI-Temp-Fehler mehr)
       - name: Fahrer-Fenster bauen
         run: >
           pyinstaller --noconfirm --onedir --windowed
