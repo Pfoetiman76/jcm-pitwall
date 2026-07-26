@@ -21,6 +21,7 @@ import json
 import signal
 import sys
 import time
+from datetime import datetime, timezone
 from pathlib import Path
 
 import config as cfg_mod
@@ -46,6 +47,14 @@ def _stop(*_):
 
 
 class PitwallClient:
+    # Eine Session gilt als "laeuft noch", wenn ihr letzter field_state juenger
+    # als das hier ist. Waehrend eines echten Rennens kommt alle ~2 s ein
+    # field_state, also ist eine laufende Session immer sekundenfrisch - auch
+    # ueber Mitternacht hinweg im 24h-Lauf. Die 20 min sind reine Toleranz fuer
+    # die Luecke bei einem Fahrerwechsel (Client 1 aus, Client 2 an). Eine
+    # Geister-Session vom Vortag ist dagegen Stunden alt und faellt raus.
+    SESSION_FRESH_MIN = 20.0
+
     def __init__(self, cfg, args):
         self.cfg = cfg
         self.args = args
@@ -100,31 +109,92 @@ class PitwallClient:
             self.driver_id = row["id"]
         print(f"[client] Fahrer: {name} ({self.driver_id})")
 
+    @staticmethod
+    def _within_minutes(iso_ts, minutes: float) -> bool:
+        """True, wenn der Zeitstempel (Postgres-ISO) hoechstens `minutes` alt ist.
+        Bei Parse-Problemen bewusst False -> die Session gilt als nicht frisch und
+        es wird lieber eine neue angelegt, statt in eine tote hineinzuschreiben."""
+        if not iso_ts:
+            return False
+        try:
+            s = str(iso_ts).strip().replace("Z", "+00:00")
+            dt = datetime.fromisoformat(s)
+            if dt.tzinfo is None:
+                dt = dt.replace(tzinfo=timezone.utc)
+            age = (datetime.now(timezone.utc) - dt).total_seconds()
+            return age <= minutes * 60          # negatives Alter (Uhr-Drift) zaehlt als frisch
+        except Exception:
+            return False
+
+    def _session_is_live(self, sid: str) -> bool:
+        """Laeuft die Session noch? is_active gesetzt UND kuerzlich Aktivitaet
+        (letzter field_state, ersatzweise started_at). Verhindert, dass ein alter
+        SESSION_FILE-Eintrag oder eine is_active-Geister-Session vom Vortag
+        wiederbelebt bzw. angedockt wird."""
+        try:
+            rows = self.db.get(f"sessions?id=eq.{sid}&select=is_active,started_at&limit=1")
+            if not rows or rows[0].get("is_active") is False:
+                return False
+            last = None
+            fs = self.db.get(
+                f"field_state?session_id=eq.{sid}&select=updated_at&order=updated_at.desc&limit=1")
+            if fs:
+                last = fs[0].get("updated_at")
+            if last is None:
+                last = rows[0].get("started_at")     # noch kein field_state -> Startzeit
+            return self._within_minutes(last, self.SESSION_FRESH_MIN)
+        except Exception as exc:
+            print(f"[client] Frische-Pruefung fehlgeschlagen ({exc}) - behandle Session als nicht aktiv")
+            return False
+
     def ensure_session(self, sample: dict):
+        # 1) Ausdruecklich per --session vorgegeben: immer respektieren.
         if self.args.session:
             self.session_id = self.args.session
-        elif SESSION_FILE.exists() and not self.args.new_session:
-            self.session_id = SESSION_FILE.read_text(encoding="utf-8").strip() or None
-
-        if self.session_id or self.dry:
-            if self.session_id:
-                print(f"[client] Session: {self.session_id}")
+            print(f"[client] Session: {self.session_id}")
+            return
+        if self.dry:
             return
 
-        # Laeuft schon eine Session? Dann andocken statt eine zweite anlegen.
-        # Das war die groesste Fussangel: sechs Fahrer, sechs Sessions,
-        # und das Dashboard zeigt nur eine davon.
+        # 2) Auf diesem PC gecachte Session wiederaufnehmen - aber nur, wenn sie
+        #    noch laeuft. Sonst wuerde ein Eintrag vom Vortag eine tote Session
+        #    wiederbeleben: Uploads liefen ins Leere, das Dashboard zeigt Altes.
+        #    (Genau diese Falle war heute der Ausloeser.) Bei einem Crash-Neustart
+        #    mitten im Stint ist die Session sekundenfrisch und wird korrekt wieder
+        #    aufgenommen.
+        if SESSION_FILE.exists() and not self.args.new_session:
+            cached = SESSION_FILE.read_text(encoding="utf-8").strip() or None
+            if cached and self._session_is_live(cached):
+                self.session_id = cached
+                print(f"[client] Session: {self.session_id} (wiederaufgenommen)")
+                return
+            if cached:
+                print("[client] Gespeicherte Session ist nicht mehr aktiv - ignoriere sie.")
+
+        # 3) Laeuft auf einem anderen PC schon eine Session (Fahrerwechsel)? Andocken
+        #    statt eine zweite anlegen - aber nur, wenn sie frisch ist. Eine
+        #    Geister-Session vom Vortag wird NICHT adoptiert, sondern geschlossen.
         if not self.args.new_session:
             try:
-                rows = self.db.get("sessions?is_active=eq.true&order=started_at.desc&limit=1&select=id,track_name")
-                if rows:
+                rows = self.db.get(
+                    "sessions?is_active=eq.true&order=started_at.desc&limit=1&select=id,track_name")
+                if rows and self._session_is_live(rows[0]["id"]):
                     self.session_id = rows[0]["id"]
                     SESSION_FILE.write_text(self.session_id, encoding="utf-8")
                     print(f"[client] An laufende Session angedockt: {rows[0].get('track_name')}")
                     return
+                if rows:
+                    stale = rows[0]["id"]
+                    try:
+                        self.db.patch("sessions", f"id=eq.{stale}",
+                                      {"is_active": False, "ended_at": "now()"})
+                        print("[client] Alte, inaktive Session gefunden und geschlossen.")
+                    except Exception:
+                        pass
             except Exception as exc:
                 print(f"[client] Suche nach laufender Session fehlgeschlagen: {exc}")
 
+        # 4) Nichts Frisches da -> neue Session anlegen (explizit aktiv).
         row = self.db.safe_insert("sessions", {
             "sim": self.cfg.sim,
             "track_name": sample.get("track_name") or "Unbekannt",
@@ -135,6 +205,7 @@ class PitwallClient:
             "fuel_capacity_l": sample.get("fuel_capacity_l"),
             "track_temp_c": sample.get("track_temp"),
             "ambient_temp_c": sample.get("ambient_temp"),
+            "is_active": True,
         })
         if row:
             self.session_id = row["id"]
@@ -444,6 +515,15 @@ def main():
         return 1
 
     signal.signal(signal.SIGINT, _stop)
+    # Die GUI schickt beim STOPP ein CTRL_BREAK an die Prozessgruppe. Windows
+    # liefert das als SIGBREAK (nicht SIGINT) -> auch darauf sauber beenden, damit
+    # der Nachlauf (letzte Runde flushen) noch durchlaeuft.
+    _sigbreak = getattr(signal, "SIGBREAK", None)
+    if _sigbreak is not None:
+        try:
+            signal.signal(_sigbreak, _stop)
+        except (ValueError, OSError):
+            pass
     try:
         PitwallClient(cfg, args).run()
     except TelemetrieNichtGefunden as exc:

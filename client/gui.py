@@ -16,6 +16,7 @@ from __future__ import annotations
 import json
 import os
 import queue
+import signal
 import subprocess
 import sys
 import threading
@@ -333,14 +334,42 @@ class App:
         self.want_restart = False
         self.running = False
         if self.proc and self.proc.poll() is None:
-            try:
-                self.proc.terminate()
-            except Exception:
-                pass
+            self._graceful_stop(self.proc)
         self.btn.configure(text="START", bg=ORANGE, fg="#12100e")
         self.combo.configure(state="readonly")
         self._set_state("off", "Gestoppt")
         self._write("--- Gestoppt ---")
+
+    @staticmethod
+    def _graceful_stop(proc, wait_s: float = 5.0):
+        """Client erst sauber beenden lassen (letzte Runde flushen), dann notfalls
+        hart. Auf Windows via CTRL_BREAK an die eigene Prozessgruppe; sonst SIGINT.
+        Schlaegt das Signal fehl oder haengt der Prozess, greift terminate()/kill()
+        wie bisher - schlimmstenfalls geht nur die angefangene letzte Runde verloren."""
+        signalled = False
+        try:
+            brk = getattr(signal, "CTRL_BREAK_EVENT", None)
+            if brk is not None:
+                proc.send_signal(brk)          # Windows
+            else:
+                proc.send_signal(signal.SIGINT)  # POSIX-Fallback
+            signalled = True
+        except Exception:
+            signalled = False
+        try:
+            if signalled:
+                proc.wait(timeout=wait_s)        # sauberes Ende abwarten
+                return
+        except Exception:
+            pass
+        try:
+            proc.terminate()
+            proc.wait(timeout=2.0)
+        except Exception:
+            try:
+                proc.kill()
+            except Exception:
+                pass
 
     def _command(self, name: str) -> list[str]:
         if IS_FROZEN:
@@ -356,12 +385,17 @@ class App:
                 # sich als sys.executable --run-client auf) in den ungepufferten
                 # Modus - zweiter Riegel gegen das haengende "warte auf Telemetrie".
                 env = dict(os.environ, PYTHONUNBUFFERED="1")
+                # CREATE_NEW_PROCESS_GROUP: nur so laesst sich dem Client beim STOPP
+                # gezielt ein CTRL_BREAK schicken (sauberes Beenden inkl. letztem
+                # Runden-Flush), ohne das eigene Fenster mitzureissen.
+                _flags = (getattr(subprocess, "CREATE_NO_WINDOW", 0)
+                          | getattr(subprocess, "CREATE_NEW_PROCESS_GROUP", 0))
                 self.proc = subprocess.Popen(
                     self._command(name), cwd=str(HERE),
                     stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
                     text=True, bufsize=1, encoding="utf-8", errors="replace",
                     env=env,
-                    creationflags=getattr(subprocess, "CREATE_NO_WINDOW", 0),
+                    creationflags=_flags,
                 )
             except Exception as exc:
                 self.queue.put(f"!! Start fehlgeschlagen: {exc}")
