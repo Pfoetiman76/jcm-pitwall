@@ -43,13 +43,6 @@ BASE = Path(sys.executable).parent if IS_FROZEN else HERE
 
 
 def _config_path() -> Path:
-    """Wo die Konfiguration liegt.
-
-    Installiert liegt das Programm unter "Programme" und darf dort nicht
-    schreiben - die Konfiguration gehoert deshalb ins Benutzerprofil.
-    Liegt eine Datei direkt neben dem Programm, gewinnt die (fuer den
-    portablen Betrieb vom USB-Stick).
-    """
     daneben = BASE / "pitwall_config.json"
     if daneben.exists():
         return daneben
@@ -86,7 +79,6 @@ def save_config(cfg: dict):
 
 
 def fetch_drivers(cfg: dict) -> list[str]:
-    """Fahrernamen aus der Datenbank holen, damit die Liste immer stimmt."""
     url, key = cfg.get("supabase_url", ""), cfg.get("supabase_key", "")
     if not url or not key:
         return []
@@ -102,8 +94,6 @@ def fetch_drivers(cfg: dict) -> list[str]:
 
 
 class TeamCodeDialog(tk.Toplevel):
-    """Erster Start: Team-Code einfuegen. Danach nie wieder."""
-
     def __init__(self, parent, vorhandener: str = ""):
         super().__init__(parent)
         self.result: dict | None = None
@@ -188,11 +178,9 @@ class App:
         self._check_ready()
         root.after(120, self._pump)
         root.protocol("WM_DELETE_WINDOW", self._on_close)
-        # Beim Start einmal auf Updates pruefen (im Hintergrund, blockiert nie).
         if updater is not None:
             threading.Thread(target=self._check_update, daemon=True).start()
 
-    # ----------------------------------------------------------------
     def _build(self):
         head = tk.Frame(self.root, bg=BG); head.pack(fill="x", padx=22, pady=(20, 6))
         tk.Frame(head, bg=ORANGE, width=5, height=42).pack(side="left", padx=(0, 12))
@@ -206,11 +194,9 @@ class App:
                   bg=PANEL, fg=MUTED, relief="flat", font=("Segoe UI", 9),
                   cursor="hand2").pack(side="right", ipadx=10, ipady=4)
 
-        # Update-Banner (leer/unsichtbar, bis ein Update gefunden wird)
         self.update_bar = tk.Frame(self.root, bg=BG)
         self.update_bar.pack(fill="x", padx=22)
 
-        # Fahrerauswahl
         card = tk.Frame(self.root, bg=PANEL, highlightbackground=LINE, highlightthickness=1)
         card.pack(fill="x", padx=22, pady=(18, 0))
         tk.Label(card, text="WER FÄHRT?", bg=PANEL, fg=MUTED,
@@ -228,14 +214,12 @@ class App:
                                   style="P.TCombobox", font=("Segoe UI", 13))
         self.combo.pack(fill="x", padx=16, pady=(0, 16), ipady=6)
 
-        # Startknopf
         self.btn = tk.Button(self.root, text="START", command=self.toggle,
                              bg=ORANGE, fg="#12100e", activebackground=ORANGE,
                              font=("Bahnschrift Condensed", 26, "bold"),
                              relief="flat", cursor="hand2", height=1)
         self.btn.pack(fill="x", padx=22, pady=18, ipady=16)
 
-        # Status
         st = tk.Frame(self.root, bg=PANEL, highlightbackground=LINE, highlightthickness=1)
         st.pack(fill="x", padx=22)
         inner = tk.Frame(st, bg=PANEL); inner.pack(fill="x", padx=16, pady=14)
@@ -246,7 +230,6 @@ class App:
                                font=("Segoe UI", 11), anchor="w", justify="left")
         self.status.pack(side="left", fill="x", expand=True)
 
-        # Protokoll
         tk.Label(self.root, text="WAS GERADE PASSIERT", bg=BG, fg=MUTED,
                  font=("Segoe UI", 8, "bold")).pack(anchor="w", padx=22, pady=(18, 6))
         lf = tk.Frame(self.root, bg=PANEL, highlightbackground=LINE, highlightthickness=1)
@@ -264,7 +247,6 @@ class App:
                              anchor="w", justify="left", wraplength=560)
         self.hint.pack(fill="x")
 
-    # ----------------------------------------------------------------
     def _load_drivers(self):
         names = fetch_drivers(self.cfg)
         if not names:
@@ -319,7 +301,6 @@ class App:
         self.log.see("end")
         self.log.configure(state="disabled")
 
-    # ----------------------------------------------------------------
     def toggle(self):
         if self.running:
             self.stop()
@@ -348,7 +329,6 @@ class App:
         self._write(f"--- Start als {name} ---")
         threading.Thread(target=self._supervise, args=(name,), daemon=True).start()
 
-    # --- Selbst-Update ----------------------------------------------
     def _check_update(self):
         try:
             info = updater.check()
@@ -404,9 +384,8 @@ class App:
                 "Update", f"Download fehlgeschlagen:\n{exc}"))
             self.root.after(0, lambda: self.status.configure(text="Bereit"))
             return
-# NEU (ab Zeile 407):
-       is_installer = bool(info.get("is_installer"))
 
+        is_installer = bool(info.get("is_installer"))
         if is_installer:
             self.root.after(0, lambda: self._execute_installer_and_exit(dest))
         elif updater and updater.apply_update(dest, False):
@@ -416,7 +395,14 @@ class App:
                 "Update", "Automatischer Tausch nur in der EXE-Version. Die geladene "
                 f"Datei liegt bereit:\n{dest}"))
             self.root.after(0, lambda: self.status.configure(text="Bereit"))
-            
+
+    def _execute_installer_and_exit(self, installer_path):
+        try:
+            os.startfile(str(installer_path), arguments="/SILENT /CLOSEAPPLICATIONS")
+        except Exception:
+            subprocess.Popen([str(installer_path), "/SILENT", "/CLOSEAPPLICATIONS"], shell=True)
+        self._close_for_update()
+
     def _close_for_update(self):
         try:
             self.want_restart = False
@@ -427,29 +413,6 @@ class App:
             pass
         self.root.destroy()
         os._exit(0)
-def _close_for_update(self):
-        try:
-            self.want_restart = False
-            self.running = False
-            if self.proc and self.proc.poll() is None:
-                self._graceful_stop(self.proc)
-        except Exception:
-            pass
-        self.root.destroy()
-        os._exit(0)
-
-    def _execute_installer_and_exit(self, installer_path):
-        import os
-        import subprocess
-
-        # 1. Installer im Hintergrund starten
-        try:
-            os.startfile(str(installer_path), arguments="/SILENT /CLOSEAPPLICATIONS")
-        except Exception:
-            subprocess.Popen([str(installer_path), "/SILENT", "/CLOSEAPPLICATIONS"], shell=True)
-
-        # 2. App schließen, damit Inno Setup freie Bahn hat
-        self._close_for_update()
 
     def stop(self):
         self.want_restart = False
@@ -463,23 +426,19 @@ def _close_for_update(self):
 
     @staticmethod
     def _graceful_stop(proc, wait_s: float = 5.0):
-        """Client erst sauber beenden lassen (letzte Runde flushen), dann notfalls
-        hart. Auf Windows via CTRL_BREAK an die eigene Prozessgruppe; sonst SIGINT.
-        Schlaegt das Signal fehl oder haengt der Prozess, greift terminate()/kill()
-        wie bisher - schlimmstenfalls geht nur die angefangene letzte Runde verloren."""
         signalled = False
         try:
             brk = getattr(signal, "CTRL_BREAK_EVENT", None)
             if brk is not None:
-                proc.send_signal(brk)          # Windows
+                proc.send_signal(brk)
             else:
-                proc.send_signal(signal.SIGINT)  # POSIX-Fallback
+                proc.send_signal(signal.SIGINT)
             signalled = True
         except Exception:
             signalled = False
         try:
             if signalled:
-                proc.wait(timeout=wait_s)        # sauberes Ende abwarten
+                proc.wait(timeout=wait_s)
                 return
         except Exception:
             pass
@@ -498,17 +457,10 @@ def _close_for_update(self):
         return [sys.executable, str(HERE / "run_client.py"), "--driver", name]
 
     def _supervise(self, name: str):
-        """Startet den Client neu, falls er abstuerzt. 24h heisst 24h."""
         attempts = 0
         while self.want_restart:
             try:
-                # PYTHONUNBUFFERED zwingt auch den re-exec'ten Client (EXE ruft
-                # sich als sys.executable --run-client auf) in den ungepufferten
-                # Modus - zweiter Riegel gegen das haengende "warte auf Telemetrie".
                 env = dict(os.environ, PYTHONUNBUFFERED="1")
-                # CREATE_NEW_PROCESS_GROUP: nur so laesst sich dem Client beim STOPP
-                # gezielt ein CTRL_BREAK schicken (sauberes Beenden inkl. letztem
-                # Runden-Flush), ohne das eigene Fenster mitzureissen.
                 _flags = (getattr(subprocess, "CREATE_NO_WINDOW", 0)
                           | getattr(subprocess, "CREATE_NEW_PROCESS_GROUP", 0))
                 self.proc = subprocess.Popen(
@@ -522,8 +474,6 @@ def _close_for_update(self):
                 self.queue.put(f"!! Start fehlgeschlagen: {exc}")
                 self.queue.put("!!STATE!!err!!Python oder Client nicht gefunden")
                 return
-            # iter(readline, "") statt "for line in stdout": der File-Iterator
-            # macht read-ahead und haelt Zeilen zurueck, bis sein Puffer voll ist.
             for line in iter(self.proc.stdout.readline, ""):
                 if not self.want_restart:
                     break
@@ -555,7 +505,6 @@ def _close_for_update(self):
         self.root.after(150, self._pump)
 
     def _interpret(self, line: str):
-        """Rohausgabe in eine Aussage uebersetzen, die jeder versteht."""
         if "[Runde" in line:
             self.laps_sent += 1
             self._set_state("ok", f"Läuft - {self.laps_sent} Runden übertragen")
