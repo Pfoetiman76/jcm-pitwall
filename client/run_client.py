@@ -75,6 +75,7 @@ class PitwallClient:
         self._ref_lap = None          # saubere Referenzrunde fuer den Boxenverlust
         self._replay_gemeldet = False
         self._dmg = {}          # letzter Karosserieschaden-Stand (aus source.read)
+        self._trackmap_done = False   # Streckenkarte nur einmal pro Lauf hochladen
         # LMUs lokale REST-Schnittstelle: echter Bremsbelagverschleiss und
         # Wettervorhersage. Beides gibt es in der Shared Memory nicht.
         self.rest = LmuRest() if not args.demo else None
@@ -412,6 +413,27 @@ class PitwallClient:
         )
 
     # ----------------------------------------------------------------
+    def _upload_trackmap(self):
+        """Holt die Streckenkontur einmalig aus der REST-Schnittstelle und legt sie
+        in session_trackmap ab. Beim Fahrerwechsel teilen sich alle dieselbe
+        Session -> upsert auf session_id, spaetere Clients ueberschreiben nur
+        identisch. Faellt still aus, wenn die Karte nicht kommt (Dashboard nutzt
+        dann die Ersatzform aus den Fahrzeugpositionen)."""
+        try:
+            tm = self.rest.trackmap()
+        except Exception as exc:
+            print(f"[client] Streckenkarte nicht abrufbar: {exc}")
+            return
+        if not tm or len(tm.get("line") or []) < 10:
+            return
+        self.db.safe_upsert(
+            "session_trackmap",
+            {"session_id": self.session_id, "line": tm["line"], "pit": tm["pit"]},
+            on_conflict="session_id",
+        )
+        print(f"[client] Streckenkarte hochgeladen ({len(tm['line'])} Linien-, "
+              f"{len(tm.get('pit') or [])} Boxenpunkte).")
+
     def run(self):
         interval = 1.0 / max(1, self.cfg.poll_hz)
         first = None
@@ -470,6 +492,11 @@ class PitwallClient:
                         w = stand["wearables"].get("brake_left_pct") or []
                         print("[rest] LMU-Schnittstelle erreichbar - echter Bremsbelag "
                               f"{w if w else 'noch ohne Werte'}")
+                    # Streckenkarte einmal pro Lauf hochladen, sobald REST bestaetigt.
+                    if stand["verfuegbar"] and not self._trackmap_done \
+                            and self.session_id and not self.dry:
+                        self._trackmap_done = True
+                        self._upload_trackmap()
 
                 # Boxen-Diagnose: zeigt sofort, ob mInPits ueberhaupt kippt.
                 jetzt_box = bool(sample.get("in_pits"))

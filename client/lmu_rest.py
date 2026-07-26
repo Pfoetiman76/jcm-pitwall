@@ -33,6 +33,7 @@ WEARABLES = f"{BASIS}/garage/UIScreen/RepairAndRefuel"
 WETTER = f"{BASIS}/sessions/weather"
 ENERGIE = f"{BASIS}/strategy/usage"
 PITSTOP = f"{BASIS}/strategy/pitstop-estimate"
+TRACKMAP = f"{BASIS}/watch/trackmap"
 
 # WNV_SKY, 0 bis 10. Benennung aus LMU Pitwall uebernommen.
 HIMMEL = {
@@ -51,6 +52,14 @@ def _hole(url: str, timeout: float = 2.0):
     except (urllib.error.URLError, urllib.error.HTTPError, TimeoutError,
             OSError, ValueError):
         return None
+
+
+def _downsample(pts: list, n: int) -> list:
+    """Punktzahl gleichmaessig auf hoechstens n reduzieren (Endpunkte bleiben)."""
+    if n <= 2 or len(pts) <= n:
+        return pts
+    schritt = (len(pts) - 1) / (n - 1)
+    return [pts[round(i * schritt)] for i in range(n)]
 
 
 def _rad_feld(wert) -> list[Optional[float]]:
@@ -217,6 +226,32 @@ class LmuRest:
                 "wind_richtung": zahl("WNV_WINDDIRECTION"),
             })
         return aus
+
+    def trackmap(self, max_line: int = 220, max_pit: int = 90) -> Optional[dict]:
+        """Streckenkontur aus /rest/watch/trackmap (aktuelle Session, Welt-x/z).
+        type 0 = Ideallinie (geschlossene Schleife), type 1 = Boxengasse. Marker
+        (type >=2) werden verworfen. Einmal pro Session aufrufen - die Kontur ist
+        statisch. Gibt {'line': [[x,z],..], 'pit': [[x,z],..]} oder None zurueck."""
+        daten = _hole(TRACKMAP, timeout=5.0)
+        if not isinstance(daten, list) or not daten:
+            return None
+        line, pit = [], []
+        for p in daten:
+            if not isinstance(p, dict):
+                continue
+            try:
+                x = round(float(p["x"]), 1)
+                z = round(float(p["z"]), 1)
+            except (KeyError, TypeError, ValueError):
+                continue
+            t = p.get("type")
+            if t == 0:
+                line.append([x, z])
+            elif t == 1:
+                pit.append([x, z])
+        if len(line) < 10:
+            return None
+        return {"line": _downsample(line, max_line), "pit": _downsample(pit, max_pit)}
 
     # ----------------------------------------------------------------
     def energie_verlauf(self, fahrername: str) -> Optional[list[float]]:

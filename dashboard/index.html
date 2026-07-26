@@ -475,7 +475,8 @@ const CFG = Object.assign({
 }, window.PITWALL_CONFIG || {});
 
 const S = { mode:"demo", screen:"overview", session:null, laps:[], drivers:[], stints:[],
-            field:null, pace:[], weather:[], classFilter:"ALLE", timer:null, pitLossMeasured:null };
+            field:null, pace:[], weather:[], classFilter:"ALLE", timer:null, pitLossMeasured:null,
+            trackMap:null, trackMapSid:null };
 
 const $ = id => document.getElementById(id);
 const clamp = (v,a,b) => Math.max(a, Math.min(b, v));
@@ -540,6 +541,7 @@ function switchSession(sid){
   rtActive=false; window.__pitwallRTReady=null;
   curSid = sid;
   S.laps=[]; S.stints=[]; S.field=null; S.pace=[]; S.weather=[]; S.pitLossMeasured=null;
+  S.trackMap=null; S.trackMapSid=null;        // Streckenkarte der neuen Session neu laden
   ensureRealtime(sid);                        // neuen Push-Kanal fuer die neue Session
   if(!first) flashSessionSwitch();
 }
@@ -571,12 +573,30 @@ async function pickLatestSession(){
   return rows[0] || null;
 }
 
+// Echte Streckenkontur (aus /rest/watch/trackmap, vom Client einmalig hochgeladen).
+// Einmal pro Session laden und in S.trackMap als {line,pit} in Welt-x/z ablegen.
+async function loadTrackMap(sid){
+  if(!sid || S.trackMapSid===sid) return;
+  S.trackMapSid=sid;                          // sofort markieren -> kein Doppelladen
+  try{
+    const rows = await rest(`session_trackmap?session_id=eq.${sid}&limit=1`);
+    const row = rows && rows[0];
+    if(row && Array.isArray(row.line) && row.line.length>10){
+      S.trackMap = {
+        line: row.line.map(p=>({x:+p[0], z:+p[1]})),
+        pit:  Array.isArray(row.pit) ? row.pit.map(p=>({x:+p[0], z:+p[1]})) : []
+      };
+    } else S.trackMap=null;
+  }catch(e){ S.trackMap=null; }
+}
+
 async function loadLive(){
   const sess = await pickLatestSession();
   if(!sess) throw new Error("Keine Session in der Datenbank");
   const sid = sess.id;
   S.session = sess;
   if(sid !== curSid) switchSession(sid);   // Fahrerwechsel/Client-Neustart -> automatisch mitziehen
+  loadTrackMap(sid);                        // echte Streckenkarte (einmal pro Session)
   const [laps, drivers, stints, field, pace, weather] = await Promise.all([
     rest(`v_laps_full?session_id=eq.${sid}&order=lap_num.desc&limit=400`),
     rest(`v_driver_summary?session_id=eq.${sid}`),
@@ -1369,8 +1389,12 @@ const TRK = (()=>{
     return Object.values(eased);
   }
 
+  // Echte Streckenkarte vom Client (Welt-x/z), sonst Ersatzschleife/Krümel.
+  function realMap(){ return (S.trackMap && S.trackMap.line && S.trackMap.line.length>10 && mode==="world") ? S.trackMap : null; }
+
   function fitOf(cars){
-    const pts = mode==="synth" ? LOOP.LINE.map(p=>({x:p[0],z:p[1]})) : (breadcrumb.length>10?breadcrumb:cars);
+    const tm=realMap();
+    const pts = tm ? tm.line : (mode==="synth" ? LOOP.LINE.map(p=>({x:p[0],z:p[1]})) : (breadcrumb.length>10?breadcrumb:cars));
     if(!pts.length) return null;
     let minX=1e18,maxX=-1e18,minZ=1e18,maxZ=-1e18;
     for(const p of pts){ if(p.x<minX)minX=p.x;if(p.x>maxX)maxX=p.x;if(p.z<minZ)minZ=p.z;if(p.z>maxZ)maxZ=p.z; }
@@ -1409,13 +1433,18 @@ const TRK = (()=>{
     const inPit=cars.filter(c=>c.in_pits);
     const fit=fitOf(onTrack); if(!fit){ drawPitlane(inPit); return; }
     const r=Math.max(13*DPR,fit.s*10), wRoad=r*2.4, wEdge=wRoad+8*DPR;
-    const ribbon = mode==="synth" ? LOOP.LINE.map(p=>({x:p[0],z:p[1]})) : breadcrumb;
-    const closed = mode==="synth";
+    const tm=realMap();
+    const ribbon = tm ? tm.line : (mode==="synth" ? LOOP.LINE.map(p=>({x:p[0],z:p[1]})) : breadcrumb);
+    const closed = tm ? true : (mode==="synth");
     if(ribbon.length>10){
       ctx.lineJoin="round";ctx.lineCap="round";
       ctx.strokeStyle="#000";ctx.globalAlpha=.6;ctx.lineWidth=wEdge;smooth(fit,ribbon,closed);
       ctx.globalAlpha=1;ctx.strokeStyle="#23272f";ctx.lineWidth=wRoad;smooth(fit,ribbon,closed);
       ctx.strokeStyle="#333944";ctx.lineWidth=Math.max(1,1.4*DPR);ctx.setLineDash([7*DPR,12*DPR]);smooth(fit,ribbon,closed);ctx.setLineDash([]);
+    }
+    // Boxengasse (nur bei echter Karte, offener dünner Strich).
+    if(tm && tm.pit && tm.pit.length>2){
+      ctx.globalAlpha=.5;ctx.strokeStyle="#2a2f37";ctx.lineWidth=Math.max(2,r*0.9);smooth(fit,tm.pit,false);ctx.globalAlpha=1;
     }
     for(const c of onTrack){
       const x=fit.X(c.x),y=fit.Y(c.z),col=classColor(c.car_class);
@@ -1459,7 +1488,8 @@ const TRK = (()=>{
 
   function hud(cars){
     const pits=cars.filter(c=>c.in_pits).length;
-    $("trk-hud").innerHTML="<b>"+cars.length+"</b> Fahrzeuge \u00b7 <b>"+pits+"</b> in der Box<br>Karte skaliert automatisch";
+    const echt=realMap()?"echte Streckenkarte":"Karte skaliert automatisch";
+    $("trk-hud").innerHTML="<b>"+cars.length+"</b> Fahrzeuge \u00b7 <b>"+pits+"</b> in der Box<br>"+echt;
     const classes=[...new Set(cars.map(c=>c.car_class))];
     $("trk-legend").innerHTML=classes.map(c=>'<span class="k"><b style="background:'+classColor(c)+'"></b>'+c+"</span>").join("")
       +'<span class="k"><b style="background:#fff"></b>Eigenes Auto</span>';
