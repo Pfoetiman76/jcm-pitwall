@@ -25,8 +25,6 @@ jobs:
         with: { python-version: '3.12' }
 
       # Version + Tag EINMAL zentral bestimmen.
-      #   Tag-Push        -> aus github.ref_name (v1.0.0 -> 1.0.0)
-      #   workflow_dispatch -> aus dem Eingabefeld (1.0.0 -> Tag v1.0.0)
       - name: Version bestimmen
         id: ver
         shell: pwsh
@@ -45,9 +43,10 @@ jobs:
       - name: PyInstaller
         run: pip install --upgrade pyinstaller
 
+      # Build umgestellt auf --onedir (verhindert _MEI-Temp-Entpack-Fehler)
       - name: Fahrer-Fenster bauen
         run: >
-          pyinstaller --noconfirm --onefile --windowed
+          pyinstaller --noconfirm --onedir --windowed
           --name JCM-Pitwall
           --distpath dist --workpath build --specpath build
           --paths client --collect-submodules pyLMUSharedMemory
@@ -56,18 +55,16 @@ jobs:
 
       - name: Einrichter bauen
         run: >
-          pyinstaller --noconfirm --onefile --windowed
+          pyinstaller --noconfirm --onedir --windowed
           --name JCM-Pitwall-Einrichter
           --distpath dist --workpath build --specpath build
           --paths client --hidden-import tkinter
           client/einrichter.py
 
-      # NEU: Inno Setup ist auf dem Runner nicht vorinstalliert -> selbst holen.
       - name: Inno Setup installieren
         run: choco install innosetup --no-progress -y
         shell: pwsh
 
-      # ISCC danach robust suchen (fester Pfad war der alte Fehler).
       - name: Installer bauen
         shell: pwsh
         run: |
@@ -84,13 +81,9 @@ jobs:
       - name: An das Release haengen
         uses: softprops/action-gh-release@v2
         with:
-          # Der eigentliche Fix: Tag explizit setzen. Beim manuellen Lauf gibt es
-          # keinen Tag-Ref -> die Action erstellt den Tag auf dem aktuellen Commit.
           tag_name: ${{ steps.ver.outputs.tag }}
           files: |
             installer/Output/*.exe
-            dist/JCM-Pitwall.exe
-            dist/JCM-Pitwall-Einrichter.exe
           body: |
             **Installer für alle** — Fahrer wie Einrichter dieselbe Datei.
 

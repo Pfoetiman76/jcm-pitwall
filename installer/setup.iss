@@ -1,5 +1,5 @@
 ; JCM Pitwall - Windows-Installer (Inno Setup 6)
-; Baut aus den beiden EXE-Dateien ein Setup mit zwei Komponenten:
+; Baut aus den beiden --onedir Ordnern ein Setup mit zwei Komponenten:
 ;   Fahrer      - das Fenster fuer die Strecke (Standard)
 ;   Einrichter  - das Werkzeug fuer denjenigen, der das Team aufsetzt
 ;
@@ -43,8 +43,9 @@ Name: "client"; Description: "Fahrer-Fenster"; Types: fahrer einrichter voll; Fl
 Name: "admin";  Description: "Einrichter (Datenbank, Fahrer, Team-Code)"; Types: einrichter voll
 
 [Files]
-Source: "..\dist\JCM-Pitwall.exe";            DestDir: "{app}"; Components: client; Flags: ignoreversion
-Source: "..\dist\JCM-Pitwall-Einrichter.exe"; DestDir: "{app}"; Components: admin;  Flags: ignoreversion
+; Durch Umstellung auf --onedir werden komplette Ordnerinhalte inklusive aller DLLs/Subfolder gepackt:
+Source: "..\dist\JCM-Pitwall\*";            DestDir: "{app}"; Components: client; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "..\dist\JCM-Pitwall-Einrichter\*"; DestDir: "{app}"; Components: admin;  Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "..\ANLEITUNG_FAHRER.md";             DestDir: "{app}"; DestName: "Anleitung.txt"; Components: client; Flags: ignoreversion
 
 [Icons]
