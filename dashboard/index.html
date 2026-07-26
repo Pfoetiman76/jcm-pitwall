@@ -530,17 +530,51 @@ function setRealtime(on){
   if(S.mode!=="demo") tick();                            // sofort neu laden statt aufs Intervall warten
 }
 
-async function loadLive(){
-  let sid = CFG.sessionId;
-  if(!sid){
-    const act = await rest("sessions?is_active=eq.true&order=started_at.desc&limit=1");
-    if(!act.length) throw new Error("Keine aktive Session in der Datenbank");
-    sid = act[0].id; S.session = act[0];
-  } else {
-    S.session = (await rest(`sessions?id=eq.${sid}&limit=1`))[0] || null;
-  }
+// Session hat gewechselt (neuer Client-Start = neue session_id). Realtime-Kanal
+// auf die neue Session umhaengen, veralteten Zustand leeren, Hinweis zeigen.
+function switchSession(sid){
+  const first = (curSid===null);              // Erststart bekommt keinen Wechsel-Hinweis
+  if(rtChannel){ try{ rtChannel.unsubscribe(); }catch(e){} rtChannel=null; }
+  rtActive=false; window.__pitwallRTReady=null;
   curSid = sid;
-  ensureRealtime(sid);
+  S.laps=[]; S.stints=[]; S.field=null; S.pace=[]; S.weather=[]; S.pitLossMeasured=null;
+  ensureRealtime(sid);                        // neuen Push-Kanal fuer die neue Session
+  if(!first) flashSessionSwitch();
+}
+
+function flashSessionSwitch(){
+  let t=document.getElementById("sess-toast");
+  if(!t){
+    t=document.createElement("div"); t.id="sess-toast";
+    t.style.cssText="position:fixed;top:14px;left:50%;transform:translateX(-50%);z-index:9999;"
+      +"background:var(--orange);color:#0a0b0d;font-weight:700;padding:8px 16px;border-radius:8px;"
+      +"box-shadow:0 6px 24px rgba(0,0,0,.5);transition:opacity .4s;font-size:14px;letter-spacing:.02em;";
+    document.body.appendChild(t);
+  }
+  t.textContent="Neue Session — Anzeige umgeschaltet";
+  t.style.opacity="1";
+  clearTimeout(t._h); t._h=setTimeout(()=>{ t.style.opacity="0"; },4000);
+}
+
+// Bestimmt die anzuzeigende Session. "Immer das aktuelle Rennen":
+// NICHT ueber is_active filtern - eine alte Session bleibt beim Schliessen des
+// Clients oft is_active=true und wuerde die frische Session verdraengen. Stattdessen
+// streng die neueste per started_at (nullslast, falls started_at mal fehlt).
+// Ein fest gepinntes CFG.sessionId (config.js) hat weiterhin Vorrang.
+async function pickLatestSession(){
+  if(CFG.sessionId){
+    return (await rest(`sessions?id=eq.${CFG.sessionId}&limit=1`))[0] || null;
+  }
+  const rows = await rest("sessions?order=started_at.desc.nullslast&limit=1");
+  return rows[0] || null;
+}
+
+async function loadLive(){
+  const sess = await pickLatestSession();
+  if(!sess) throw new Error("Keine Session in der Datenbank");
+  const sid = sess.id;
+  S.session = sess;
+  if(sid !== curSid) switchSession(sid);   // Fahrerwechsel/Client-Neustart -> automatisch mitziehen
   const [laps, drivers, stints, field, pace, weather] = await Promise.all([
     rest(`v_laps_full?session_id=eq.${sid}&order=lap_num.desc&limit=400`),
     rest(`v_driver_summary?session_id=eq.${sid}`),

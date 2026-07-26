@@ -459,6 +459,55 @@ class Einrichter:
                   bg=PANEL2, fg=INK, relief="flat", font=("Segoe UI", 9),
                   cursor="hand2").pack(anchor="w", padx=18, pady=16, ipadx=12, ipady=8)
 
+        karte3 = tk.Frame(f, bg=PANEL, highlightbackground=LINE, highlightthickness=1)
+        karte3.pack(fill="x", pady=(12, 0))
+        tk.Label(karte3, text="RENNEN BEENDEN", bg=PANEL, fg=MUTED,
+                 font=("Segoe UI", 8, "bold")).pack(anchor="w", padx=18, pady=(16, 6))
+        tk.Label(karte3, bg=PANEL, fg=MUTED, justify="left", wraplength=760,
+                 font=("Segoe UI", 9),
+                 text="Schließt alle noch laufenden Sessions ab (is_active=false). "
+                      "Erst klicken, wenn der LETZTE Fahrer fertig ist — nicht beim "
+                      "Fahrerwechsel, sonst reißt die gemeinsame Session ab. Danach "
+                      "startet das nächste Rennen sauber mit einer neuen Session."
+                 ).pack(anchor="w", padx=18)
+        tk.Button(karte3, text="Rennen beenden", command=self._rennen_beenden,
+                  bg=RED, fg="#12100e", relief="flat", font=("Segoe UI", 9, "bold"),
+                  cursor="hand2").pack(anchor="w", padx=18, pady=16, ipadx=12, ipady=8)
+
+    def _rennen_beenden(self):
+        if not self.url.get() or not self.key.get():
+            messagebox.showinfo("Rennen beenden",
+                                "Erst im Tab „1 · Zugang“ URL und Schlüssel eintragen.")
+            return
+        if not messagebox.askyesno(
+                "Rennen beenden",
+                "Wirklich das laufende Rennen beenden?\n\n"
+                "Alle aktiven Sessions werden geschlossen. Erst klicken, wenn der "
+                "letzte Fahrer fertig ist — nicht beim Fahrerwechsel."):
+            return
+        try:
+            r = self.rest()
+            rows = r("sessions?is_active=eq.true&select=id,track_name")
+        except Exception as exc:
+            messagebox.showerror("Rennen beenden",
+                                 f"Konnte aktive Sessions nicht laden:\n{exc}")
+            return
+        if not rows:
+            messagebox.showinfo("Rennen beenden",
+                                "Es lief keine aktive Session — nichts zu tun.")
+            return
+        ok = 0
+        for sess in rows:
+            try:
+                r(f"sessions?id=eq.{sess['id']}", "PATCH",
+                  {"is_active": False, "ended_at": "now()"}, prefer="return=minimal")
+                ok += 1
+            except Exception as exc:
+                print(f"[einrichter] Session {sess['id']} nicht geschlossen: {exc}")
+        msg = f"{ok} von {len(rows)} Session(s) beendet."
+        (messagebox.showinfo if ok == len(rows) else messagebox.showerror)(
+            "Rennen beenden", msg)
+
     def _code_erzeugen(self):
         if not self.url.get() or not self.key.get():
             messagebox.showinfo("Fehlt noch", "Erst unter „1 · Zugang“ die Daten eintragen.")
