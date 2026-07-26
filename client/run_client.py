@@ -74,6 +74,7 @@ class PitwallClient:
         self._next_weather = 0.0
         self._ref_lap = None          # saubere Referenzrunde fuer den Boxenverlust
         self._replay_gemeldet = False
+        self._dmg = {}          # letzter Karosserieschaden-Stand (aus source.read)
         # LMUs lokale REST-Schnittstelle: echter Bremsbelagverschleiss und
         # Wettervorhersage. Beides gibt es in der Shared Memory nicht.
         self.rest = LmuRest() if not args.demo else None
@@ -250,6 +251,30 @@ class PitwallClient:
                                        if any(x is not None for x in susp) else None),
             })
 
+        # Karosserieschaden aus der Shared Memory (unabhaengig von der REST-Schnittstelle).
+        dmg = getattr(self, "_dmg", None) or {}
+        flat = dmg.get("flat") or [None, None, None, None]
+        telemetry.update({
+            "dent_front": dmg.get("dent_front"),
+            "dent_rear": dmg.get("dent_rear"),
+            "detached": dmg.get("detached"),
+            "flat_fl": bool(flat[0]) if flat[0] is not None else None,
+            "flat_fr": bool(flat[1]) if flat[1] is not None else None,
+            "flat_rl": bool(flat[2]) if flat[2] is not None else None,
+            "flat_rr": bool(flat[3]) if flat[3] is not None else None,
+        })
+
+        # Live geplante Boxenstoppdauer aus der REST-Schnittstelle (Pit-Menue).
+        pe = self.rest.pit_estimate if self.rest is not None else None
+        if pe:
+            telemetry.update({
+                "pit_estimate_s": pe.get("total"),
+                "pit_est_fuel": pe.get("fuel"),
+                "pit_est_tires": pe.get("tires"),
+                "pit_est_damage": pe.get("damage"),
+                "pit_est_driver": pe.get("driver"),
+            })
+
         lt = payload.get("lap_time")
         # Referenz ist die schnellste SAUBERE Runde - unabhaengig davon, ob
         # das Spiel sie als gueltig fuehrt. Sonst gibt es bei einer Session
@@ -414,6 +439,15 @@ class PitwallClient:
                 break
             try:
                 sample = self.source.read()
+
+                if sample.get("dent_front") is not None or sample.get("dent_rear") is not None \
+                        or sample.get("flat") is not None:
+                    self._dmg = {
+                        "dent_front": sample.get("dent_front"),
+                        "dent_rear": sample.get("dent_rear"),
+                        "detached": bool(sample.get("detached")),
+                        "flat": sample.get("flat") or [False, False, False, False],
+                    }
 
                 if self._ist_wiederholung(sample) and not self.args.wiederholung:
                     if not self._replay_gemeldet:

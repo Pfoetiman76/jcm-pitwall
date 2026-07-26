@@ -32,6 +32,7 @@ BASIS = "http://localhost:6397/rest"
 WEARABLES = f"{BASIS}/garage/UIScreen/RepairAndRefuel"
 WETTER = f"{BASIS}/sessions/weather"
 ENERGIE = f"{BASIS}/strategy/usage"
+PITSTOP = f"{BASIS}/strategy/pitstop-estimate"
 
 # WNV_SKY, 0 bis 10. Benennung aus LMU Pitwall uebernommen.
 HIMMEL = {
@@ -80,6 +81,7 @@ class LmuRest:
         self.wear_interval = wear_interval
         self.forecast_interval = forecast_interval
         self.wearables: dict = {}
+        self.pit_estimate: dict = {}
         self.forecast: list[dict] = []
         self.verfuegbar: Optional[bool] = None      # None = noch nicht versucht
         self._next_wear = 0.0
@@ -106,6 +108,11 @@ class LmuRest:
                 self.verfuegbar = True
                 self.wearables = self._lies_wearables(daten)
                 self._next_wear = jetzt + self.wear_interval
+                # Live-Boxenstoppdauer im selben Takt (aendert sich nur mit dem
+                # Pit-Menue). Fehlt der Endpunkt, bleibt der letzte Stand stehen.
+                pit = _hole(PITSTOP)
+                if pit is not None:
+                    self.pit_estimate = self._lies_pit_estimate(pit)
 
         if jetzt >= self._next_forecast:
             daten = _hole(WETTER)
@@ -139,6 +146,27 @@ class LmuRest:
             "suspension": fahrwerk,
             "aero_damage": aero,
             "hat_werte": any(b is not None for b in bremsen),
+        }
+
+    @staticmethod
+    def _lies_pit_estimate(daten: dict) -> dict:
+        """Live geplante Boxenstoppdauer je Bestandteil (Sekunden). total ist die
+        Summe aus dem aktuell im Pit-Menue Angewaehlten."""
+        if not isinstance(daten, dict):
+            return {}
+
+        def z(feld):
+            try:
+                return round(float(daten.get(feld)), 2)
+            except (TypeError, ValueError):
+                return None
+
+        return {
+            "total": z("total"),
+            "fuel": z("fuel"),
+            "tires": z("tires"),
+            "damage": z("damage"),
+            "driver": z("driverSwap"),
         }
 
     @staticmethod

@@ -1,0 +1,4363 @@
+{
+  "/rest/garage/getVehicleCondition": {
+    "brakeCondition": [
+      1.0,
+      1.0,
+      1.0,
+      1.0
+    ],
+    "fuel": 99.9043553984378,
+    "fuelCapacity": 100.0,
+    "suspensionDamage": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "tireCondition": [
+      0.9830687642097473,
+      0.9966344237327576,
+      0.9725856781005859,
+      0.9828776717185974
+    ],
+    "vehicleDamage": 0.06607182323932648
+  },
+  "/rest/garage/tireinfo": {
+    "frontLeft": {
+      "centerTemperature": 295.1614074707031,
+      "leftTemperature": 295.1614074707031,
+      "load": 231.6628,
+      "pressure": 150.0,
+      "rightTemperature": 295.1614074707031
+    },
+    "frontRight": {
+      "centerTemperature": 295.1614074707031,
+      "leftTemperature": 295.1614074707031,
+      "load": 231.6628,
+      "pressure": 150.0,
+      "rightTemperature": 295.1614074707031
+    },
+    "rearLeft": {
+      "centerTemperature": 295.1614074707031,
+      "leftTemperature": 295.1614074707031,
+      "load": 306.3372,
+      "pressure": 130.0,
+      "rightTemperature": 295.1614074707031
+    },
+    "rearRight": {
+      "centerTemperature": 295.1614074707031,
+      "leftTemperature": 295.1614074707031,
+      "load": 306.3372,
+      "pressure": 130.0,
+      "rightTemperature": 295.1614074707031
+    },
+    "unitSystem": "US_METRIC"
+  },
+  "/rest/garage/brakeinfo": [
+    0.03200000151991844,
+    0.03200000151991844,
+    0.03200000151991844,
+    0.03200000151991844
+  ],
+  "/rest/garage/summary": {
+    "activeSetup": "LMP3_Ligier_HDF_Silverstone",
+    "activeSetupRawData": "00CA0000000000000000000000000000",
+    "car": {
+      "displayProperties": {
+        "displayName": "Ligier JS P325 Custom Team 2025 #397",
+        "fullTreePath": "ELMS 2025, LMP3, Ligier JS P325"
+      },
+      "dlcappID": 3954000,
+      "engine": "Toyota V35A-FTS 3500 cc V6 twin-turbocharged",
+      "fullPathTree": "ELMS 2025, LMP3, Ligier JS P325",
+      "id": "246199474b2432c68e514c510a6ded1ca1834724",
+      "image": "/rest/race/car/246199474b2432c68e514c510a6ded1ca1834724/image",
+      "manufacturer": "Ligier",
+      "name": "Ligier JS P325 Custom Team 2025 #397 1.07",
+      "owned": true,
+      "premId": 999997,
+      "sig": "947194500be96072b5b369815808332cdd21f0169461eea893e35bfa5715f9d0",
+      "thumbnail": "/rest/race/car/246199474b2432c68e514c510a6ded1ca1834724/thumbnail",
+      "vehFile": "D:\\SteamLibrary\\steamapps\\common\\Le Mans Ultimate\\Installed\\Vehicles\\Ligier_JSP325_2025\\1.07\\397_25_JSP325.VEH"
+    },
+    "compareToSetup": "",
+    "currentTrackFolder": "Silverstone_National",
+    "defaultSetup": "<Werkseinstellung>",
+    "fixedSetupRace": false,
+    "settingSummaries": {
+      "AERODYNAMICS_FRONT": {
+        "VM_FRONT_WING": {
+          "caption": "SPLITTER",
+          "diffComparisonValue": 0,
+          "isFreeSetting": true,
+          "key": "VM_FRONT_WING",
+          "lastSavedStringValue": "Standard",
+          "maxValue": 1,
+          "minValue": 0,
+          "numChangesValue": 0,
+          "stringValue": "Standard",
+          "value": 0
+        },
+        "VM_OIL_RADIATOR": {
+          "caption": "ÖLKÜHLER-ABDECKUNG:",
+          "diffComparisonValue": 0,
+          "isFreeSetting": true,
+          "key": "VM_OIL_RADIATOR",
+          "lastSavedStringValue": "Open",
+          "maxValue": 5,
+          "minValue": 0,
+          "numChangesValue": 0,
+          "stringValue": "Open",
+          "value": 0
+        },
+        "VM_WATER_RADIATOR": {
+          "caption": "Wasserkühlerabdeckung:",
+          "diffComparisonValue": 0,
+          "isFreeSetting": true,
+          "key": "VM_WATER_RADIATOR",
+          "lastSavedStringValue": "Open",
+          "maxValue": 5,
+          "minValue": 0,
+          "numChangesValue": 0,
+          "stringValue": "Open",
+          "value": 0
+        },
+        "diffCount": 0
+      },
+      "AERODYNAMICS_REAR": {
+        "VM_REAR_WING": {
+          "caption": "",
+          "diffComparisonValue": 0,
+          "isFreeSetting": true,
+          "key": "VM_REAR_WING",
+          "lastSavedStringValue": "9.5 Grad",
+          "maxValue": 25,
+          "minValue": 0,
+          "numChangesValue": 0,
+          "stringValue": "9.5 Grad",
+          "value": 14
+        },
+        "diffCount": 0
+      },
+      "ENGINE": {
+        "VM_ELECTRIC_MOTOR_MAP": {
+          "caption": "",
+          "diffComparisonValue": 0,
+          "isFreeSetting": true,
+          "key": "VM_ELECTRIC_MOTOR_MAP",
+          "lastSavedStringValue": "0",
+          "maxValue": 1,
+          "minValue": 0,
+          "numChangesValue": 0,
+          "stringValue": "0",
+          "value": 0
+        },
+        "VM_ENGINE_BOOST": {
+          "caption": "",
+          "diffComparisonValue": 0,
+          "isFreeSetting": true,
+          "key": "VM_ENGINE_BOOST",
+          "lastSavedStringValue": "N/A",
+          "maxValue": 1,
+          "minValue": 0,
+          "numChangesValue": 0,
+          "stringValue": "N/A",
+          "value": 0
+        },
+        "VM_ENGINE_BRAKEMAP": {
+          "caption": "",
+          "diffComparisonValue": 0,
+          "isFreeSetting": true,
+          "key": "VM_ENGINE_BRAKEMAP",
+          "lastSavedStringValue": "N/A",
+          "maxValue": 1,
+          "minValue": 0,
+          "numChangesValue": 0,
+          "stringValue": "N/A",
+          "value": 0
+        },
+        "VM_ENGINE_MIXTURE": {
+          "caption": "",
+          "diffComparisonValue": 0,
+          "isFreeSetting": true,
+          "key": "VM_ENGINE_MIXTURE",
+          "lastSavedStringValue": "N/A",
+          "maxValue": 1,
+          "minValue": 0,
+          "numChangesValue": 0,
+          "stringValue": "N/A",
+          "value": 0
+        },
+        "VM_REGEN_LEVEL": {
+          "caption": "",
+          "diffComparisonValue": 0,
+          "isFreeSetting": true,
+          "key": "VM_REGEN_LEVEL",
+          "lastSavedStringValue": "0%",
+          "maxValue": 1,
+          "minValue": 0,
+          "numChangesValue": 0,
+          "stringValue": "0%",
+          "value": 0
+        },
+        "VM_REV_LIMITER": {
+          "caption": "",
+          "diffComparisonValue": 0,
+          "isFreeSetting": true,
+          "key": "VM_REV_LIMITER",
+          "lastSavedStringValue": "7000",
+          "maxValue": 1,
+          "minValue": 0,
+          "numChangesValue": 0,
+          "stringValue": "7000",
+          "value": 0
+        },
+        "diffCount": 0
+      },
+      "GEARS": {
+        "VM_GEAR_1": {
+          "caption": "",
+          "diffComparisonValue": 0,
+          "isFreeSetting": true,
+          "key": "VM_GEAR_1",
+          "lastSavedStringValue": "Fixed",
+          "maxValue": 1,
+          "minValue": 0,
+          "numChangesValue": 0,
+          "stringValue": "Fixed",
+          "value": 0
+        },
+        "VM_GEAR_2": {
+          "caption": "",
+          "diffComparisonValue": 0,
+          "isFreeSetting": true,
+          "key": "VM_GEAR_2",
+          "lastSavedStringValue": "Fixed",
+          "maxValue": 1,
+          "minValue": 0,
+          "numChangesValue": 0,
+          "stringValue": "Fixed",
+          "value": 0
+        },
+        "VM_GEAR_3": {
+          "caption": "",
+          "diffComparisonValue": 0,
+          "isFreeSetting": true,
+          "key": "VM_GEAR_3",
+          "lastSavedStringValue": "Fixed",
+          "maxValue": 1,
+          "minValue": 0,
+          "numChangesValue": 0,
+          "stringValue": "Fixed",
+          "value": 0
+        },
+        "VM_GEAR_4": {
+          "caption": "",
+          "diffComparisonValue": 0,
+          "isFreeSetting": true,
+          "key": "VM_GEAR_4",
+          "lastSavedStringValue": "Fixed",
+          "maxValue": 1,
+          "minValue": 0,
+          "numChangesValue": 0,
+          "stringValue": "Fixed",
+          "value": 0
+        },
+        "VM_GEAR_5": {
+          "caption": "",
+          "diffComparisonValue": 0,
+          "isFreeSetting": true,
+          "key": "VM_GEAR_5",
+          "lastSavedStringValue": "Fixed",
+          "maxValue": 1,
+          "minValue": 0,
+          "numChangesValue": 0,
+          "stringValue": "Fixed",
+          "value": 0
+        },
+        "VM_GEAR_6": {
+          "caption": "",
+          "diffComparisonValue": 0,
+          "isFreeSetting": true,
+          "key": "VM_GEAR_6",
+          "lastSavedStringValue": "Fixed",
+          "maxValue": 1,
+          "minValue": 0,
+          "numChangesValue": 0,
+          "stringValue": "Fixed",
+          "value": 0
+        },
+        "VM_GEAR_7": {
+          "caption": "",
+          "diffComparisonValue": 0,
+          "isFreeSetting": true,
+          "key": "VM_GEAR_7",
+          "lastSavedStringValue": "N/V",
+          "maxValue": 1,
+          "minValue": 0,
+          "numChangesValue": 0,
+          "stringValue": "N/V",
+          "value": 0
+        },
+        "VM_GEAR_8": {
+          "caption": "",
+          "diffComparisonValue": 0,
+          "isFreeSetting": true,
+          "key": "VM_GEAR_8",
+          "lastSavedStringValue": "N/V",
+          "maxValue": 1,
+          "minValue": 0,
+          "numChangesValue": 0,
+          "stringValue": "N/V",
+          "value": 0
+        },
+        "VM_GEAR_9": {
+          "caption": "",
+          "diffComparisonValue": 0,
+          "isFreeSetting": true,
+          "key": "VM_GEAR_9",
+          "lastSavedStringValue": "N/V",
+          "maxValue": 1,
+          "minValue": 0,
+          "numChangesValue": 0,
+          "stringValue": "N/V",
+          "value": 0
+        },
+        "VM_GEAR_AUTODOWNSHIFT": {
+          "caption": "",
+          "diffComparisonValue": 0,
+          "isFreeSetting": true,
+          "key": "VM_GEAR_AUTODOWNSHIFT",
+          "lastSavedStringValue": "Aus",
+          "maxValue": 1,
+          "minValue": 0,
+          "numChangesValue": 0,
+          "stringValue": "Aus",
+          "value": 0
+        },
+        "VM_GEAR_AUTOUPSHIFT": {
+          "caption": "",
+          "diffComparisonValue": 0,
+          "isFreeSetting": true,
+          "key": "VM_GEAR_AUTOUPSHIFT",
+          "lastSavedStringValue": "Aus",
+          "maxValue": 1,
+          "minValue": 0,
+          "numChangesValue": 0,
+          "stringValue": "Aus",
+          "value": 0
+        },
+        "VM_GEAR_FINAL": {
+          "caption": "",
+          "diffComparisonValue": 0,
+          "isFreeSetting": true,
+          "key": "VM_GEAR_FINAL",
+          "lastSavedStringValue": "Fixed",
+          "maxValue": 1,
+          "minValue": 0,
+          "numChangesValue": 0,
+          "stringValue": "Fixed",
+          "value": 0
+        },
+        "VM_GEAR_REVERSE": {
+          "caption": "",
+          "diffComparisonValue": 0,
+          "isFreeSetting": true,
+          "key": "VM_GEAR_REVERSE",
+          "lastSavedStringValue": "Fixed",
+          "maxValue": 1,
+          "minValue": 0,
+          "numChangesValue": 0,
+          "stringValue": "Fixed",
+          "value": 0
+        },
+        "VM_GEAR_UPSHIFT_RPM_1": {
+          "caption": "",
+          "diffComparisonValue": 0,
+          "isFreeSetting": true,
+          "key": "VM_GEAR_UPSHIFT_RPM_1",
+          "lastSavedStringValue": "N/V",
+          "maxValue": 35,
+          "minValue": 0,
+          "numChangesValue": 0,
+          "stringValue": "N/V",
+          "value": 0
+        },
+        "VM_GEAR_UPSHIFT_RPM_2": {
+          "caption": "",
+          "diffComparisonValue": 0,
+          "isFreeSetting": true,
+          "key": "VM_GEAR_UPSHIFT_RPM_2",
+          "lastSavedStringValue": "N/V",
+          "maxValue": 35,
+          "minValue": 0,
+          "numChangesValue": 0,
+          "stringValue": "N/V",
+          "value": 0
+        },
+        "VM_GEAR_UPSHIFT_RPM_3": {
+          "caption": "",
+          "diffComparisonValue": 0,
+          "isFreeSetting": true,
+          "key": "VM_GEAR_UPSHIFT_RPM_3",
+          "lastSavedStringValue": "N/V",
+          "maxValue": 35,
+          "minValue": 0,
+          "numChangesValue": 0,
+          "stringValue": "N/V",
+          "value": 0
+        },
+        "VM_GEAR_UPSHIFT_RPM_4": {
+          "caption": "",
+          "diffComparisonValue": 0,
+          "isFreeSetting": true,
+          "key": "VM_GEAR_UPSHIFT_RPM_4",
+          "lastSavedStringValue": "N/V",
+          "maxValue": 35,
+          "minValue": 0,
+          "numChangesValue": 0,
+          "stringValue": "N/V",
+          "value": 0
+        },
+        "VM_GEAR_UPSHIFT_RPM_5": {
+          "caption": "",
+          "diffComparisonValue": 0,
+          "isFreeSetting": true,
+          "key": "VM_GEAR_UPSHIFT_RPM_5",
+          "lastSavedStringValue": "N/V",
+          "maxValue": 35,
+          "minValue": 0,
+          "numChangesValue": 0,
+          "stringValue": "N/V",
+          "value": 0
+        },
+        "VM_GEAR_UPSHIFT_RPM_6": {
+          "caption": "",
+          "diffComparisonValue": 0,
+          "isFreeSetting": true,
+          "key": "VM_GEAR_UPSHIFT_RPM_6",
+          "lastSavedStringValue": "N/V",
+          "maxValue": 1,
+          "minValue": 0,
+          "numChangesValue": 0,
+          "stringValue": "N/V",
+          "value": 0
+        },
+        "VM_GEAR_UPSHIFT_RPM_7": {
+          "caption": "",
+          "diffComparisonValue": 0,
+          "isFreeSetting": true,
+          "key": "VM_GEAR_UPSHIFT_RPM_7",
+          "lastSavedStringValue": "N/V",
+          "maxValue": 1,
+          "minValue": 0,
+          "numChangesValue": 0,
+          "stringValue": "N/V",
+          "value": 0
+        },
+        "VM_GEAR_UPSHIFT_RPM_8": {
+          "caption": "",
+          "diffComparisonValue": 0,
+          "isFreeSetting": true,
+          "key": "VM_GEAR_UPSHIFT_RPM_8",
+          "lastSavedStringValue": "N/V",
+          "maxValue": 1,
+          "minValue": 0,
+          "numChangesValue": 0,
+          "stringValue": "N/V",
+          "value": 0
+        },
+        "VM_RATIO_SET": {
+          "caption": "",
+          "diffComparisonValue": 0,
+          "isFreeSetting": true,
+          "key": "VM_RATIO_SET",
+          "lastSavedStringValue": "Standard",
+          "maxValue": 1,
+          "minValue": 0,
+          "numChangesValue": 0,
+          "stringValue": "Standard",
+          "value": 0
+        },
+        "diffCount": 0
+      },
+      "SUSPENSION_FRONT": {
+        "VM_FRONT_3RD_FASTBUMP": {
+          "caption": "",
+          "diffComparisonValue": 0,
+          "isFreeSetting": true,
+          "key": "VM_FRONT_3RD_FASTBUMP",
+          "lastSavedStringValue": "1",
+          "maxValue": 1,
+          "minValue": 0,
+          "numChangesValue": 0,
+          "stringValue": "1",
+          "value": 0
+        },
+        "VM_FRONT_3RD_FASTREBOUND": {
+          "caption": "",
+          "diffComparisonValue": 0,
+          "isFreeSetting": true,
+          "key": "VM_FRONT_3RD_FASTREBOUND",
+          "lastSavedStringValue": "1",
+          "maxValue": 1,
+          "minValue": 0,
+          "numChangesValue": 0,
+          "stringValue": "1",
+          "value": 0
+        },
+        "VM_FRONT_3RD_PACKERS": {
+          "caption": "",
+          "diffComparisonValue": 0,
+          "isFreeSetting": true,
+          "key": "VM_FRONT_3RD_PACKERS",
+          "lastSavedStringValue": "5.0 mm",
+          "maxValue": 61,
+          "minValue": 0,
+          "numChangesValue": 0,
+          "stringValue": "5.0 mm",
+          "value": 0
+        },
+        "VM_FRONT_3RD_SLOWBUMP": {
+          "caption": "",
+          "diffComparisonValue": 0,
+          "isFreeSetting": true,
+          "key": "VM_FRONT_3RD_SLOWBUMP",
+          "lastSavedStringValue": "1",
+          "maxValue": 1,
+          "minValue": 0,
+          "numChangesValue": 0,
+          "stringValue": "1",
+          "value": 0
+        },
+        "VM_FRONT_3RD_SLOWREBOUND": {
+          "caption": "",
+          "diffComparisonValue": 0,
+          "isFreeSetting": true,
+          "key": "VM_FRONT_3RD_SLOWREBOUND",
+          "lastSavedStringValue": "1",
+          "maxValue": 1,
+          "minValue": 0,
+          "numChangesValue": 0,
+          "stringValue": "1",
+          "value": 0
+        },
+        "VM_FRONT_3RD_SPRING": {
+          "caption": "",
+          "diffComparisonValue": 0,
+          "isFreeSetting": true,
+          "key": "VM_FRONT_3RD_SPRING",
+          "lastSavedStringValue": "2.1N/mm",
+          "maxValue": 4,
+          "minValue": 0,
+          "numChangesValue": 0,
+          "stringValue": "2.1N/mm",
+          "value": 0
+        },
+        "VM_FRONT_3RD_TENDERSPRING": {
+          "caption": "",
+          "diffComparisonValue": 0,
+          "isFreeSetting": true,
+          "key": "VM_FRONT_3RD_TENDERSPRING",
+          "lastSavedStringValue": "Abmontiert",
+          "maxValue": 1,
+          "minValue": 0,
+          "numChangesValue": 0,
+          "stringValue": "Abmontiert",
+          "value": 0
+        },
+        "VM_FRONT_ANTISWAY": {
+          "caption": "ARB SIZE & POSITION",
+          "diffComparisonValue": 0,
+          "isFreeSetting": true,
+          "key": "VM_FRONT_ANTISWAY",
+          "lastSavedStringValue": "15.5mm Hard (2724)",
+          "maxValue": 18,
+          "minValue": 0,
+          "numChangesValue": 0,
+          "stringValue": "15.5mm Hard (2724)",
+          "value": 14
+        },
+        "VM_FRONT_TOEIN": {
+          "caption": "",
+          "diffComparisonValue": 0,
+          "isFreeSetting": true,
+          "key": "VM_FRONT_TOEIN",
+          "lastSavedStringValue": "-0.00 Grad",
+          "maxValue": 17,
+          "minValue": 0,
+          "numChangesValue": 0,
+          "stringValue": "-0.00 Grad",
+          "value": 8
+        },
+        "VM_FRONT_TOEOFFSET": {
+          "caption": "",
+          "diffComparisonValue": 0,
+          "isFreeSetting": true,
+          "key": "VM_FRONT_TOEOFFSET",
+          "lastSavedStringValue": "N/A",
+          "maxValue": 1,
+          "minValue": 0,
+          "numChangesValue": 0,
+          "stringValue": "N/A",
+          "value": 0
+        },
+        "WM_FASTBUMP-W_FL": {
+          "diffComparisonValue": 0,
+          "isFreeSetting": false,
+          "key": "WM_FASTBUMP-W_FL",
+          "lastSavedStringValue": "10",
+          "maxValue": 49,
+          "minValue": 0,
+          "numChangesValue": 0,
+          "stringValue": "10",
+          "value": 9,
+          "wheelLoc": "W_FL"
+        },
+        "WM_FASTBUMP-W_FR": {
+          "diffComparisonValue": 0,
+          "isFreeSetting": false,
+          "key": "WM_FASTBUMP-W_FR",
+          "lastSavedStringValue": "10",
+          "maxValue": 49,
+          "minValue": 0,
+          "numChangesValue": 0,
+          "stringValue": "10",
+          "value": 9,
+          "wheelLoc": "W_FR"
+        },
+        "WM_FASTREBOUND-W_FL": {
+          "diffComparisonValue": 0,
+          "isFreeSetting": false,
+          "key": "WM_FASTREBOUND-W_FL",
+          "lastSavedStringValue": "20",
+          "maxValue": 25,
+          "minValue": 0,
+          "numChangesValue": 0,
+          "stringValue": "20",
+          "value": 19,
+          "wheelLoc": "W_FL"
+        },
+        "WM_FASTREBOUND-W_FR": {
+          "diffComparisonValue": 0,
+          "isFreeSetting": false,
+          "key": "WM_FASTREBOUND-W_FR",
+          "lastSavedStringValue": "20",
+          "maxValue": 25,
+          "minValue": 0,
+          "numChangesValue": 0,
+          "stringValue": "20",
+          "value": 19,
+          "wheelLoc": "W_FR"
+        },
+        "WM_PACKERS-W_FL": {
+          "diffComparisonValue": 0,
+          "isFreeSetting": false,
+          "key": "WM_PACKERS-W_FL",
+          "lastSavedStringValue": "5.0 mm",
+          "maxValue": 55,
+          "minValue": 0,
+          "numChangesValue": 0,
+          "stringValue": "5.0 mm",
+          "value": 0,
+          "wheelLoc": "W_FL"
+        },
+        "WM_PACKERS-W_FR": {
+          "diffComparisonValue": 0,
+          "isFreeSetting": false,
+          "key": "WM_PACKERS-W_FR",
+          "lastSavedStringValue": "5.0 mm",
+          "maxValue": 55,
+          "minValue": 0,
+          "numChangesValue": 0,
+          "stringValue": "5.0 mm",
+          "value": 0,
+          "wheelLoc": "W_FR"
+        },
+        "WM_RIDEHEIGHT-W_FL": {
+          "diffComparisonValue": 0,
+          "isFreeSetting": false,
+          "key": "WM_RIDEHEIGHT-W_FL",
+          "lastSavedStringValue": "41.0 mm",
+          "maxValue": 41,
+          "minValue": 0,
+          "numChangesValue": 0,
+          "stringValue": "41.0 mm",
+          "value": 2,
+          "wheelLoc": "W_FL"
+        },
+        "WM_RIDEHEIGHT-W_FR": {
+          "diffComparisonValue": 0,
+          "isFreeSetting": false,
+          "key": "WM_RIDEHEIGHT-W_FR",
+          "lastSavedStringValue": "41.0 mm",
+          "maxValue": 41,
+          "minValue": 0,
+          "numChangesValue": 0,
+          "stringValue": "41.0 mm",
+          "value": 2,
+          "wheelLoc": "W_FR"
+        },
+        "WM_SLOWBUMP-W_FL": {
+          "diffComparisonValue": 0,
+          "isFreeSetting": false,
+          "key": "WM_SLOWBUMP-W_FL",
+          "lastSavedStringValue": "4",
+          "maxValue": 41,
+          "minValue": 0,
+          "numChangesValue": 0,
+          "stringValue": "4",
+          "value": 3,
+          "wheelLoc": "W_FL"
+        },
+        "WM_SLOWBUMP-W_FR": {
+          "diffComparisonValue": 0,
+          "isFreeSetting": false,
+          "key": "WM_SLOWBUMP-W_FR",
+          "lastSavedStringValue": "4",
+          "maxValue": 41,
+          "minValue": 0,
+          "numChangesValue": 0,
+          "stringValue": "4",
+          "value": 3,
+          "wheelLoc": "W_FR"
+        },
+        "WM_SLOWREBOUND-W_FL": {
+          "diffComparisonValue": 0,
+          "isFreeSetting": false,
+          "key": "WM_SLOWREBOUND-W_FL",
+          "lastSavedStringValue": "20",
+          "maxValue": 25,
+          "minValue": 0,
+          "numChangesValue": 0,
+          "stringValue": "20",
+          "value": 19,
+          "wheelLoc": "W_FL"
+        },
+        "WM_SLOWREBOUND-W_FR": {
+          "diffComparisonValue": 0,
+          "isFreeSetting": false,
+          "key": "WM_SLOWREBOUND-W_FR",
+          "lastSavedStringValue": "20",
+          "maxValue": 25,
+          "minValue": 0,
+          "numChangesValue": 0,
+          "stringValue": "20",
+          "value": 19,
+          "wheelLoc": "W_FR"
+        },
+        "WM_SPRING-W_FL": {
+          "diffComparisonValue": 0,
+          "isFreeSetting": false,
+          "key": "WM_SPRING-W_FL",
+          "lastSavedStringValue": "950 lbf/in",
+          "maxValue": 12,
+          "minValue": 0,
+          "numChangesValue": 0,
+          "stringValue": "950 lbf/in",
+          "value": 5,
+          "wheelLoc": "W_FL"
+        },
+        "WM_SPRING-W_FR": {
+          "diffComparisonValue": 0,
+          "isFreeSetting": false,
+          "key": "WM_SPRING-W_FR",
+          "lastSavedStringValue": "950 lbf/in",
+          "maxValue": 12,
+          "minValue": 0,
+          "numChangesValue": 0,
+          "stringValue": "950 lbf/in",
+          "value": 5,
+          "wheelLoc": "W_FR"
+        },
+        "WM_SRUBBER-W_FL": {
+          "diffComparisonValue": 0,
+          "isFreeSetting": false,
+          "key": "WM_SRUBBER-W_FL",
+          "lastSavedStringValue": "Abmontiert",
+          "maxValue": 1,
+          "minValue": 0,
+          "numChangesValue": 0,
+          "stringValue": "Abmontiert",
+          "value": 0,
+          "wheelLoc": "W_FL"
+        },
+        "WM_SRUBBER-W_FR": {
+          "diffComparisonValue": 0,
+          "isFreeSetting": false,
+          "key": "WM_SRUBBER-W_FR",
+          "lastSavedStringValue": "Abmontiert",
+          "maxValue": 1,
+          "minValue": 0,
+          "numChangesValue": 0,
+          "stringValue": "Abmontiert",
+          "value": 0,
+          "wheelLoc": "W_FR"
+        },
+        "WM_TENDERSPRING-W_FL": {
+          "diffComparisonValue": 0,
+          "isFreeSetting": false,
+          "key": "WM_TENDERSPRING-W_FL",
+          "lastSavedStringValue": "Abmontiert",
+          "maxValue": 1,
+          "minValue": 0,
+          "numChangesValue": 0,
+          "stringValue": "Abmontiert",
+          "value": 0,
+          "wheelLoc": "W_FL"
+        },
+        "WM_TENDERSPRING-W_FR": {
+          "diffComparisonValue": 0,
+          "isFreeSetting": false,
+          "key": "WM_TENDERSPRING-W_FR",
+          "lastSavedStringValue": "Abmontiert",
+          "maxValue": 1,
+          "minValue": 0,
+          "numChangesValue": 0,
+          "stringValue": "Abmontiert",
+          "value": 0,
+          "wheelLoc": "W_FR"
+        },
+        "diffCount": 0
+      },
+      "SUSPENSION_REAR": {
+        "VM_REAR_3RD_FASTBUMP": {
+          "caption": "",
+          "diffComparisonValue": 0,
+          "isFreeSetting": true,
+          "key": "VM_REAR_3RD_FASTBUMP",
+          "lastSavedStringValue": "1",
+          "maxValue": 1,
+          "minValue": 0,
+          "numChangesValue": 0,
+          "stringValue": "1",
+          "value": 0
+        },
+        "VM_REAR_3RD_FASTREBOUND": {
+          "caption": "",
+          "diffComparisonValue": 0,
+          "isFreeSetting": true,
+          "key": "VM_REAR_3RD_FASTREBOUND",
+          "lastSavedStringValue": "1",
+          "maxValue": 1,
+          "minValue": 0,
+          "numChangesValue": 0,
+          "stringValue": "1",
+          "value": 0
+        },
+        "VM_REAR_3RD_PACKERS": {
+          "caption": "",
+          "diffComparisonValue": 0,
+          "isFreeSetting": true,
+          "key": "VM_REAR_3RD_PACKERS",
+          "lastSavedStringValue": "8.0 mm",
+          "maxValue": 101,
+          "minValue": 0,
+          "numChangesValue": 0,
+          "stringValue": "8.0 mm",
+          "value": 0
+        },
+        "VM_REAR_3RD_SLOWBUMP": {
+          "caption": "",
+          "diffComparisonValue": 0,
+          "isFreeSetting": true,
+          "key": "VM_REAR_3RD_SLOWBUMP",
+          "lastSavedStringValue": "1",
+          "maxValue": 1,
+          "minValue": 0,
+          "numChangesValue": 0,
+          "stringValue": "1",
+          "value": 0
+        },
+        "VM_REAR_3RD_SLOWREBOUND": {
+          "caption": "",
+          "diffComparisonValue": 0,
+          "isFreeSetting": true,
+          "key": "VM_REAR_3RD_SLOWREBOUND",
+          "lastSavedStringValue": "1",
+          "maxValue": 1,
+          "minValue": 0,
+          "numChangesValue": 0,
+          "stringValue": "1",
+          "value": 0
+        },
+        "VM_REAR_3RD_SPRING": {
+          "caption": "",
+          "diffComparisonValue": 0,
+          "isFreeSetting": true,
+          "key": "VM_REAR_3RD_SPRING",
+          "lastSavedStringValue": "2.2N/mm",
+          "maxValue": 13,
+          "minValue": 0,
+          "numChangesValue": 0,
+          "stringValue": "2.2N/mm",
+          "value": 0
+        },
+        "VM_REAR_3RD_TENDERSPRING": {
+          "caption": "",
+          "diffComparisonValue": 0,
+          "isFreeSetting": true,
+          "key": "VM_REAR_3RD_TENDERSPRING",
+          "lastSavedStringValue": "Abmontiert",
+          "maxValue": 1,
+          "minValue": 0,
+          "numChangesValue": 0,
+          "stringValue": "Abmontiert",
+          "value": 0
+        },
+        "VM_REAR_ANTISWAY": {
+          "caption": "ARB SIZE & POSITION",
+          "diffComparisonValue": 0,
+          "isFreeSetting": true,
+          "key": "VM_REAR_ANTISWAY",
+          "lastSavedStringValue": "13mm Medium (403)",
+          "maxValue": 15,
+          "minValue": 0,
+          "numChangesValue": 0,
+          "stringValue": "13mm Medium (403)",
+          "value": 1
+        },
+        "VM_REAR_TOEIN": {
+          "caption": "",
+          "diffComparisonValue": 0,
+          "isFreeSetting": true,
+          "key": "VM_REAR_TOEIN",
+          "lastSavedStringValue": "0.32 Grad",
+          "maxValue": 17,
+          "minValue": 0,
+          "numChangesValue": 0,
+          "stringValue": "0.32 Grad",
+          "value": 10
+        },
+        "VM_REAR_TOEOFFSET": {
+          "caption": "",
+          "diffComparisonValue": 0,
+          "isFreeSetting": true,
+          "key": "VM_REAR_TOEOFFSET",
+          "lastSavedStringValue": "N/A",
+          "maxValue": 1,
+          "minValue": 0,
+          "numChangesValue": 0,
+          "stringValue": "N/A",
+          "value": 0
+        },
+        "WM_FASTBUMP-W_RL": {
+          "diffComparisonValue": 0,
+          "isFreeSetting": false,
+          "key": "WM_FASTBUMP-W_RL",
+          "lastSavedStringValue": "10",
+          "maxValue": 49,
+          "minValue": 0,
+          "numChangesValue": 0,
+          "stringValue": "10",
+          "value": 9,
+          "wheelLoc": "W_RL"
+        },
+        "WM_FASTBUMP-W_RR": {
+          "diffComparisonValue": 0,
+          "isFreeSetting": false,
+          "key": "WM_FASTBUMP-W_RR",
+          "lastSavedStringValue": "10",
+          "maxValue": 49,
+          "minValue": 0,
+          "numChangesValue": 0,
+          "stringValue": "10",
+          "value": 9,
+          "wheelLoc": "W_RR"
+        },
+        "WM_FASTREBOUND-W_RL": {
+          "diffComparisonValue": 0,
+          "isFreeSetting": false,
+          "key": "WM_FASTREBOUND-W_RL",
+          "lastSavedStringValue": "20",
+          "maxValue": 25,
+          "minValue": 0,
+          "numChangesValue": 0,
+          "stringValue": "20",
+          "value": 19,
+          "wheelLoc": "W_RL"
+        },
+        "WM_FASTREBOUND-W_RR": {
+          "diffComparisonValue": 0,
+          "isFreeSetting": false,
+          "key": "WM_FASTREBOUND-W_RR",
+          "lastSavedStringValue": "20",
+          "maxValue": 25,
+          "minValue": 0,
+          "numChangesValue": 0,
+          "stringValue": "20",
+          "value": 19,
+          "wheelLoc": "W_RR"
+        },
+        "WM_PACKERS-W_RL": {
+          "diffComparisonValue": 0,
+          "isFreeSetting": false,
+          "key": "WM_PACKERS-W_RL",
+          "lastSavedStringValue": "7.5 mm",
+          "maxValue": 82,
+          "minValue": 0,
+          "numChangesValue": 0,
+          "stringValue": "7.5 mm",
+          "value": 0,
+          "wheelLoc": "W_RL"
+        },
+        "WM_PACKERS-W_RR": {
+          "diffComparisonValue": 0,
+          "isFreeSetting": false,
+          "key": "WM_PACKERS-W_RR",
+          "lastSavedStringValue": "7.5 mm",
+          "maxValue": 82,
+          "minValue": 0,
+          "numChangesValue": 0,
+          "stringValue": "7.5 mm",
+          "value": 0,
+          "wheelLoc": "W_RR"
+        },
+        "WM_RIDEHEIGHT-W_RL": {
+          "diffComparisonValue": 0,
+          "isFreeSetting": false,
+          "key": "WM_RIDEHEIGHT-W_RL",
+          "lastSavedStringValue": "78.0 mm",
+          "maxValue": 81,
+          "minValue": 0,
+          "numChangesValue": 0,
+          "stringValue": "78.0 mm",
+          "value": 56,
+          "wheelLoc": "W_RL"
+        },
+        "WM_RIDEHEIGHT-W_RR": {
+          "diffComparisonValue": 0,
+          "isFreeSetting": false,
+          "key": "WM_RIDEHEIGHT-W_RR",
+          "lastSavedStringValue": "78.0 mm",
+          "maxValue": 81,
+          "minValue": 0,
+          "numChangesValue": 0,
+          "stringValue": "78.0 mm",
+          "value": 56,
+          "wheelLoc": "W_RR"
+        },
+        "WM_SLOWBUMP-W_RL": {
+          "diffComparisonValue": 0,
+          "isFreeSetting": false,
+          "key": "WM_SLOWBUMP-W_RL",
+          "lastSavedStringValue": "6",
+          "maxValue": 41,
+          "minValue": 0,
+          "numChangesValue": 0,
+          "stringValue": "6",
+          "value": 5,
+          "wheelLoc": "W_RL"
+        },
+        "WM_SLOWBUMP-W_RR": {
+          "diffComparisonValue": 0,
+          "isFreeSetting": false,
+          "key": "WM_SLOWBUMP-W_RR",
+          "lastSavedStringValue": "6",
+          "maxValue": 41,
+          "minValue": 0,
+          "numChangesValue": 0,
+          "stringValue": "6",
+          "value": 5,
+          "wheelLoc": "W_RR"
+        },
+        "WM_SLOWREBOUND-W_RL": {
+          "diffComparisonValue": 0,
+          "isFreeSetting": false,
+          "key": "WM_SLOWREBOUND-W_RL",
+          "lastSavedStringValue": "20",
+          "maxValue": 25,
+          "minValue": 0,
+          "numChangesValue": 0,
+          "stringValue": "20",
+          "value": 19,
+          "wheelLoc": "W_RL"
+        },
+        "WM_SLOWREBOUND-W_RR": {
+          "diffComparisonValue": 0,
+          "isFreeSetting": false,
+          "key": "WM_SLOWREBOUND-W_RR",
+          "lastSavedStringValue": "20",
+          "maxValue": 25,
+          "minValue": 0,
+          "numChangesValue": 0,
+          "stringValue": "20",
+          "value": 19,
+          "wheelLoc": "W_RR"
+        },
+        "WM_SPRING-W_RL": {
+          "diffComparisonValue": 0,
+          "isFreeSetting": false,
+          "key": "WM_SPRING-W_RL",
+          "lastSavedStringValue": "750 lbf/in",
+          "maxValue": 12,
+          "minValue": 0,
+          "numChangesValue": 0,
+          "stringValue": "750 lbf/in",
+          "value": 1,
+          "wheelLoc": "W_RL"
+        },
+        "WM_SPRING-W_RR": {
+          "diffComparisonValue": 0,
+          "isFreeSetting": false,
+          "key": "WM_SPRING-W_RR",
+          "lastSavedStringValue": "750 lbf/in",
+          "maxValue": 12,
+          "minValue": 0,
+          "numChangesValue": 0,
+          "stringValue": "750 lbf/in",
+          "value": 1,
+          "wheelLoc": "W_RR"
+        },
+        "WM_SRUBBER-W_RL": {
+          "diffComparisonValue": 0,
+          "isFreeSetting": false,
+          "key": "WM_SRUBBER-W_RL",
+          "lastSavedStringValue": "Abmontiert",
+          "maxValue": 1,
+          "minValue": 0,
+          "numChangesValue": 0,
+          "stringValue": "Abmontiert",
+          "value": 0,
+          "wheelLoc": "W_RL"
+        },
+        "WM_SRUBBER-W_RR": {
+          "diffComparisonValue": 0,
+          "isFreeSetting": false,
+          "key": "WM_SRUBBER-W_RR",
+          "lastSavedStringValue": "Abmontiert",
+          "maxValue": 1,
+          "minValue": 0,
+          "numChangesValue": 0,
+          "stringValue": "Abmontiert",
+          "value": 0,
+          "wheelLoc": "W_RR"
+        },
+        "WM_TENDERSPRING-W_RL": {
+          "diffComparisonValue": 0,
+          "isFreeSetting": false,
+          "key": "WM_TENDERSPRING-W_RL",
+          "lastSavedStringValue": "Abmontiert",
+          "maxValue": 1,
+          "minValue": 0,
+          "numChangesValue": 0,
+          "stringValue": "Abmontiert",
+          "value": 0,
+          "wheelLoc": "W_RL"
+        },
+        "WM_TENDERSPRING-W_RR": {
+          "diffComparisonValue": 0,
+          "isFreeSetting": false,
+          "key": "WM_TENDERSPRING-W_RR",
+          "lastSavedStringValue": "Abmontiert",
+          "maxValue": 1,
+          "minValue": 0,
+          "numChangesValue": 0,
+          "stringValue": "Abmontiert",
+          "value": 0,
+          "wheelLoc": "W_RR"
+        },
+        "diffCount": 0
+      },
+      "TIRES_FRONT": {
+        "WM_CAMBER-W_FL": {
+          "diffComparisonValue": 0,
+          "isFreeSetting": false,
+          "key": "WM_CAMBER-W_FL",
+          "lastSavedStringValue": "-2.6 Grad",
+          "maxValue": 41,
+          "minValue": 0,
+          "numChangesValue": 0,
+          "stringValue": "-2.6 Grad",
+          "value": 14,
+          "wheelLoc": "W_FL"
+        },
+        "WM_CAMBER-W_FR": {
+          "diffComparisonValue": 0,
+          "isFreeSetting": false,
+          "key": "WM_CAMBER-W_FR",
+          "lastSavedStringValue": "-2.6 Grad",
+          "maxValue": 41,
+          "minValue": 0,
+          "numChangesValue": 0,
+          "stringValue": "-2.6 Grad",
+          "value": 14,
+          "wheelLoc": "W_FR"
+        },
+        "WM_COMPOUND-W_FL": {
+          "diffComparisonValue": 0,
+          "isFreeSetting": false,
+          "key": "WM_COMPOUND-W_FL",
+          "lastSavedStringValue": "Medium",
+          "maxValue": 4,
+          "minValue": 0,
+          "numChangesValue": 0,
+          "stringValue": "Medium",
+          "value": 0,
+          "wheelLoc": "W_FL"
+        },
+        "WM_COMPOUND-W_FR": {
+          "diffComparisonValue": 0,
+          "isFreeSetting": false,
+          "key": "WM_COMPOUND-W_FR",
+          "lastSavedStringValue": "Medium",
+          "maxValue": 4,
+          "minValue": 0,
+          "numChangesValue": 0,
+          "stringValue": "Medium",
+          "value": 0,
+          "wheelLoc": "W_FR"
+        },
+        "WM_PRESSURE-W_FL": {
+          "diffComparisonValue": 0,
+          "isFreeSetting": false,
+          "key": "WM_PRESSURE-W_FL",
+          "lastSavedStringValue": "150 kPa",
+          "maxValue": 47,
+          "minValue": 0,
+          "numChangesValue": 0,
+          "stringValue": "150 kPa",
+          "value": 0,
+          "wheelLoc": "W_FL"
+        },
+        "WM_PRESSURE-W_FR": {
+          "diffComparisonValue": 0,
+          "isFreeSetting": false,
+          "key": "WM_PRESSURE-W_FR",
+          "lastSavedStringValue": "150 kPa",
+          "maxValue": 47,
+          "minValue": 0,
+          "numChangesValue": 0,
+          "stringValue": "150 kPa",
+          "value": 0,
+          "wheelLoc": "W_FR"
+        },
+        "diffCount": 0
+      },
+      "TIRES_REAR": {
+        "WM_CAMBER-W_RL": {
+          "diffComparisonValue": 0,
+          "isFreeSetting": false,
+          "key": "WM_CAMBER-W_RL",
+          "lastSavedStringValue": "-1.8 Grad",
+          "maxValue": 41,
+          "minValue": 0,
+          "numChangesValue": 0,
+          "stringValue": "-1.8 Grad",
+          "value": 22,
+          "wheelLoc": "W_RL"
+        },
+        "WM_CAMBER-W_RR": {
+          "diffComparisonValue": 0,
+          "isFreeSetting": false,
+          "key": "WM_CAMBER-W_RR",
+          "lastSavedStringValue": "-1.8 Grad",
+          "maxValue": 41,
+          "minValue": 0,
+          "numChangesValue": 0,
+          "stringValue": "-1.8 Grad",
+          "value": 22,
+          "wheelLoc": "W_RR"
+        },
+        "WM_COMPOUND-W_RL": {
+          "diffComparisonValue": 0,
+          "isFreeSetting": false,
+          "key": "WM_COMPOUND-W_RL",
+          "lastSavedStringValue": "Medium",
+          "maxValue": 4,
+          "minValue": 0,
+          "numChangesValue": 0,
+          "stringValue": "Medium",
+          "value": 0,
+          "wheelLoc": "W_RL"
+        },
+        "WM_COMPOUND-W_RR": {
+          "diffComparisonValue": 0,
+          "isFreeSetting": false,
+          "key": "WM_COMPOUND-W_RR",
+          "lastSavedStringValue": "Medium",
+          "maxValue": 4,
+          "minValue": 0,
+          "numChangesValue": 0,
+          "stringValue": "Medium",
+          "value": 0,
+          "wheelLoc": "W_RR"
+        },
+        "WM_PRESSURE-W_RL": {
+          "diffComparisonValue": 0,
+          "isFreeSetting": false,
+          "key": "WM_PRESSURE-W_RL",
+          "lastSavedStringValue": "130 kPa",
+          "maxValue": 47,
+          "minValue": 0,
+          "numChangesValue": 0,
+          "stringValue": "130 kPa",
+          "value": 0,
+          "wheelLoc": "W_RL"
+        },
+        "WM_PRESSURE-W_RR": {
+          "diffComparisonValue": 0,
+          "isFreeSetting": false,
+          "key": "WM_PRESSURE-W_RR",
+          "lastSavedStringValue": "130 kPa",
+          "maxValue": 47,
+          "minValue": 0,
+          "numChangesValue": 0,
+          "stringValue": "130 kPa",
+          "value": 0,
+          "wheelLoc": "W_RR"
+        },
+        "diffCount": 0
+      }
+    },
+    "track": {
+      "displayProperties": {
+        "name": "Silverstone National Circuit",
+        "shortName": "Silverstone Circuit"
+      },
+      "dlcappID": 0,
+      "id": "9c6f6aa6fa72cf4e6720c05f24717c06c9bf31f8",
+      "image": "/rest/race/track/9c6f6aa6fa72cf4e6720c05f24717c06c9bf31f8/image",
+      "length": "2.639",
+      "name": "Silverstone National Circuit",
+      "owned": true,
+      "premId": 999998,
+      "sceneDesc": "SILVERSTONE_NATIONAL",
+      "shortName": "Silverstone Circuit 1.09",
+      "thumbnail": "/rest/race/track/9c6f6aa6fa72cf4e6720c05f24717c06c9bf31f8/thumbnail",
+      "type": "Road Course"
+    },
+    "unsavedChanges": false
+  },
+  "/rest/garage/UIScreen/TireManagement": {
+    "currentWeather": {
+      "airPressure": 99.0,
+      "ambientTempKelvin": 295.16355467298695,
+      "cloudCoverage": 0.1428395968510909,
+      "humidity": 0.5,
+      "lightLevel": 0.8819128274917603,
+      "rainIntensity": 0.0,
+      "raining": 0.0,
+      "trackTempKelvin": 302.1836069595348
+    },
+    "expectedUsage": {
+      "compoundsWearPerLap": [
+        {
+          "type": "Medium",
+          "wearPerLap": 0.1
+        },
+        {
+          "type": "Wet",
+          "wearPerLap": 0.1
+        }
+      ],
+      "fuelConsumption": 1.2566897869110107,
+      "fuelFractionPerLap": 0.01256689801812172
+    },
+    "optimalCompoundConditions": {
+      "compounds": [
+        {
+          "optimalTemperature": 93.0,
+          "type": "Medium"
+        },
+        {
+          "optimalTemperature": 51.0,
+          "type": "Wet"
+        }
+      ]
+    },
+    "pitMenu": {
+      "pitMenu": [
+        {
+          "PMC Value": 2,
+          "currentSetting": 0,
+          "default": 0,
+          "name": "DAMAGE:",
+          "settings": [
+            {
+              "text": "N/V"
+            },
+            {
+              "text": "Chassis reparieren"
+            }
+          ]
+        },
+        {
+          "PMC Value": 5,
+          "currentSetting": 0,
+          "default": 0,
+          "name": "DRIVER:",
+          "settings": [
+            {
+              "text": "M Wijnandts"
+            }
+          ]
+        },
+        {
+          "PMC Value": 7,
+          "currentSetting": 95,
+          "default": 45,
+          "name": "FUEL:",
+          "settings": [
+            {
+              "text": "5l/3 Runden"
+            },
+            {
+              "text": "6l/4 Runden"
+            },
+            {
+              "text": "7l/5 Runden"
+            },
+            {
+              "text": "8l/6 Runden"
+            },
+            {
+              "text": "9l/7 Runden"
+            },
+            {
+              "text": "10l/7 Runden"
+            },
+            {
+              "text": "11l/8 Runden"
+            },
+            {
+              "text": "12l/9 Runden"
+            },
+            {
+              "text": "13l/10 Runden"
+            },
+            {
+              "text": "14l/11 Runden"
+            },
+            {
+              "text": "15l/11 Runden"
+            },
+            {
+              "text": "16l/12 Runden"
+            },
+            {
+              "text": "17l/13 Runden"
+            },
+            {
+              "text": "18l/14 Runden"
+            },
+            {
+              "text": "19l/15 Runden"
+            },
+            {
+              "text": "20l/15 Runden"
+            },
+            {
+              "text": "21l/16 Runden"
+            },
+            {
+              "text": "22l/17 Runden"
+            },
+            {
+              "text": "23l/18 Runden"
+            },
+            {
+              "text": "24l/19 Runden"
+            },
+            {
+              "text": "25l/19 Runden"
+            },
+            {
+              "text": "26l/20 Runden"
+            },
+            {
+              "text": "27l/21 Runden"
+            },
+            {
+              "text": "28l/22 Runden"
+            },
+            {
+              "text": "29l/23 Runden"
+            },
+            {
+              "text": "30l/23 Runden"
+            },
+            {
+              "text": "31l/24 Runden"
+            },
+            {
+              "text": "32l/25 Runden"
+            },
+            {
+              "text": "33l/26 Runden"
+            },
+            {
+              "text": "34l/27 Runden"
+            },
+            {
+              "text": "35l/27 Runden"
+            },
+            {
+              "text": "36l/28 Runden"
+            },
+            {
+              "text": "37l/29 Runden"
+            },
+            {
+              "text": "38l/30 Runden"
+            },
+            {
+              "text": "39l/31 Runden"
+            },
+            {
+              "text": "40l/31 Runden"
+            },
+            {
+              "text": "41l/32 Runden"
+            },
+            {
+              "text": "42l/33 Runden"
+            },
+            {
+              "text": "43l/34 Runden"
+            },
+            {
+              "text": "44l/35 Runden"
+            },
+            {
+              "text": "45l/35 Runden"
+            },
+            {
+              "text": "46l/36 Runden"
+            },
+            {
+              "text": "47l/37 Runden"
+            },
+            {
+              "text": "48l/38 Runden"
+            },
+            {
+              "text": "49l/38 Runden"
+            },
+            {
+              "text": "50l/39 Runden"
+            },
+            {
+              "text": "51l/40 Runden"
+            },
+            {
+              "text": "52l/41 Runden"
+            },
+            {
+              "text": "53l/42 Runden"
+            },
+            {
+              "text": "54l/42 Runden"
+            },
+            {
+              "text": "55l/43 Runden"
+            },
+            {
+              "text": "56l/44 Runden"
+            },
+            {
+              "text": "57l/45 Runden"
+            },
+            {
+              "text": "58l/46 Runden"
+            },
+            {
+              "text": "59l/46 Runden"
+            },
+            {
+              "text": "60l/47 Runden"
+            },
+            {
+              "text": "61l/48 Runden"
+            },
+            {
+              "text": "62l/49 Runden"
+            },
+            {
+              "text": "63l/50 Runden"
+            },
+            {
+              "text": "64l/50 Runden"
+            },
+            {
+              "text": "65l/51 Runden"
+            },
+            {
+              "text": "66l/52 Runden"
+            },
+            {
+              "text": "67l/53 Runden"
+            },
+            {
+              "text": "68l/54 Runden"
+            },
+            {
+              "text": "69l/54 Runden"
+            },
+            {
+              "text": "70l/55 Runden"
+            },
+            {
+              "text": "71l/56 Runden"
+            },
+            {
+              "text": "72l/57 Runden"
+            },
+            {
+              "text": "73l/58 Runden"
+            },
+            {
+              "text": "74l/58 Runden"
+            },
+            {
+              "text": "75l/59 Runden"
+            },
+            {
+              "text": "76l/60 Runden"
+            },
+            {
+              "text": "77l/61 Runden"
+            },
+            {
+              "text": "78l/62 Runden"
+            },
+            {
+              "text": "79l/62 Runden"
+            },
+            {
+              "text": "80l/63 Runden"
+            },
+            {
+              "text": "81l/64 Runden"
+            },
+            {
+              "text": "82l/65 Runden"
+            },
+            {
+              "text": "83l/66 Runden"
+            },
+            {
+              "text": "84l/66 Runden"
+            },
+            {
+              "text": "85l/67 Runden"
+            },
+            {
+              "text": "86l/68 Runden"
+            },
+            {
+              "text": "87l/69 Runden"
+            },
+            {
+              "text": "88l/70 Runden"
+            },
+            {
+              "text": "89l/70 Runden"
+            },
+            {
+              "text": "90l/71 Runden"
+            },
+            {
+              "text": "91l/72 Runden"
+            },
+            {
+              "text": "92l/73 Runden"
+            },
+            {
+              "text": "93l/74 Runden"
+            },
+            {
+              "text": "94l/74 Runden"
+            },
+            {
+              "text": "95l/75 Runden"
+            },
+            {
+              "text": "96l/76 Runden"
+            },
+            {
+              "text": "97l/77 Runden"
+            },
+            {
+              "text": "98l/77 Runden"
+            },
+            {
+              "text": "99l/78 Runden"
+            },
+            {
+              "text": "100l/79 Runden"
+            }
+          ]
+        },
+        {
+          "PMC Value": 8,
+          "currentSetting": 0,
+          "default": 0,
+          "name": "TIRES:",
+          "settings": [
+            {
+              "text": "Keine Veränderung"
+            },
+            {
+              "isUsed": false,
+              "text": "Neu Medium ",
+              "type": "Medium"
+            },
+            {
+              "isUsed": false,
+              "text": "Neu Nass ",
+              "type": "Wet"
+            },
+            {
+              "isUsed": true,
+              "text": "Gebraucht Medium  0%",
+              "type": "Medium"
+            },
+            {
+              "isUsed": true,
+              "text": "Mixed Tires",
+              "type": "Wet"
+            }
+          ]
+        },
+        {
+          "PMC Value": 13,
+          "currentSetting": 0,
+          "default": 0,
+          "name": "FL TIRE:",
+          "settings": [
+            {
+              "text": "Keine Veränderung"
+            },
+            {
+              "isUsed": false,
+              "text": "Neu Medium ",
+              "type": "Medium"
+            },
+            {
+              "isUsed": false,
+              "text": "Neu Nass ",
+              "type": "Wet"
+            },
+            {
+              "isUsed": true,
+              "text": "Gebraucht Medium  0%",
+              "type": "Medium"
+            }
+          ]
+        },
+        {
+          "PMC Value": 14,
+          "currentSetting": 0,
+          "default": 0,
+          "name": "FR TIRE:",
+          "settings": [
+            {
+              "text": "Keine Veränderung"
+            },
+            {
+              "isUsed": false,
+              "text": "Neu Medium ",
+              "type": "Medium"
+            },
+            {
+              "isUsed": false,
+              "text": "Neu Nass ",
+              "type": "Wet"
+            },
+            {
+              "isUsed": true,
+              "text": "Gebraucht Medium  0%",
+              "type": "Medium"
+            }
+          ]
+        },
+        {
+          "PMC Value": 15,
+          "currentSetting": 0,
+          "default": 0,
+          "name": "RL TIRE:",
+          "settings": [
+            {
+              "text": "Keine Veränderung"
+            },
+            {
+              "isUsed": false,
+              "text": "Neu Medium ",
+              "type": "Medium"
+            },
+            {
+              "isUsed": false,
+              "text": "Neu Nass ",
+              "type": "Wet"
+            },
+            {
+              "isUsed": true,
+              "text": "Gebraucht Medium  0%",
+              "type": "Medium"
+            }
+          ]
+        },
+        {
+          "PMC Value": 16,
+          "currentSetting": 0,
+          "default": 0,
+          "name": "RR TIRE:",
+          "settings": [
+            {
+              "text": "Keine Veränderung"
+            },
+            {
+              "isUsed": false,
+              "text": "Neu Medium ",
+              "type": "Medium"
+            },
+            {
+              "isUsed": false,
+              "text": "Neu Nass ",
+              "type": "Wet"
+            },
+            {
+              "isUsed": true,
+              "text": "Gebraucht Medium  0%",
+              "type": "Medium"
+            }
+          ]
+        },
+        {
+          "PMC Value": 20,
+          "currentSetting": 14,
+          "default": 14,
+          "name": "R WING:",
+          "settings": [
+            {
+              "text": "2.5 Grad (-14)"
+            },
+            {
+              "text": "3.0 Grad (-13)"
+            },
+            {
+              "text": "3.5 Grad (-12)"
+            },
+            {
+              "text": "4.0 Grad (-11)"
+            },
+            {
+              "text": "4.5 Grad (-10)"
+            },
+            {
+              "text": "5.0 Grad (-9)"
+            },
+            {
+              "text": "5.5 Grad (-8)"
+            },
+            {
+              "text": "6.0 Grad (-7)"
+            },
+            {
+              "text": "6.5 Grad (-6)"
+            },
+            {
+              "text": "7.0 Grad (-5)"
+            },
+            {
+              "text": "7.5 Grad (-4)"
+            },
+            {
+              "text": "8.0 Grad (-3)"
+            },
+            {
+              "text": "8.5 Grad (-2)"
+            },
+            {
+              "text": "9.0 Grad (-1)"
+            },
+            {
+              "text": "9.5 Grad"
+            },
+            {
+              "text": "10.0 Grad (+1)"
+            },
+            {
+              "text": "10.5 Grad (+2)"
+            },
+            {
+              "text": "11.0 Grad (+3)"
+            },
+            {
+              "text": "11.5 Grad (+4)"
+            },
+            {
+              "text": "12.0 Grad (+5)"
+            },
+            {
+              "text": "12.5 Grad (+6)"
+            },
+            {
+              "text": "13.0 Grad (+7)"
+            },
+            {
+              "text": "13.5 Grad (+8)"
+            },
+            {
+              "text": "14.0 Grad (+9)"
+            },
+            {
+              "text": "14.5 Grad (+10)"
+            }
+          ]
+        },
+        {
+          "PMC Value": 22,
+          "currentSetting": 0,
+          "default": 0,
+          "name": "GRILLE:",
+          "settings": [
+            {
+              "text": "1"
+            },
+            {
+              "text": "2 (+1)"
+            },
+            {
+              "text": "3 (+2)"
+            },
+            {
+              "text": "4 (+3)"
+            },
+            {
+              "text": "5 (+4)"
+            }
+          ]
+        },
+        {
+          "PMC Value": 25,
+          "currentSetting": 0,
+          "default": 0,
+          "name": "FL PRESS:",
+          "settings": [
+            {
+              "text": "150"
+            },
+            {
+              "text": "151 (+1)"
+            },
+            {
+              "text": "152 (+2)"
+            },
+            {
+              "text": "153 (+3)"
+            },
+            {
+              "text": "154 (+4)"
+            },
+            {
+              "text": "155 (+5)"
+            },
+            {
+              "text": "156 (+6)"
+            },
+            {
+              "text": "157 (+7)"
+            },
+            {
+              "text": "158 (+8)"
+            },
+            {
+              "text": "159 (+9)"
+            },
+            {
+              "text": "160 (+10)"
+            },
+            {
+              "text": "161 (+11)"
+            },
+            {
+              "text": "162 (+12)"
+            },
+            {
+              "text": "163 (+13)"
+            },
+            {
+              "text": "164 (+14)"
+            },
+            {
+              "text": "165 (+15)"
+            },
+            {
+              "text": "166 (+16)"
+            },
+            {
+              "text": "167 (+17)"
+            },
+            {
+              "text": "168 (+18)"
+            },
+            {
+              "text": "169 (+19)"
+            },
+            {
+              "text": "170 (+20)"
+            },
+            {
+              "text": "171 (+21)"
+            },
+            {
+              "text": "172 (+22)"
+            },
+            {
+              "text": "173 (+23)"
+            },
+            {
+              "text": "174 (+24)"
+            },
+            {
+              "text": "175 (+25)"
+            },
+            {
+              "text": "176 (+26)"
+            },
+            {
+              "text": "177 (+27)"
+            },
+            {
+              "text": "178 (+28)"
+            },
+            {
+              "text": "179 (+29)"
+            },
+            {
+              "text": "180 (+30)"
+            },
+            {
+              "text": "181 (+31)"
+            },
+            {
+              "text": "182 (+32)"
+            },
+            {
+              "text": "183 (+33)"
+            },
+            {
+              "text": "184 (+34)"
+            },
+            {
+              "text": "185 (+35)"
+            },
+            {
+              "text": "186 (+36)"
+            },
+            {
+              "text": "187 (+37)"
+            },
+            {
+              "text": "188 (+38)"
+            },
+            {
+              "text": "189 (+39)"
+            },
+            {
+              "text": "190 (+40)"
+            },
+            {
+              "text": "191 (+41)"
+            },
+            {
+              "text": "192 (+42)"
+            },
+            {
+              "text": "193 (+43)"
+            },
+            {
+              "text": "194 (+44)"
+            },
+            {
+              "text": "195 (+45)"
+            },
+            {
+              "text": "196 (+46)"
+            }
+          ]
+        },
+        {
+          "PMC Value": 26,
+          "currentSetting": 0,
+          "default": 0,
+          "name": "FR PRESS:",
+          "settings": [
+            {
+              "text": "150"
+            },
+            {
+              "text": "151 (+1)"
+            },
+            {
+              "text": "152 (+2)"
+            },
+            {
+              "text": "153 (+3)"
+            },
+            {
+              "text": "154 (+4)"
+            },
+            {
+              "text": "155 (+5)"
+            },
+            {
+              "text": "156 (+6)"
+            },
+            {
+              "text": "157 (+7)"
+            },
+            {
+              "text": "158 (+8)"
+            },
+            {
+              "text": "159 (+9)"
+            },
+            {
+              "text": "160 (+10)"
+            },
+            {
+              "text": "161 (+11)"
+            },
+            {
+              "text": "162 (+12)"
+            },
+            {
+              "text": "163 (+13)"
+            },
+            {
+              "text": "164 (+14)"
+            },
+            {
+              "text": "165 (+15)"
+            },
+            {
+              "text": "166 (+16)"
+            },
+            {
+              "text": "167 (+17)"
+            },
+            {
+              "text": "168 (+18)"
+            },
+            {
+              "text": "169 (+19)"
+            },
+            {
+              "text": "170 (+20)"
+            },
+            {
+              "text": "171 (+21)"
+            },
+            {
+              "text": "172 (+22)"
+            },
+            {
+              "text": "173 (+23)"
+            },
+            {
+              "text": "174 (+24)"
+            },
+            {
+              "text": "175 (+25)"
+            },
+            {
+              "text": "176 (+26)"
+            },
+            {
+              "text": "177 (+27)"
+            },
+            {
+              "text": "178 (+28)"
+            },
+            {
+              "text": "179 (+29)"
+            },
+            {
+              "text": "180 (+30)"
+            },
+            {
+              "text": "181 (+31)"
+            },
+            {
+              "text": "182 (+32)"
+            },
+            {
+              "text": "183 (+33)"
+            },
+            {
+              "text": "184 (+34)"
+            },
+            {
+              "text": "185 (+35)"
+            },
+            {
+              "text": "186 (+36)"
+            },
+            {
+              "text": "187 (+37)"
+            },
+            {
+              "text": "188 (+38)"
+            },
+            {
+              "text": "189 (+39)"
+            },
+            {
+              "text": "190 (+40)"
+            },
+            {
+              "text": "191 (+41)"
+            },
+            {
+              "text": "192 (+42)"
+            },
+            {
+              "text": "193 (+43)"
+            },
+            {
+              "text": "194 (+44)"
+            },
+            {
+              "text": "195 (+45)"
+            },
+            {
+              "text": "196 (+46)"
+            }
+          ]
+        },
+        {
+          "PMC Value": 27,
+          "currentSetting": 0,
+          "default": 0,
+          "name": "RL PRESS:",
+          "settings": [
+            {
+              "text": "130"
+            },
+            {
+              "text": "131 (+1)"
+            },
+            {
+              "text": "132 (+2)"
+            },
+            {
+              "text": "133 (+3)"
+            },
+            {
+              "text": "134 (+4)"
+            },
+            {
+              "text": "135 (+5)"
+            },
+            {
+              "text": "136 (+6)"
+            },
+            {
+              "text": "137 (+7)"
+            },
+            {
+              "text": "138 (+8)"
+            },
+            {
+              "text": "139 (+9)"
+            },
+            {
+              "text": "140 (+10)"
+            },
+            {
+              "text": "141 (+11)"
+            },
+            {
+              "text": "142 (+12)"
+            },
+            {
+              "text": "143 (+13)"
+            },
+            {
+              "text": "144 (+14)"
+            },
+            {
+              "text": "145 (+15)"
+            },
+            {
+              "text": "146 (+16)"
+            },
+            {
+              "text": "147 (+17)"
+            },
+            {
+              "text": "148 (+18)"
+            },
+            {
+              "text": "149 (+19)"
+            },
+            {
+              "text": "150 (+20)"
+            },
+            {
+              "text": "151 (+21)"
+            },
+            {
+              "text": "152 (+22)"
+            },
+            {
+              "text": "153 (+23)"
+            },
+            {
+              "text": "154 (+24)"
+            },
+            {
+              "text": "155 (+25)"
+            },
+            {
+              "text": "156 (+26)"
+            },
+            {
+              "text": "157 (+27)"
+            },
+            {
+              "text": "158 (+28)"
+            },
+            {
+              "text": "159 (+29)"
+            },
+            {
+              "text": "160 (+30)"
+            },
+            {
+              "text": "161 (+31)"
+            },
+            {
+              "text": "162 (+32)"
+            },
+            {
+              "text": "163 (+33)"
+            },
+            {
+              "text": "164 (+34)"
+            },
+            {
+              "text": "165 (+35)"
+            },
+            {
+              "text": "166 (+36)"
+            },
+            {
+              "text": "167 (+37)"
+            },
+            {
+              "text": "168 (+38)"
+            },
+            {
+              "text": "169 (+39)"
+            },
+            {
+              "text": "170 (+40)"
+            },
+            {
+              "text": "171 (+41)"
+            },
+            {
+              "text": "172 (+42)"
+            },
+            {
+              "text": "173 (+43)"
+            },
+            {
+              "text": "174 (+44)"
+            },
+            {
+              "text": "175 (+45)"
+            },
+            {
+              "text": "176 (+46)"
+            }
+          ]
+        },
+        {
+          "PMC Value": 28,
+          "currentSetting": 0,
+          "default": 0,
+          "name": "RR PRESS:",
+          "settings": [
+            {
+              "text": "130"
+            },
+            {
+              "text": "131 (+1)"
+            },
+            {
+              "text": "132 (+2)"
+            },
+            {
+              "text": "133 (+3)"
+            },
+            {
+              "text": "134 (+4)"
+            },
+            {
+              "text": "135 (+5)"
+            },
+            {
+              "text": "136 (+6)"
+            },
+            {
+              "text": "137 (+7)"
+            },
+            {
+              "text": "138 (+8)"
+            },
+            {
+              "text": "139 (+9)"
+            },
+            {
+              "text": "140 (+10)"
+            },
+            {
+              "text": "141 (+11)"
+            },
+            {
+              "text": "142 (+12)"
+            },
+            {
+              "text": "143 (+13)"
+            },
+            {
+              "text": "144 (+14)"
+            },
+            {
+              "text": "145 (+15)"
+            },
+            {
+              "text": "146 (+16)"
+            },
+            {
+              "text": "147 (+17)"
+            },
+            {
+              "text": "148 (+18)"
+            },
+            {
+              "text": "149 (+19)"
+            },
+            {
+              "text": "150 (+20)"
+            },
+            {
+              "text": "151 (+21)"
+            },
+            {
+              "text": "152 (+22)"
+            },
+            {
+              "text": "153 (+23)"
+            },
+            {
+              "text": "154 (+24)"
+            },
+            {
+              "text": "155 (+25)"
+            },
+            {
+              "text": "156 (+26)"
+            },
+            {
+              "text": "157 (+27)"
+            },
+            {
+              "text": "158 (+28)"
+            },
+            {
+              "text": "159 (+29)"
+            },
+            {
+              "text": "160 (+30)"
+            },
+            {
+              "text": "161 (+31)"
+            },
+            {
+              "text": "162 (+32)"
+            },
+            {
+              "text": "163 (+33)"
+            },
+            {
+              "text": "164 (+34)"
+            },
+            {
+              "text": "165 (+35)"
+            },
+            {
+              "text": "166 (+36)"
+            },
+            {
+              "text": "167 (+37)"
+            },
+            {
+              "text": "168 (+38)"
+            },
+            {
+              "text": "169 (+39)"
+            },
+            {
+              "text": "170 (+40)"
+            },
+            {
+              "text": "171 (+41)"
+            },
+            {
+              "text": "172 (+42)"
+            },
+            {
+              "text": "173 (+43)"
+            },
+            {
+              "text": "174 (+44)"
+            },
+            {
+              "text": "175 (+45)"
+            },
+            {
+              "text": "176 (+46)"
+            }
+          ]
+        },
+        {
+          "PMC Value": 33,
+          "currentSetting": 2,
+          "default": 2,
+          "name": "F BRAKE DUCT:",
+          "settings": [
+            {
+              "text": "Öffnen"
+            },
+            {
+              "text": "33%"
+            },
+            {
+              "text": "66%"
+            },
+            {
+              "text": "Geschlossen"
+            }
+          ]
+        },
+        {
+          "PMC Value": 34,
+          "currentSetting": 2,
+          "default": 2,
+          "name": "R BRAKE DUCT:",
+          "settings": [
+            {
+              "text": "Öffnen"
+            },
+            {
+              "text": "33%"
+            },
+            {
+              "text": "66%"
+            },
+            {
+              "text": "Geschlossen"
+            }
+          ]
+        },
+        {
+          "PMC Value": 35,
+          "currentSetting": 0,
+          "default": 0,
+          "name": "REPLACE BRAKES:",
+          "settings": [
+            {
+              "text": "Nein"
+            },
+            {
+              "text": "Ja"
+            }
+          ]
+        }
+      ]
+    },
+    "racePosition": {
+      "gapToFirstInClassLaps": 0,
+      "gapToFirstInClassTime": 0.0,
+      "gapToLastInClassLaps": 2,
+      "gapToLastInClassTime": 0.0,
+      "placeInClass": 1,
+      "placeOverall": 1
+    },
+    "sessionTime": {
+      "timeOfDay": 39719.8984375
+    },
+    "teamInfo": {
+      "driverNames": [
+        [
+          77,
+          97,
+          114,
+          99,
+          101,
+          108,
+          32,
+          87,
+          105,
+          106,
+          110,
+          97,
+          110,
+          100,
+          116,
+          115,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      ],
+      "teamName": "JCM Motorsport Arnout",
+      "vehicleName": "Ligier JS P325 Custom Team 2025 #397"
+    },
+    "tireInvGarageOptions": {
+      "newTiresRemaining": 60,
+      "selectedTires": [
+        {
+          "compoundIndex": 0,
+          "index": 0,
+          "isUsed": true,
+          "type": 2,
+          "wearValue": 98
+        },
+        {
+          "compoundIndex": 0,
+          "index": 0,
+          "isUsed": true,
+          "type": 2,
+          "wearValue": 100
+        },
+        {
+          "compoundIndex": 0,
+          "index": 0,
+          "isUsed": true,
+          "type": 2,
+          "wearValue": 97
+        },
+        {
+          "compoundIndex": 0,
+          "index": 0,
+          "isUsed": true,
+          "type": 2,
+          "wearValue": 98
+        }
+      ],
+      "tireOptions": [
+        [
+          {
+            "compoundIndex": 0,
+            "index": 0,
+            "isUsed": true,
+            "type": 2,
+            "wearValue": 98
+          },
+          {
+            "compoundIndex": 0,
+            "index": 1,
+            "isUsed": false,
+            "type": 0,
+            "wearValue": 100
+          },
+          {
+            "compoundIndex": 1,
+            "index": 2,
+            "isUsed": false,
+            "type": 0,
+            "wearValue": 100
+          }
+        ],
+        [
+          {
+            "compoundIndex": 0,
+            "index": 0,
+            "isUsed": true,
+            "type": 2,
+            "wearValue": 100
+          },
+          {
+            "compoundIndex": 0,
+            "index": 1,
+            "isUsed": false,
+            "type": 0,
+            "wearValue": 100
+          },
+          {
+            "compoundIndex": 1,
+            "index": 2,
+            "isUsed": false,
+            "type": 0,
+            "wearValue": 100
+          }
+        ],
+        [
+          {
+            "compoundIndex": 0,
+            "index": 0,
+            "isUsed": true,
+            "type": 2,
+            "wearValue": 97
+          },
+          {
+            "compoundIndex": 0,
+            "index": 1,
+            "isUsed": false,
+            "type": 0,
+            "wearValue": 100
+          },
+          {
+            "compoundIndex": 1,
+            "index": 2,
+            "isUsed": false,
+            "type": 0,
+            "wearValue": 100
+          }
+        ],
+        [
+          {
+            "compoundIndex": 0,
+            "index": 0,
+            "isUsed": true,
+            "type": 2,
+            "wearValue": 98
+          },
+          {
+            "compoundIndex": 0,
+            "index": 1,
+            "isUsed": false,
+            "type": 0,
+            "wearValue": 100
+          },
+          {
+            "compoundIndex": 1,
+            "index": 2,
+            "isUsed": false,
+            "type": 0,
+            "wearValue": 100
+          }
+        ]
+      ]
+    },
+    "tireInventory": {
+      "bestConditionsUsed": [
+        [
+          -1,
+          -1,
+          -1,
+          -1
+        ],
+        [
+          100,
+          100,
+          100,
+          100
+        ]
+      ],
+      "maxAvailableTires": 60,
+      "newTires": 60
+    },
+    "wearables": {
+      "body": {
+        "aero": 0.06607182323932648,
+        "detachableParts": [
+          true,
+          true,
+          true,
+          true,
+          false,
+          true,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false
+        ]
+      },
+      "brakes": [
+        0.032,
+        0.032,
+        0.032,
+        0.032
+      ],
+      "suspension": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "tires": [
+        0.9830687635326747,
+        0.9966344289064032,
+        0.9725856848642501,
+        0.9828776538029315
+      ]
+    },
+    "weatherForecast": {
+      "nodes": {
+        "Duration": [
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "Humidity": [
+          60,
+          40,
+          40,
+          40,
+          40
+        ],
+        "RainChance": [
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "Sky": [
+          1,
+          2,
+          2,
+          1,
+          0
+        ],
+        "StartTime": [
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "Temperature": [
+          22,
+          23,
+          23,
+          24,
+          24
+        ],
+        "WindDirection": [
+          6,
+          6,
+          6,
+          6,
+          6
+        ],
+        "WindSpeed": [
+          1,
+          1,
+          1,
+          1,
+          1
+        ]
+      }
+    },
+    "wheelInfo": {
+      "wheelLocs": [
+        {
+          "brakeTemp": 296.2824838921131,
+          "compound": 0,
+          "tirePressure": 146.50598719587285,
+          "tireTemp": 307.1038818359375
+        },
+        {
+          "brakeTemp": 296.28061344534393,
+          "compound": 0,
+          "tirePressure": 145.3297030512384,
+          "tireTemp": 301.6676025390625
+        },
+        {
+          "brakeTemp": 296.21240639918517,
+          "compound": 0,
+          "tirePressure": 131.75491668694488,
+          "tireTemp": 325.1358642578125
+        },
+        {
+          "brakeTemp": 296.21079838828274,
+          "compound": 0,
+          "tirePressure": 129.9315785101943,
+          "tireTemp": 318.4367980957031
+        }
+      ]
+    }
+  },
+  "/rest/strategy/overall": {
+    "_fehler": "HTTPError: HTTP Error 400: Bad Request"
+  },
+  "/rest/strategy/pitstop-estimate": {
+    "brakeDucts": 0.0,
+    "brakes": 0.0,
+    "damage": 0.0,
+    "driverSwap": 0.0,
+    "fuel": 2.433476448059082,
+    "penalties": 0.0,
+    "tires": 0.0,
+    "total": 2.433476448059082,
+    "ve": 0.0
+  },
+  "/rest/garage/UIScreen/RepairAndRefuel": {
+    "currentWeather": {
+      "airPressure": 99.0,
+      "ambientTempKelvin": 295.16355467298695,
+      "cloudCoverage": 0.1428395968510909,
+      "humidity": 0.5,
+      "lightLevel": 0.8819128274917603,
+      "rainIntensity": 0.0,
+      "raining": 0.0,
+      "trackTempKelvin": 302.1836069595348
+    },
+    "fuelInfo": {
+      "currentBattery": 0.0,
+      "currentFuel": 99.90435791015625,
+      "maxBattery": 0.0,
+      "maxFuel": 100.0
+    },
+    "pitMenu": {
+      "pitMenu": [
+        {
+          "PMC Value": 2,
+          "currentSetting": 0,
+          "default": 0,
+          "name": "DAMAGE:",
+          "settings": [
+            {
+              "text": "N/V"
+            },
+            {
+              "text": "Chassis reparieren"
+            }
+          ]
+        },
+        {
+          "PMC Value": 5,
+          "currentSetting": 0,
+          "default": 0,
+          "name": "DRIVER:",
+          "settings": [
+            {
+              "text": "M Wijnandts"
+            }
+          ]
+        },
+        {
+          "PMC Value": 7,
+          "currentSetting": 95,
+          "default": 45,
+          "name": "FUEL:",
+          "settings": [
+            {
+              "text": "5l/3 Runden"
+            },
+            {
+              "text": "6l/4 Runden"
+            },
+            {
+              "text": "7l/5 Runden"
+            },
+            {
+              "text": "8l/6 Runden"
+            },
+            {
+              "text": "9l/7 Runden"
+            },
+            {
+              "text": "10l/7 Runden"
+            },
+            {
+              "text": "11l/8 Runden"
+            },
+            {
+              "text": "12l/9 Runden"
+            },
+            {
+              "text": "13l/10 Runden"
+            },
+            {
+              "text": "14l/11 Runden"
+            },
+            {
+              "text": "15l/11 Runden"
+            },
+            {
+              "text": "16l/12 Runden"
+            },
+            {
+              "text": "17l/13 Runden"
+            },
+            {
+              "text": "18l/14 Runden"
+            },
+            {
+              "text": "19l/15 Runden"
+            },
+            {
+              "text": "20l/15 Runden"
+            },
+            {
+              "text": "21l/16 Runden"
+            },
+            {
+              "text": "22l/17 Runden"
+            },
+            {
+              "text": "23l/18 Runden"
+            },
+            {
+              "text": "24l/19 Runden"
+            },
+            {
+              "text": "25l/19 Runden"
+            },
+            {
+              "text": "26l/20 Runden"
+            },
+            {
+              "text": "27l/21 Runden"
+            },
+            {
+              "text": "28l/22 Runden"
+            },
+            {
+              "text": "29l/23 Runden"
+            },
+            {
+              "text": "30l/23 Runden"
+            },
+            {
+              "text": "31l/24 Runden"
+            },
+            {
+              "text": "32l/25 Runden"
+            },
+            {
+              "text": "33l/26 Runden"
+            },
+            {
+              "text": "34l/27 Runden"
+            },
+            {
+              "text": "35l/27 Runden"
+            },
+            {
+              "text": "36l/28 Runden"
+            },
+            {
+              "text": "37l/29 Runden"
+            },
+            {
+              "text": "38l/30 Runden"
+            },
+            {
+              "text": "39l/31 Runden"
+            },
+            {
+              "text": "40l/31 Runden"
+            },
+            {
+              "text": "41l/32 Runden"
+            },
+            {
+              "text": "42l/33 Runden"
+            },
+            {
+              "text": "43l/34 Runden"
+            },
+            {
+              "text": "44l/35 Runden"
+            },
+            {
+              "text": "45l/35 Runden"
+            },
+            {
+              "text": "46l/36 Runden"
+            },
+            {
+              "text": "47l/37 Runden"
+            },
+            {
+              "text": "48l/38 Runden"
+            },
+            {
+              "text": "49l/38 Runden"
+            },
+            {
+              "text": "50l/39 Runden"
+            },
+            {
+              "text": "51l/40 Runden"
+            },
+            {
+              "text": "52l/41 Runden"
+            },
+            {
+              "text": "53l/42 Runden"
+            },
+            {
+              "text": "54l/42 Runden"
+            },
+            {
+              "text": "55l/43 Runden"
+            },
+            {
+              "text": "56l/44 Runden"
+            },
+            {
+              "text": "57l/45 Runden"
+            },
+            {
+              "text": "58l/46 Runden"
+            },
+            {
+              "text": "59l/46 Runden"
+            },
+            {
+              "text": "60l/47 Runden"
+            },
+            {
+              "text": "61l/48 Runden"
+            },
+            {
+              "text": "62l/49 Runden"
+            },
+            {
+              "text": "63l/50 Runden"
+            },
+            {
+              "text": "64l/50 Runden"
+            },
+            {
+              "text": "65l/51 Runden"
+            },
+            {
+              "text": "66l/52 Runden"
+            },
+            {
+              "text": "67l/53 Runden"
+            },
+            {
+              "text": "68l/54 Runden"
+            },
+            {
+              "text": "69l/54 Runden"
+            },
+            {
+              "text": "70l/55 Runden"
+            },
+            {
+              "text": "71l/56 Runden"
+            },
+            {
+              "text": "72l/57 Runden"
+            },
+            {
+              "text": "73l/58 Runden"
+            },
+            {
+              "text": "74l/58 Runden"
+            },
+            {
+              "text": "75l/59 Runden"
+            },
+            {
+              "text": "76l/60 Runden"
+            },
+            {
+              "text": "77l/61 Runden"
+            },
+            {
+              "text": "78l/62 Runden"
+            },
+            {
+              "text": "79l/62 Runden"
+            },
+            {
+              "text": "80l/63 Runden"
+            },
+            {
+              "text": "81l/64 Runden"
+            },
+            {
+              "text": "82l/65 Runden"
+            },
+            {
+              "text": "83l/66 Runden"
+            },
+            {
+              "text": "84l/66 Runden"
+            },
+            {
+              "text": "85l/67 Runden"
+            },
+            {
+              "text": "86l/68 Runden"
+            },
+            {
+              "text": "87l/69 Runden"
+            },
+            {
+              "text": "88l/70 Runden"
+            },
+            {
+              "text": "89l/70 Runden"
+            },
+            {
+              "text": "90l/71 Runden"
+            },
+            {
+              "text": "91l/72 Runden"
+            },
+            {
+              "text": "92l/73 Runden"
+            },
+            {
+              "text": "93l/74 Runden"
+            },
+            {
+              "text": "94l/74 Runden"
+            },
+            {
+              "text": "95l/75 Runden"
+            },
+            {
+              "text": "96l/76 Runden"
+            },
+            {
+              "text": "97l/77 Runden"
+            },
+            {
+              "text": "98l/77 Runden"
+            },
+            {
+              "text": "99l/78 Runden"
+            },
+            {
+              "text": "100l/79 Runden"
+            }
+          ]
+        },
+        {
+          "PMC Value": 8,
+          "currentSetting": 0,
+          "default": 0,
+          "name": "TIRES:",
+          "settings": [
+            {
+              "text": "Keine Veränderung"
+            },
+            {
+              "isUsed": false,
+              "text": "Neu Medium ",
+              "type": "Medium"
+            },
+            {
+              "isUsed": false,
+              "text": "Neu Nass ",
+              "type": "Wet"
+            },
+            {
+              "isUsed": true,
+              "text": "Gebraucht Medium  0%",
+              "type": "Medium"
+            },
+            {
+              "isUsed": true,
+              "text": "Mixed Tires",
+              "type": "Wet"
+            }
+          ]
+        },
+        {
+          "PMC Value": 13,
+          "currentSetting": 0,
+          "default": 0,
+          "name": "FL TIRE:",
+          "settings": [
+            {
+              "text": "Keine Veränderung"
+            },
+            {
+              "isUsed": false,
+              "text": "Neu Medium ",
+              "type": "Medium"
+            },
+            {
+              "isUsed": false,
+              "text": "Neu Nass ",
+              "type": "Wet"
+            },
+            {
+              "isUsed": true,
+              "text": "Gebraucht Medium  0%",
+              "type": "Medium"
+            }
+          ]
+        },
+        {
+          "PMC Value": 14,
+          "currentSetting": 0,
+          "default": 0,
+          "name": "FR TIRE:",
+          "settings": [
+            {
+              "text": "Keine Veränderung"
+            },
+            {
+              "isUsed": false,
+              "text": "Neu Medium ",
+              "type": "Medium"
+            },
+            {
+              "isUsed": false,
+              "text": "Neu Nass ",
+              "type": "Wet"
+            },
+            {
+              "isUsed": true,
+              "text": "Gebraucht Medium  0%",
+              "type": "Medium"
+            }
+          ]
+        },
+        {
+          "PMC Value": 15,
+          "currentSetting": 0,
+          "default": 0,
+          "name": "RL TIRE:",
+          "settings": [
+            {
+              "text": "Keine Veränderung"
+            },
+            {
+              "isUsed": false,
+              "text": "Neu Medium ",
+              "type": "Medium"
+            },
+            {
+              "isUsed": false,
+              "text": "Neu Nass ",
+              "type": "Wet"
+            },
+            {
+              "isUsed": true,
+              "text": "Gebraucht Medium  0%",
+              "type": "Medium"
+            }
+          ]
+        },
+        {
+          "PMC Value": 16,
+          "currentSetting": 0,
+          "default": 0,
+          "name": "RR TIRE:",
+          "settings": [
+            {
+              "text": "Keine Veränderung"
+            },
+            {
+              "isUsed": false,
+              "text": "Neu Medium ",
+              "type": "Medium"
+            },
+            {
+              "isUsed": false,
+              "text": "Neu Nass ",
+              "type": "Wet"
+            },
+            {
+              "isUsed": true,
+              "text": "Gebraucht Medium  0%",
+              "type": "Medium"
+            }
+          ]
+        },
+        {
+          "PMC Value": 20,
+          "currentSetting": 14,
+          "default": 14,
+          "name": "R WING:",
+          "settings": [
+            {
+              "text": "2.5 Grad (-14)"
+            },
+            {
+              "text": "3.0 Grad (-13)"
+            },
+            {
+              "text": "3.5 Grad (-12)"
+            },
+            {
+              "text": "4.0 Grad (-11)"
+            },
+            {
+              "text": "4.5 Grad (-10)"
+            },
+            {
+              "text": "5.0 Grad (-9)"
+            },
+            {
+              "text": "5.5 Grad (-8)"
+            },
+            {
+              "text": "6.0 Grad (-7)"
+            },
+            {
+              "text": "6.5 Grad (-6)"
+            },
+            {
+              "text": "7.0 Grad (-5)"
+            },
+            {
+              "text": "7.5 Grad (-4)"
+            },
+            {
+              "text": "8.0 Grad (-3)"
+            },
+            {
+              "text": "8.5 Grad (-2)"
+            },
+            {
+              "text": "9.0 Grad (-1)"
+            },
+            {
+              "text": "9.5 Grad"
+            },
+            {
+              "text": "10.0 Grad (+1)"
+            },
+            {
+              "text": "10.5 Grad (+2)"
+            },
+            {
+              "text": "11.0 Grad (+3)"
+            },
+            {
+              "text": "11.5 Grad (+4)"
+            },
+            {
+              "text": "12.0 Grad (+5)"
+            },
+            {
+              "text": "12.5 Grad (+6)"
+            },
+            {
+              "text": "13.0 Grad (+7)"
+            },
+            {
+              "text": "13.5 Grad (+8)"
+            },
+            {
+              "text": "14.0 Grad (+9)"
+            },
+            {
+              "text": "14.5 Grad (+10)"
+            }
+          ]
+        },
+        {
+          "PMC Value": 22,
+          "currentSetting": 0,
+          "default": 0,
+          "name": "GRILLE:",
+          "settings": [
+            {
+              "text": "1"
+            },
+            {
+              "text": "2 (+1)"
+            },
+            {
+              "text": "3 (+2)"
+            },
+            {
+              "text": "4 (+3)"
+            },
+            {
+              "text": "5 (+4)"
+            }
+          ]
+        },
+        {
+          "PMC Value": 25,
+          "currentSetting": 0,
+          "default": 0,
+          "name": "FL PRESS:",
+          "settings": [
+            {
+              "text": "150"
+            },
+            {
+              "text": "151 (+1)"
+            },
+            {
+              "text": "152 (+2)"
+            },
+            {
+              "text": "153 (+3)"
+            },
+            {
+              "text": "154 (+4)"
+            },
+            {
+              "text": "155 (+5)"
+            },
+            {
+              "text": "156 (+6)"
+            },
+            {
+              "text": "157 (+7)"
+            },
+            {
+              "text": "158 (+8)"
+            },
+            {
+              "text": "159 (+9)"
+            },
+            {
+              "text": "160 (+10)"
+            },
+            {
+              "text": "161 (+11)"
+            },
+            {
+              "text": "162 (+12)"
+            },
+            {
+              "text": "163 (+13)"
+            },
+            {
+              "text": "164 (+14)"
+            },
+            {
+              "text": "165 (+15)"
+            },
+            {
+              "text": "166 (+16)"
+            },
+            {
+              "text": "167 (+17)"
+            },
+            {
+              "text": "168 (+18)"
+            },
+            {
+              "text": "169 (+19)"
+            },
+            {
+              "text": "170 (+20)"
+            },
+            {
+              "text": "171 (+21)"
+            },
+            {
+              "text": "172 (+22)"
+            },
+            {
+              "text": "173 (+23)"
+            },
+            {
+              "text": "174 (+24)"
+            },
+            {
+              "text": "175 (+25)"
+            },
+            {
+              "text": "176 (+26)"
+            },
+            {
+              "text": "177 (+27)"
+            },
+            {
+              "text": "178 (+28)"
+            },
+            {
+              "text": "179 (+29)"
+            },
+            {
+              "text": "180 (+30)"
+            },
+            {
+              "text": "181 (+31)"
+            },
+            {
+              "text": "182 (+32)"
+            },
+            {
+              "text": "183 (+33)"
+            },
+            {
+              "text": "184 (+34)"
+            },
+            {
+              "text": "185 (+35)"
+            },
+            {
+              "text": "186 (+36)"
+            },
+            {
+              "text": "187 (+37)"
+            },
+            {
+              "text": "188 (+38)"
+            },
+            {
+              "text": "189 (+39)"
+            },
+            {
+              "text": "190 (+40)"
+            },
+            {
+              "text": "191 (+41)"
+            },
+            {
+              "text": "192 (+42)"
+            },
+            {
+              "text": "193 (+43)"
+            },
+            {
+              "text": "194 (+44)"
+            },
+            {
+              "text": "195 (+45)"
+            },
+            {
+              "text": "196 (+46)"
+            }
+          ]
+        },
+        {
+          "PMC Value": 26,
+          "currentSetting": 0,
+          "default": 0,
+          "name": "FR PRESS:",
+          "settings": [
+            {
+              "text": "150"
+            },
+            {
+              "text": "151 (+1)"
+            },
+            {
+              "text": "152 (+2)"
+            },
+            {
+              "text": "153 (+3)"
+            },
+            {
+              "text": "154 (+4)"
+            },
+            {
+              "text": "155 (+5)"
+            },
+            {
+              "text": "156 (+6)"
+            },
+            {
+              "text": "157 (+7)"
+            },
+            {
+              "text": "158 (+8)"
+            },
+            {
+              "text": "159 (+9)"
+            },
+            {
+              "text": "160 (+10)"
+            },
+            {
+              "text": "161 (+11)"
+            },
+            {
+              "text": "162 (+12)"
+            },
+            {
+              "text": "163 (+13)"
+            },
+            {
+              "text": "164 (+14)"
+            },
+            {
+              "text": "165 (+15)"
+            },
+            {
+              "text": "166 (+16)"
+            },
+            {
+              "text": "167 (+17)"
+            },
+            {
+              "text": "168 (+18)"
+            },
+            {
+              "text": "169 (+19)"
+            },
+            {
+              "text": "170 (+20)"
+            },
+            {
+              "text": "171 (+21)"
+            },
+            {
+              "text": "172 (+22)"
+            },
+            {
+              "text": "173 (+23)"
+            },
+            {
+              "text": "174 (+24)"
+            },
+            {
+              "text": "175 (+25)"
+            },
+            {
+              "text": "176 (+26)"
+            },
+            {
+              "text": "177 (+27)"
+            },
+            {
+              "text": "178 (+28)"
+            },
+            {
+              "text": "179 (+29)"
+            },
+            {
+              "text": "180 (+30)"
+            },
+            {
+              "text": "181 (+31)"
+            },
+            {
+              "text": "182 (+32)"
+            },
+            {
+              "text": "183 (+33)"
+            },
+            {
+              "text": "184 (+34)"
+            },
+            {
+              "text": "185 (+35)"
+            },
+            {
+              "text": "186 (+36)"
+            },
+            {
+              "text": "187 (+37)"
+            },
+            {
+              "text": "188 (+38)"
+            },
+            {
+              "text": "189 (+39)"
+            },
+            {
+              "text": "190 (+40)"
+            },
+            {
+              "text": "191 (+41)"
+            },
+            {
+              "text": "192 (+42)"
+            },
+            {
+              "text": "193 (+43)"
+            },
+            {
+              "text": "194 (+44)"
+            },
+            {
+              "text": "195 (+45)"
+            },
+            {
+              "text": "196 (+46)"
+            }
+          ]
+        },
+        {
+          "PMC Value": 27,
+          "currentSetting": 0,
+          "default": 0,
+          "name": "RL PRESS:",
+          "settings": [
+            {
+              "text": "130"
+            },
+            {
+              "text": "131 (+1)"
+            },
+            {
+              "text": "132 (+2)"
+            },
+            {
+              "text": "133 (+3)"
+            },
+            {
+              "text": "134 (+4)"
+            },
+            {
+              "text": "135 (+5)"
+            },
+            {
+              "text": "136 (+6)"
+            },
+            {
+              "text": "137 (+7)"
+            },
+            {
+              "text": "138 (+8)"
+            },
+            {
+              "text": "139 (+9)"
+            },
+            {
+              "text": "140 (+10)"
+            },
+            {
+              "text": "141 (+11)"
+            },
+            {
+              "text": "142 (+12)"
+            },
+            {
+              "text": "143 (+13)"
+            },
+            {
+              "text": "144 (+14)"
+            },
+            {
+              "text": "145 (+15)"
+            },
+            {
+              "text": "146 (+16)"
+            },
+            {
+              "text": "147 (+17)"
+            },
+            {
+              "text": "148 (+18)"
+            },
+            {
+              "text": "149 (+19)"
+            },
+            {
+              "text": "150 (+20)"
+            },
+            {
+              "text": "151 (+21)"
+            },
+            {
+              "text": "152 (+22)"
+            },
+            {
+              "text": "153 (+23)"
+            },
+            {
+              "text": "154 (+24)"
+            },
+            {
+              "text": "155 (+25)"
+            },
+            {
+              "text": "156 (+26)"
+            },
+            {
+              "text": "157 (+27)"
+            },
+            {
+              "text": "158 (+28)"
+            },
+            {
+              "text": "159 (+29)"
+            },
+            {
+              "text": "160 (+30)"
+            },
+            {
+              "text": "161 (+31)"
+            },
+            {
+              "text": "162 (+32)"
+            },
+            {
+              "text": "163 (+33)"
+            },
+            {
+              "text": "164 (+34)"
+            },
+            {
+              "text": "165 (+35)"
+            },
+            {
+              "text": "166 (+36)"
+            },
+            {
+              "text": "167 (+37)"
+            },
+            {
+              "text": "168 (+38)"
+            },
+            {
+              "text": "169 (+39)"
+            },
+            {
+              "text": "170 (+40)"
+            },
+            {
+              "text": "171 (+41)"
+            },
+            {
+              "text": "172 (+42)"
+            },
+            {
+              "text": "173 (+43)"
+            },
+            {
+              "text": "174 (+44)"
+            },
+            {
+              "text": "175 (+45)"
+            },
+            {
+              "text": "176 (+46)"
+            }
+          ]
+        },
+        {
+          "PMC Value": 28,
+          "currentSetting": 0,
+          "default": 0,
+          "name": "RR PRESS:",
+          "settings": [
+            {
+              "text": "130"
+            },
+            {
+              "text": "131 (+1)"
+            },
+            {
+              "text": "132 (+2)"
+            },
+            {
+              "text": "133 (+3)"
+            },
+            {
+              "text": "134 (+4)"
+            },
+            {
+              "text": "135 (+5)"
+            },
+            {
+              "text": "136 (+6)"
+            },
+            {
+              "text": "137 (+7)"
+            },
+            {
+              "text": "138 (+8)"
+            },
+            {
+              "text": "139 (+9)"
+            },
+            {
+              "text": "140 (+10)"
+            },
+            {
+              "text": "141 (+11)"
+            },
+            {
+              "text": "142 (+12)"
+            },
+            {
+              "text": "143 (+13)"
+            },
+            {
+              "text": "144 (+14)"
+            },
+            {
+              "text": "145 (+15)"
+            },
+            {
+              "text": "146 (+16)"
+            },
+            {
+              "text": "147 (+17)"
+            },
+            {
+              "text": "148 (+18)"
+            },
+            {
+              "text": "149 (+19)"
+            },
+            {
+              "text": "150 (+20)"
+            },
+            {
+              "text": "151 (+21)"
+            },
+            {
+              "text": "152 (+22)"
+            },
+            {
+              "text": "153 (+23)"
+            },
+            {
+              "text": "154 (+24)"
+            },
+            {
+              "text": "155 (+25)"
+            },
+            {
+              "text": "156 (+26)"
+            },
+            {
+              "text": "157 (+27)"
+            },
+            {
+              "text": "158 (+28)"
+            },
+            {
+              "text": "159 (+29)"
+            },
+            {
+              "text": "160 (+30)"
+            },
+            {
+              "text": "161 (+31)"
+            },
+            {
+              "text": "162 (+32)"
+            },
+            {
+              "text": "163 (+33)"
+            },
+            {
+              "text": "164 (+34)"
+            },
+            {
+              "text": "165 (+35)"
+            },
+            {
+              "text": "166 (+36)"
+            },
+            {
+              "text": "167 (+37)"
+            },
+            {
+              "text": "168 (+38)"
+            },
+            {
+              "text": "169 (+39)"
+            },
+            {
+              "text": "170 (+40)"
+            },
+            {
+              "text": "171 (+41)"
+            },
+            {
+              "text": "172 (+42)"
+            },
+            {
+              "text": "173 (+43)"
+            },
+            {
+              "text": "174 (+44)"
+            },
+            {
+              "text": "175 (+45)"
+            },
+            {
+              "text": "176 (+46)"
+            }
+          ]
+        },
+        {
+          "PMC Value": 33,
+          "currentSetting": 2,
+          "default": 2,
+          "name": "F BRAKE DUCT:",
+          "settings": [
+            {
+              "text": "Öffnen"
+            },
+            {
+              "text": "33%"
+            },
+            {
+              "text": "66%"
+            },
+            {
+              "text": "Geschlossen"
+            }
+          ]
+        },
+        {
+          "PMC Value": 34,
+          "currentSetting": 2,
+          "default": 2,
+          "name": "R BRAKE DUCT:",
+          "settings": [
+            {
+              "text": "Öffnen"
+            },
+            {
+              "text": "33%"
+            },
+            {
+              "text": "66%"
+            },
+            {
+              "text": "Geschlossen"
+            }
+          ]
+        },
+        {
+          "PMC Value": 35,
+          "currentSetting": 0,
+          "default": 0,
+          "name": "REPLACE BRAKES:",
+          "settings": [
+            {
+              "text": "Nein"
+            },
+            {
+              "text": "Ja"
+            }
+          ]
+        }
+      ]
+    },
+    "pitRecommendations": {
+      "FL TIRE:": 0,
+      "FR TIRE:": 0,
+      "RL TIRE:": 0,
+      "RR TIRE:": 0,
+      "TIRES:": 0,
+      "fuel": 0,
+      "virtualEnergy": 0
+    },
+    "pitStopLength": {
+      "timeInSeconds": 2.433476448059082
+    },
+    "pitStopTimes": {
+      "times": {
+        "BrakeChange": 120.0,
+        "BrakeTimeConcurrent": 0.0,
+        "DriverChange": 25.0,
+        "DriverConcurrent": 1.0,
+        "DriverDamage": 1.0,
+        "DriverRandom": 3.0,
+        "FenderFlareAdjust": 0.0,
+        "FixAeroDamage": 25.0,
+        "FixAllDamage": 25.0,
+        "FixRandomDelay": 5.0,
+        "FixTimeConcurrent": 0.0,
+        "FourTireChange": 12.0,
+        "FrontWingAdjust": 20.0,
+        "FrontWingReplace": 20.0,
+        "FuelFillRate": 2.8570001125335693,
+        "FuelInsert": 1.5,
+        "FuelRandomDelay": 3.0,
+        "FuelRemove": 0.8999999761581421,
+        "FuelTimeConcurrent": 1.0,
+        "OnTheFlyPressure": false,
+        "PressureChange": 5.0,
+        "RadiatorChange": 10.0,
+        "RandomBrakeDelay": 0.0,
+        "RandomTireDelay": 1.600000023841858,
+        "RearWingAdjust": 20.0,
+        "RearWingReplace": 50.0,
+        "SimultaneousStopGo": false,
+        "SpringRubberChange": 0.0,
+        "TireTimeConcurrent": 0.0,
+        "TrackBarChange": 0.0,
+        "TwoTireChange": 4.5,
+        "WedgeChange": 0.0
+      }
+    },
+    "racePosition": {
+      "gapToFirstInClassLaps": 0,
+      "gapToFirstInClassTime": 0.0,
+      "gapToLastInClassLaps": 2,
+      "gapToLastInClassTime": 0.0,
+      "placeInClass": 1,
+      "placeOverall": 1
+    },
+    "sessionTime": {
+      "timeOfDay": 39719.8984375
+    },
+    "teamInfo": {
+      "driverNames": [
+        [
+          77,
+          97,
+          114,
+          99,
+          101,
+          108,
+          32,
+          87,
+          105,
+          106,
+          110,
+          97,
+          110,
+          100,
+          116,
+          115,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      ],
+      "teamName": "JCM Motorsport Arnout",
+      "vehicleName": "Ligier JS P325 Custom Team 2025 #397"
+    },
+    "wearables": {
+      "body": {
+        "aero": 0.06607182323932648,
+        "detachableParts": [
+          true,
+          true,
+          true,
+          true,
+          false,
+          true,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false
+        ]
+      },
+      "brakes": [
+        0.032,
+        0.032,
+        0.032,
+        0.032
+      ],
+      "suspension": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "tires": [
+        0.9830687635326747,
+        0.9966344289064032,
+        0.9725856848642501,
+        0.9828776538029315
+      ]
+    },
+    "weatherForecast": {
+      "nodes": {
+        "Duration": [
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "Humidity": [
+          60,
+          40,
+          40,
+          40,
+          40
+        ],
+        "RainChance": [
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "Sky": [
+          1,
+          2,
+          2,
+          1,
+          0
+        ],
+        "StartTime": [
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "Temperature": [
+          22,
+          23,
+          23,
+          24,
+          24
+        ],
+        "WindDirection": [
+          6,
+          6,
+          6,
+          6,
+          6
+        ],
+        "WindSpeed": [
+          1,
+          1,
+          1,
+          1,
+          1
+        ]
+      }
+    }
+  }
+}
