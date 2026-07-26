@@ -23,12 +23,18 @@ OutputBaseFilename=JCM-Pitwall-Setup-{#AppVersion}
 Compression=lzma2
 SolidCompression=yes
 WizardStyle=modern
+
 ; Ohne Administratorrechte - erspart den UAC-Dialog und damit die
 ; haeufigste Stelle, an der jemand abbricht.
 PrivilegesRequired=lowest
 DisableProgramGroupPage=yes
 ArchitecturesInstallIn64BitMode=x64compatible
 UninstallDisplayIcon={app}\JCM-Pitwall.exe
+
+; Automatisches Schliessen laufender Anwendungs-Prozesse vor dem Überschreiben
+CloseApplications=yes
+CloseApplicationsFilter=*.exe
+RestartApplications=no
 
 [Languages]
 Name: "de"; MessagesFile: "compiler:Languages\German.isl"
@@ -43,7 +49,7 @@ Name: "client"; Description: "Fahrer-Fenster"; Types: fahrer einrichter voll; Fl
 Name: "admin";  Description: "Einrichter (Datenbank, Fahrer, Team-Code)"; Types: einrichter voll
 
 [Files]
-; Durch Umstellung auf --onedir werden komplette Ordnerinhalte inklusive aller DLLs/Subfolder gepackt:
+; Durch Umstellung auf --onedir werden ganze Ordnerstrukturen kopiert
 Source: "..\dist\JCM-Pitwall\*";            DestDir: "{app}"; Components: client; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "..\dist\JCM-Pitwall-Einrichter\*"; DestDir: "{app}"; Components: admin;  Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "..\ANLEITUNG_FAHRER.md";             DestDir: "{app}"; DestName: "Anleitung.txt"; Components: client; Flags: ignoreversion
