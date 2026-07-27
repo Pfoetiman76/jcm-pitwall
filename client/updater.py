@@ -25,10 +25,8 @@ from pathlib import Path
 # Workflow die Release-Version rein) - so ist sie IMMER == Release-Tag und der
 # aktualisierte Client verlangt nicht endlos dasselbe Update. Der Fallback gilt
 # nur fuer lokale Laeufe ohne _version.py.
-try:
-    from _version import VERSION            # vom CI erzeugt (client/_version.py)
-except Exception:
-    VERSION = "1.0.7"                        # Fallback fuer lokale Laeufe
+# vorher: try/except from _version ... VERSION = "1.0.7"
+from version import VERSION              # eine Quelle (version.py resolvt _version)
 GITHUB_REPO = "Pfoetiman76/jcm-pitwall"      # bestaetigt
 PREFER_EXACT = "JCM-Pitwall.exe"             # Fallback-EXE (Fahrer-Client); Einrichter setzt eigene
 
