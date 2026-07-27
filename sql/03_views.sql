@@ -4,7 +4,8 @@
 -- gruen und die anon-RLS greift korrekt.
 -- ============================================================
 
-create or replace view v_laps_full as
+drop view if exists v_laps_full;
+create view v_laps_full as
 select
     l.id, l.session_id, l.lap_num, l.lap_time,
     l.s1, l.s2, l.s3,

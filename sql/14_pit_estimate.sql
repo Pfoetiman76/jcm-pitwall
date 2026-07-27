@@ -22,7 +22,8 @@ alter table stint_telemetry add column if not exists pit_est_tires  real;
 alter table stint_telemetry add column if not exists pit_est_damage real;
 alter table stint_telemetry add column if not exists pit_est_driver real;
 
-create or replace view v_laps_full as
+drop view if exists v_laps_full;
+create view v_laps_full as
 select
     l.id, l.session_id, l.lap_num, l.lap_time,
     l.s1, l.s2, l.s3,

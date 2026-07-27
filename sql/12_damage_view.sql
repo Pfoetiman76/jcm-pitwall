@@ -11,7 +11,8 @@ alter table stint_telemetry add column if not exists suspension_fr numeric(6,2);
 alter table stint_telemetry add column if not exists suspension_rl numeric(6,2);
 alter table stint_telemetry add column if not exists suspension_rr numeric(6,2);
 
-create or replace view v_laps_full as
+drop view if exists v_laps_full;
+create view v_laps_full as
 select
     l.id,
     l.session_id,

@@ -16,7 +16,8 @@ alter table stint_telemetry add column if not exists flat_rr    boolean;
 
 -- 2) v_laps_full neu erzeugen (identisch zu 03_views.sql, plus die neuen Felder).
 --    Views frieren ihre Spaltenliste beim Anlegen ein, daher der Neubau.
-create or replace view v_laps_full as
+drop view if exists v_laps_full;
+create view v_laps_full as
 select
     l.id, l.session_id, l.lap_num, l.lap_time,
     l.s1, l.s2, l.s3,
