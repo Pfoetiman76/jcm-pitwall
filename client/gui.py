@@ -363,13 +363,23 @@ class App:
         threading.Thread(target=self._run_update, args=(info,), daemon=True).start()
 
     def _run_update(self, info):
+        # Beim Klick frisch nachfragen: beim Programmstart koennen die Release-
+        # Assets noch nicht fertig hochgeladen gewesen sein (CI). Der frische
+        # Stand hat dann die Download-URL.
+        try:
+            fresh = updater.check_for_update(updater.VERSION)
+        except Exception:
+            fresh = None
+        if fresh and fresh.get("asset_url"):
+            info = fresh
         url = info.get("asset_url") or ""
         if not url:
             import webbrowser
             webbrowser.open(info.get("url") or "")
             self.root.after(0, lambda: messagebox.showinfo(
-                "Update", f"v{info['version']} ist verfügbar, aber kein direkt ladbares "
-                "Asset gefunden. Ich habe die Release-Seite geöffnet."))
+                "Update", f"v{info['version']} ist verfügbar, aber die Installer-Datei "
+                "war noch nicht fertig hochgeladen. Ich habe die Release-Seite geöffnet — "
+                "in ein, zwei Minuten nochmal „Aktualisieren“ drücken."))
             return
         dest = updater.staged_path(bool(info.get("is_installer")))
         self.root.after(0, lambda: self.status.configure(text="Update lädt … 0 %"))
