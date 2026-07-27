@@ -67,9 +67,17 @@ Name: "{autodesktop}\JCM Pitwall";      Filename: "{app}\Fahrer\JCM-Pitwall.exe"
 [Tasks]
 Name: "desktopicon"; Description: "Verknüpfung auf dem Desktop anlegen"; GroupDescription: "Zusätzlich:"
 
+[InstallDelete]
+; Migration onefile -> onedir: die alten EXEs lagen direkt in {app}. Ohne das
+; hier bliebe die veraltete v1.0.x-EXE liegen und der alte Shortcut wuerde
+; weiter DIESE starten (Symptom: "App bleibt auf alter Version").
+Type: files; Name: "{app}\JCM-Pitwall.exe"
+Type: files; Name: "{app}\JCM-Pitwall-Einrichter.exe"
+
 [Run]
+; KEIN skipifsilent: nach dem stillen Auto-Update soll die App neu starten.
 Filename: "{app}\Fahrer\JCM-Pitwall.exe"; Description: "JCM Pitwall jetzt starten"; \
-    Flags: nowait postinstall skipifsilent; Components: client
+    Flags: nowait postinstall; Components: client
 
 [UninstallDelete]
 ; Konfiguration im Benutzerprofil bleibt bewusst stehen (Team-Code).

@@ -45,6 +45,15 @@ jobs:
       - name: PyInstaller
         run: pip install --upgrade pyinstaller
 
+      # Release-Version in den Build schreiben -> updater.VERSION == Release-Tag.
+      # Verhindert, dass ein aktualisierter Client dasselbe Update endlos verlangt.
+      - name: Version in den Build schreiben
+        shell: pwsh
+        run: |
+          $v = "${{ steps.ver.outputs.version }}"
+          Set-Content -Path client/_version.py -Value "VERSION = `"$v`"" -Encoding UTF8
+          Write-Host "client/_version.py:"; Get-Content client/_version.py
+
       - name: Fahrer-Fenster bauen
         run: >
           pyinstaller --noconfirm --onedir --windowed
