@@ -26,6 +26,10 @@ OutputBaseFilename=JCM-Pitwall-Setup-{#AppVersion}
 Compression=lzma2
 SolidCompression=yes
 WizardStyle=modern
+; Icon des Installers selbst (Assistent + Datei-Explorer). Die App- und
+; Verknuepfungs-Icons stecken bereits in den EXE (PyInstaller --icon),
+; die Startmenue-/Desktop-Shortcuts erben sie automatisch.
+SetupIconFile=..\client\jcm.ico
 ; Ohne Administratorrechte - erspart den UAC-Dialog und damit die
 ; haeufigste Stelle, an der jemand abbricht. {autopf} landet dann in
 ; %LocalAppData%\Programs (benutzerschreibbar -> Auto-Update ohne Admin).

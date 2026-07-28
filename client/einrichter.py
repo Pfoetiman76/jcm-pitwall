@@ -560,8 +560,37 @@ class Einrichter:
         self.status.configure(text=text, fg=farbe)
 
 
+def _icon_path(name="jcm-einrichter.ico"):
+    """Findet das .ico im Quell-Lauf UND in der onedir-EXE."""
+    kandidaten = []
+    mp = getattr(sys, "_MEIPASS", None)
+    if mp:
+        kandidaten.append(Path(mp))
+    base = Path(sys.executable).resolve().parent if IS_FROZEN else HERE
+    kandidaten += [HERE, base, base / "_internal"]
+    for b in kandidaten:
+        p = b / name
+        if p.exists():
+            return str(p)
+    return None
+
+
 def main():
+    # Eigene Taskbar-Identitaet (getrennt vom Fahrer-Fenster) -> eigenes Icon,
+    # getrennte Gruppierung/Anpinnen in der Taskbar.
+    try:
+        import ctypes
+        ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(
+            "jcm.pitwall.einrichter")
+    except Exception:
+        pass
     root = tk.Tk()
+    ico = _icon_path("jcm-einrichter.ico")
+    if ico:
+        try:
+            root.iconbitmap(default=ico)
+        except Exception:
+            pass
     Einrichter(root)
     root.mainloop()
 

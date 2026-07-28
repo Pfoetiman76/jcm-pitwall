@@ -545,12 +545,40 @@ class App:
         self.root.destroy()
 
 
+def _icon_path(name="jcm.ico"):
+    """Findet das .ico im Quell-Lauf UND in der onedir-EXE.
+
+    PyInstaller legt Daten je nach Version in _MEIPASS/_internal oder neben
+    die EXE. Deshalb mehrere Kandidaten pruefen statt nur HERE.
+    """
+    kandidaten = []
+    mp = getattr(sys, "_MEIPASS", None)
+    if mp:
+        kandidaten.append(Path(mp))
+    kandidaten += [HERE, BASE, BASE / "_internal"]
+    for b in kandidaten:
+        p = b / name
+        if p.exists():
+            return str(p)
+    return None
+
+
 def main():
-    root = tk.Tk()
+    # Taskbar-Identitaet setzen (VOR dem Fenster), damit Windows das eigene
+    # Icon statt der Python-Feder zeigt und die App sauber gruppiert/anpinnt.
     try:
-        root.iconbitmap(default=str(HERE / "jcm.ico"))
+        import ctypes
+        ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(
+            "jcm.pitwall.fahrer")
     except Exception:
         pass
+    root = tk.Tk()
+    ico = _icon_path("jcm.ico")
+    if ico:
+        try:
+            root.iconbitmap(default=ico)
+        except Exception:
+            pass
     App(root)
     root.mainloop()
 
