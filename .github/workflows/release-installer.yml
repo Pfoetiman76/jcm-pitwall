@@ -58,8 +58,8 @@ jobs:
         run: >
           pyinstaller --noconfirm --onedir --windowed
           --name JCM-Pitwall
-          --icon client/jcm.ico
-          --add-data "client/jcm.ico;."
+          --icon "$env:GITHUB_WORKSPACE/client/jcm.ico"
+          --add-data "$env:GITHUB_WORKSPACE/client/jcm.ico;."
           --distpath dist --workpath build --specpath build
           --paths client --collect-submodules pyLMUSharedMemory
           --hidden-import tkinter
@@ -69,8 +69,8 @@ jobs:
         run: >
           pyinstaller --noconfirm --onedir --windowed
           --name JCM-Pitwall-Einrichter
-          --icon client/jcm-einrichter.ico
-          --add-data "client/jcm-einrichter.ico;."
+          --icon "$env:GITHUB_WORKSPACE/client/jcm-einrichter.ico"
+          --add-data "$env:GITHUB_WORKSPACE/client/jcm-einrichter.ico;."
           --distpath dist --workpath build --specpath build
           --paths client --hidden-import tkinter
           client/einrichter.py

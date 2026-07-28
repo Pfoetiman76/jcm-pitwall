@@ -21,8 +21,8 @@ echo [1/4] PyInstaller bereitstellen ...
 echo [2/4] Fahrer-Fenster bauen ...
 %PY% -m PyInstaller --noconfirm --onedir --windowed ^
   --name JCM-Pitwall ^
-  --icon client\jcm.ico ^
-  --add-data "client\jcm.ico;." ^
+  --icon "%CD%\client\jcm.ico" ^
+  --add-data "%CD%\client\jcm.ico;." ^
   --distpath dist --workpath build --specpath build ^
   --paths client ^
   --collect-submodules pyLMUSharedMemory ^
@@ -32,8 +32,8 @@ echo [2/4] Fahrer-Fenster bauen ...
 echo [3/4] Einrichter bauen ...
 %PY% -m PyInstaller --noconfirm --onedir --windowed ^
   --name JCM-Pitwall-Einrichter ^
-  --icon client\jcm-einrichter.ico ^
-  --add-data "client\jcm-einrichter.ico;." ^
+  --icon "%CD%\client\jcm-einrichter.ico" ^
+  --add-data "%CD%\client\jcm-einrichter.ico;." ^
   --distpath dist --workpath build --specpath build ^
   --paths client ^
   --hidden-import tkinter ^
