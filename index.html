@@ -1,0 +1,1600 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>JCM Pitwall — Kommandostand</title>
+<style>
+:root{
+  --bg:#0a0b0d; --panel:#14161a; --panel-2:#1b1e24; --line:#262a31;
+  --ink:#e9ecf1; --muted:#79818d;
+  --orange:#ff6a13; --turq:#1fd4c3; --green:#35d07f; --amber:#ffb020; --red:#ff4d4d; --violet:#7c8cff;
+  --display:"Bahnschrift Condensed","Bahnschrift","Oswald","Roboto Condensed","Arial Narrow",system-ui,sans-serif;
+  --body:"Segoe UI",Inter,system-ui,-apple-system,sans-serif;
+  --mono:"Cascadia Mono",Consolas,"SF Mono",ui-monospace,monospace;
+}
+/* Heller Modus: nur die Neutraltoene kippen, Akzentfarben bleiben. */
+body.light{
+  --bg:#eceef1; --panel:#ffffff; --panel-2:#f2f4f7; --line:#d7dbe1;
+  --ink:#1a1d23; --muted:#5f6670;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  background:
+    radial-gradient(1100px 620px at 78% -14%, rgba(255,106,19,.10), transparent 62%),
+    radial-gradient(760px 460px at 6% 108%, rgba(31,212,195,.08), transparent 60%),
+    var(--bg);
+  color:var(--ink); font-family:var(--body); font-size:15px; min-height:100vh;
+}
+h1,h2,h3{font-family:var(--display);font-weight:600;letter-spacing:.02em;margin:0}
+.wrap{max-width:1500px;margin:0 auto;padding:0 20px 64px}
+.wide{max-width:1860px}
+
+/* ---------- Kopf ---------- */
+header{position:sticky;top:0;z-index:20;background:rgba(10,11,13,.9);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.head{max-width:1860px;margin:0 auto;padding:10px 20px;display:flex;align-items:center;gap:18px;flex-wrap:wrap}
+.mark{display:flex;align-items:center;gap:12px}
+.mark .bar{width:5px;height:34px;background:linear-gradient(180deg,var(--orange),var(--turq));border-radius:3px}
+.mark h1{font-size:22px;line-height:1}
+.mark small{display:block;color:var(--muted);font-size:10px;letter-spacing:.16em;text-transform:uppercase;margin-top:3px}
+.tabs{display:flex;gap:4px;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:3px}
+.tabs button{background:none;border:none;color:var(--muted);padding:7px 15px;border-radius:8px;font-size:13px;font-weight:600;letter-spacing:.02em}
+.tabs button[aria-selected="true"]{background:var(--panel-2);color:var(--ink);box-shadow:inset 0 0 0 1px var(--line)}
+.tabs button b{display:inline-block;width:15px;color:var(--muted);font-weight:600;font-size:11px}
+.tabs button[aria-selected="true"] b{color:var(--orange)}
+.headmeta{display:flex;gap:22px;flex:1;flex-wrap:wrap}
+.headmeta .k{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.headmeta .v{font-family:var(--display);font-size:17px}
+.status{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--muted)}
+.dot{width:9px;height:9px;border-radius:50%;background:var(--muted)}
+.dot.live{background:var(--green);animation:pulse 2.4s infinite}
+.dot.demo{background:var(--amber)} .dot.err{background:var(--red)}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(53,208,127,.6)}70%{box-shadow:0 0 0 9px rgba(53,208,127,0)}100%{box-shadow:0 0 0 0 rgba(53,208,127,0)}}
+button{font-family:var(--body);cursor:pointer}
+.btn{background:var(--panel-2);color:var(--ink);border:1px solid var(--line);border-radius:8px;padding:8px 13px;font-size:13px}
+.btn:hover{border-color:var(--orange)}
+.btn.primary{background:var(--orange);border-color:var(--orange);color:#12100e;font-weight:600}
+.btn.sm{padding:5px 10px;font-size:12px}
+:focus-visible{outline:2px solid var(--turq);outline-offset:2px}
+
+/* ---------- Raster ---------- */
+.screen{display:none} .screen.active{display:block}
+.grid{display:grid;gap:16px;margin-top:18px}
+.top{grid-template-columns:minmax(360px,500px) 1fr}
+.three{grid-template-columns:repeat(3,1fr)}
+.two{grid-template-columns:1fr 1fr}
+.tower-grid{grid-template-columns:1fr minmax(320px,400px)}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px}
+.card h2{font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin-bottom:14px;font-family:var(--body);font-weight:600;display:flex;justify-content:space-between;align-items:center;gap:10px}
+.tiles{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.tile{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:15px 17px;position:relative;overflow:hidden}
+.tile::after{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--line)}
+.tile.accent::after{background:var(--orange)} .tile.turq::after{background:var(--turq)}
+.tile.warn::after{background:var(--amber)} .tile.crit::after{background:var(--red)}
+.tile .k{font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--muted)}
+.tile .v{font-family:var(--display);font-size:36px;line-height:1.05;margin-top:6px;font-variant-numeric:tabular-nums}
+.tile .v small{font-size:15px;color:var(--muted);margin-left:4px}
+.tile .sub{font-size:12px;color:var(--muted);margin-top:5px}
+
+/* ---------- Ring ---------- */
+.ringwrap{display:flex;flex-direction:column;align-items:center}
+svg.ring{width:100%;max-width:440px;height:auto}
+.ringlabel{fill:var(--ink);font-family:var(--display)}
+.ringmuted{fill:var(--muted);font-size:9px;letter-spacing:.14em;font-family:var(--body)}
+.legend{display:flex;flex-wrap:wrap;gap:9px 15px;margin-top:14px;justify-content:center}
+.legend span{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--muted)}
+.chip{width:11px;height:11px;border-radius:3px}
+
+/* ---------- Balken / Tabellen ---------- */
+.bar{height:7px;border-radius:4px;background:var(--panel-2);overflow:hidden;margin-top:7px}
+.bar i{display:block;height:100%;border-radius:4px;transition:width .5s ease}
+.rowline{display:flex;justify-content:space-between;align-items:baseline;font-size:13px;margin-top:11px;gap:12px}
+.rowline b{font-family:var(--mono);font-weight:500;font-variant-numeric:tabular-nums;text-align:right}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);text-align:left;font-weight:600;padding:0 8px 9px 0;border-bottom:1px solid var(--line);white-space:nowrap}
+td{padding:8px 8px 8px 0;border-bottom:1px solid rgba(38,42,49,.55)}
+td.num,th.num{text-align:right;font-family:var(--mono);font-variant-numeric:tabular-nums;white-space:nowrap}
+tr:last-child td{border-bottom:none}
+.name{display:flex;align-items:center;gap:9px}
+.name i{width:4px;height:18px;border-radius:2px;display:block;flex:none}
+.tag{font-size:10px;letter-spacing:.08em;text-transform:uppercase;padding:2px 6px;border-radius:4px;border:1px solid var(--line);color:var(--muted);white-space:nowrap}
+.tag.now{border-color:var(--orange);color:var(--orange)}
+.tag.pit{border-color:var(--amber);color:var(--amber)}
+.good{color:var(--green)}.warnc{color:var(--amber)}.critc{color:var(--red)}.turqc{color:var(--turq)}
+.wheels{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media (max-width:520px){.tiles{grid-template-columns:1fr}.headmeta{gap:14px}}
+.wheel{background:var(--panel-2);border-radius:10px;padding:11px 12px}
+.wheel .k{font-size:10px;color:var(--muted);letter-spacing:.12em}
+.wheel .v{font-family:var(--display);font-size:23px;font-variant-numeric:tabular-nums}
+.wheel .p{font-size:11px;color:var(--muted);margin-top:2px}
+.note{font-size:12px;color:var(--muted);line-height:1.5;margin-top:14px;border-top:1px solid var(--line);padding-top:12px}
+.scroll{max-height:330px;overflow-y:auto;overflow-x:auto}
+.scroll table{min-width:560px}
+#s-tower .scroll table{min-width:900px}
+.wrap{overflow-x:hidden}
+.scroll::-webkit-scrollbar{width:8px}
+.scroll::-webkit-scrollbar-thumb{background:var(--line);border-radius:4px}
+
+/* ---------- Timing Tower ---------- */
+.classbar{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
+.classbar button{background:var(--panel-2);border:1px solid var(--line);color:var(--muted);border-radius:999px;padding:6px 14px;font-size:12px;font-weight:600;letter-spacing:.05em}
+.classbar button[aria-pressed="true"]{color:var(--ink);border-color:var(--orange);background:rgba(255,106,19,.12)}
+tr.me{background:linear-gradient(90deg,rgba(255,106,19,.16),rgba(255,106,19,0))}
+tr.me td{border-bottom-color:rgba(255,106,19,.3)}
+tr.classhead td{background:var(--panel-2);font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);padding:7px 8px;border-bottom:1px solid var(--line)}
+tr.pitting{opacity:.62}
+.pos{font-family:var(--display);font-size:17px;font-variant-numeric:tabular-nums}
+.clspos{font-family:var(--display);font-size:15px;color:var(--turq)}
+.numplate{font-family:var(--display);font-size:13px;background:var(--panel-2);border-radius:4px;padding:1px 6px;min-width:28px;display:inline-block;text-align:center}
+.exit{background:var(--panel-2);border-radius:10px;padding:13px 14px;margin-top:12px}
+.exit .big{font-family:var(--display);font-size:30px;line-height:1.1}
+.exitcars{display:flex;flex-direction:column;gap:7px;margin-top:12px}
+.exitcar{display:flex;align-items:center;gap:9px;font-size:12px;padding:7px 9px;border-radius:8px;background:var(--panel-2)}
+.exitcar.slot{background:rgba(255,106,19,.16);border:1px dashed rgba(255,106,19,.55)}
+.exitcar .g{margin-left:auto;font-family:var(--mono);color:var(--muted)}
+.inrow{display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap}
+.inrow label{display:block;font-size:10px;letter-spacing:.13em;text-transform:uppercase;color:var(--muted);margin-bottom:5px}
+input[type=number],input[type=text],input[type=password],select{background:var(--bg);border:1px solid var(--line);color:var(--ink);border-radius:8px;padding:8px 10px;font-family:var(--mono);font-size:13px}
+input:focus,select:focus{border-color:var(--turq);outline:none}
+input[type=number]{width:92px}
+
+/* ---------- Wetter ---------- */
+.wx{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px}
+.wxtile{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:15px 17px}
+.wxtile .k{font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--muted)}
+.wxtile .v{font-family:var(--display);font-size:34px;margin-top:5px;font-variant-numeric:tabular-nums}
+.wxtile .v small{font-size:15px;color:var(--muted)}
+.chart{width:100%;height:auto}
+.axis{fill:var(--muted);font-size:10px;font-family:var(--mono)}
+.gridline{stroke:var(--line);stroke-width:1}
+.nightband{fill:rgba(124,140,255,.07)}
+.rec{display:flex;gap:10px;align-items:center;margin-top:12px;padding:13px 14px;border-radius:10px;background:var(--panel-2)}
+.rec .ic{width:9px;align-self:stretch;border-radius:3px;flex:none}
+.rec .t{font-family:var(--display);font-size:21px}
+.rec .s{font-size:12px;color:var(--muted);margin-top:2px}
+
+.setup{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px;margin-top:18px;display:none}
+.setup.open{display:block}
+.setup .row{display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end;margin-top:10px}
+.setup input,.setup select{min-width:250px}
+.setup label{display:block;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:5px}
+.empty{color:var(--muted);font-size:13px;padding:22px 0;text-align:center}
+
+@media (max-width:1180px){.top,.three,.two,.tower-grid{grid-template-columns:1fr}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+/* ---------- Schirm 4: Streckenkarte ---------- */
+.trackstage{position:relative;margin-top:18px;height:calc(100vh - 160px);min-height:520px;
+  background:var(--panel);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+#trk-map{display:block;width:100%;height:100%}
+.trk-legend{position:absolute;left:14px;bottom:12px;display:flex;gap:15px;align-items:center;
+  background:rgba(20,22,26,.72);border:1px solid var(--line);border-radius:9px;padding:7px 12px;
+  font-family:var(--mono);font-size:12px;backdrop-filter:blur(3px)}
+.trk-legend .k{display:flex;align-items:center;gap:7px;color:var(--muted)}
+.trk-legend .k b{width:11px;height:11px;border-radius:50%;display:inline-block}
+.trk-hud{position:absolute;right:14px;bottom:12px;text-align:right;font-family:var(--mono);font-size:12px;
+  color:var(--muted);background:rgba(20,22,26,.72);border:1px solid var(--line);border-radius:9px;padding:7px 12px;backdrop-filter:blur(3px)}
+.trk-hud b{color:var(--ink)}
+.trk-note{position:absolute;left:50%;top:12px;transform:translateX(-50%);font-family:var(--mono);font-size:11px;
+  color:var(--amber);background:rgba(20,22,26,.85);border:1px solid var(--line);border-radius:20px;padding:4px 12px;white-space:nowrap}
+
+
+/* --- Schaeden --- */
+.dmg-wrap{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:20px;padding:20px;height:100%}
+@media(max-width:900px){.dmg-wrap{grid-template-columns:1fr}}
+.dmg-carbox{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;min-height:0}
+#dmg-svg{width:100%;max-width:330px;height:auto}
+.dmg-legend{display:flex;gap:16px;font-size:12px;color:var(--muted)}
+.dmg-legend i{display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+.dmg-num{fill:#0a0b0d;font:700 15px var(--mono)}
+.dmg-num.sm{font-size:12px}
+.dmg-cap{fill:var(--muted);font:600 11px var(--mono)}
+.dmg-side .panel{height:100%}
+.dmg-row{display:grid;grid-template-columns:1fr auto auto;gap:12px;align-items:center;padding:9px 0;border-bottom:1px solid var(--line);font-size:14px}
+.dmg-rowpct{color:var(--amber);font-variant-numeric:tabular-nums}
+.dmg-rowsec{color:var(--turq);font-weight:600;min-width:56px;text-align:right}
+.dmg-row.warn .dmg-rowsec{color:var(--amber)}
+.dmg-ok{color:var(--green);padding:16px 0;font-size:15px}
+.dmg-total{display:flex;justify-content:space-between;align-items:baseline;margin-top:14px;padding-top:12px;border-top:1px solid var(--line);font-size:15px}
+.dmg-total b{font-size:24px;color:var(--turq);font-family:var(--mono)}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="head">
+    <div class="mark">
+      <div class="bar" aria-hidden="true"></div>
+      <div><h1>JCM PITWALL</h1><small>Kommandostand · 24h</small></div>
+    </div>
+    <div class="tabs" role="tablist">
+      <button role="tab" id="tab-overview"  aria-selected="true"  data-screen="overview"><b>1</b>Übersicht</button>
+      <button role="tab" id="tab-tower"     aria-selected="false" data-screen="tower"><b>2</b>Zeiten</button>
+      <button role="tab" id="tab-weather"   aria-selected="false" data-screen="weather"><b>3</b>Wetter</button>
+      <button role="tab" id="tab-track"     aria-selected="false" data-screen="track"><b>4</b>Strecke</button>
+      <button role="tab" id="tab-damage"    aria-selected="false" data-screen="damage"><b>5</b>Schäden</button>
+    </div>
+    <div class="headmeta">
+      <div><div class="k">Strecke</div><div class="v" id="m-track">—</div></div>
+      <div><div class="k">Runde</div><div class="v" id="m-lap">—</div></div>
+      <div><div class="k">Restzeit</div><div class="v" id="m-remaining">—</div></div>
+    </div>
+    <div class="status">
+      <span class="dot" id="dot"></span><span id="statustext">Verbinde …</span>
+      <button class="btn sm" id="btn-pop" title="Diesen Schirm in einem eigenen Fenster öffnen">Zweiter Schirm</button>
+      <button class="btn sm" id="btn-full" title="Vollbild (Taste F)">Vollbild</button>
+      <button class="btn sm" id="btn-theme" title="Hell/Dunkel umschalten">Hell</button>
+      <button class="btn sm" id="btn-rt" title="Zwischen Realtime-Push und Standard-Polling umschalten">Realtime</button>
+      <button class="btn sm" id="btn-setup" aria-expanded="false">Verbindung</button>
+    </div>
+  </div>
+</header>
+
+<div class="wrap wide">
+
+  <section class="setup" id="setup">
+    <div class="row">
+      <div><label for="in-url">Supabase-URL</label><input id="in-url" type="text" placeholder="https://xxxx.supabase.co"></div>
+      <div><label for="in-key">Anon-Key</label><input id="in-key" type="password" placeholder="eyJ…"></div>
+      <button class="btn primary" id="btn-connect">Verbinden</button>
+      <button class="btn" id="btn-demo">Demo-Daten</button>
+    </div>
+    <p class="note">Zugangsdaten bleiben nur in diesem Tab. Für den festen Pit-PC <code>config.js</code> neben diese Datei legen. Schirme wechseln mit den Tasten 1, 2, 3 — jeder Schirm hat eine eigene Adresse (<code>#zeiten</code>, <code>#wetter</code>), damit du sie auf mehrere Monitore verteilen kannst.</p>
+  </section>
+
+<!-- ============================================================
+     SCHIRM 1 — ÜBERSICHT
+     ============================================================ -->
+<section class="screen active" id="s-overview">
+  <div class="grid top">
+    <div class="card ringwrap">
+      <h2 style="align-self:flex-start;width:100%">Stint-Ring · 24 Stunden</h2>
+      <svg class="ring" viewBox="0 0 400 400" role="img" aria-labelledby="ringtitle">
+        <title id="ringtitle">Rennverlauf über 24 Stunden mit den Stints aller Fahrer</title>
+        <g id="ring-ticks"></g>
+        <circle cx="200" cy="200" r="150" fill="none" stroke="#1b1e24" stroke-width="26"/>
+        <g id="ring-stints"></g>
+        <g id="ring-fuel"></g>
+        <g id="ring-needle"></g>
+        <text x="200" y="182" text-anchor="middle" class="ringmuted">VERBLEIBEND</text>
+        <text x="200" y="222" text-anchor="middle" class="ringlabel" id="ring-remaining" style="font-size:44px">—</text>
+        <text x="200" y="246" text-anchor="middle" class="ringmuted" id="ring-elapsed">—</text>
+      </svg>
+      <div class="legend" id="ring-legend"></div>
+    </div>
+
+    <div class="tiles">
+      <div class="tile accent"><div class="k">Am Steuer</div><div class="v" id="t-driver" style="font-size:29px">—</div><div class="sub" id="t-driver-sub">—</div></div>
+      <div class="tile turq"><div class="k">Position</div><div class="v" id="t-pos">—</div><div class="sub" id="t-gap">—</div></div>
+      <div class="tile" id="tile-fuel"><div class="k">Sprit an Bord</div><div class="v" id="t-fuel">—<small>l</small></div><div class="sub" id="t-fuel-sub">—</div></div>
+      <div class="tile" id="tile-window"><div class="k">Boxenfenster</div><div class="v" id="t-window">—</div><div class="sub" id="t-window-sub">—</div></div>
+      <div class="tile"><div class="k">Letzte Runde</div><div class="v" id="t-last" style="font-size:31px">—</div><div class="sub" id="t-last-sub">—</div></div>
+      <div class="tile"><div class="k">Team-Bestzeit</div><div class="v" id="t-best" style="font-size:31px">—</div><div class="sub" id="t-best-sub">—</div></div>
+    </div>
+  </div>
+
+  <div class="grid three">
+    <div class="card">
+      <h2>Sprit-Kalkulation</h2>
+      <div class="rowline"><span>Verbrauch Ø (5 Runden)</span><b id="f-avg">—</b></div>
+      <div class="rowline"><span>Schlechteste Runde</span><b id="f-worst">—</b></div>
+      <div class="rowline"><span>Restrunden auf Tankinhalt</span><b id="f-laps" class="turqc">—</b></div>
+      <div class="rowline"><span>Reichweite in Zeit</span><b id="f-time">—</b></div>
+      <div class="bar"><i id="f-bar" style="width:0%;background:var(--orange)"></i></div>
+      <div class="rowline"><span>Nachtanken für vollen Stint</span><b id="f-refuel">—</b></div>
+      <p class="note">Gleitender Schnitt über die letzten fünf gültigen Rennrunden. In-Laps, Out-Laps und Gelbphasen fliegen raus, damit ein einziger FCY die Hochrechnung nicht verfälscht.</p>
+    </div>
+
+    <div class="card">
+      <h2>Reifen · Projektion Stintende</h2>
+      <div class="wheels" id="tyres"></div>
+      <div class="rowline" style="margin-top:16px"><span>Abbau pro Runde (Schnitt)</span><b id="ty-deg">—</b></div>
+      <div class="rowline"><span>Runden bis Restprofil 70 / 50 / 30 %</span><b id="ty-limit" style="font-variant-numeric:tabular-nums">—</b></div>
+      <p class="note">Hochrechnung aus dem linearen Abbau der bisherigen Stintrunden. Fällt die Kurve am Stintende ab, unterschätzt die Gerade den Abbau — die letzten Runden gehören dem Fahrerfunk.</p>
+    </div>
+
+    <div class="card">
+      <h2>Bremsen · thermische Last</h2>
+      <div class="bar"><i id="b-bar" style="width:0%;background:var(--green)"></i></div>
+      <div class="rowline"><span>Bewertung</span><b id="b-verdict">—</b></div>
+    </div>
+  </div>
+
+  <div class="grid two">
+    <div class="card">
+      <h2>Fahrer · Lenkzeiten</h2>
+      <div class="scroll" style="max-height:none"><table>
+        <thead><tr><th>Fahrer</th><th class="num">Runden</th><th class="num">Beste</th><th class="num">Schnitt</th><th>Fahrzeit</th></tr></thead>
+        <tbody id="drivers"><tr><td colspan="5" class="empty">Noch keine Rundendaten</td></tr></tbody>
+      </table></div>
+      <p class="note">Der Balken zeigt die gefahrene Zeit gegen das Limit aus dem Reglement. Wer voll ist, ist raus — das rechnet um vier Uhr morgens niemand mehr im Kopf.</p>
+    </div>
+    <div class="card">
+      <h2>Rundenprotokoll</h2>
+      <div class="scroll"><table>
+        <thead><tr><th class="num">Rd</th><th>Fahrer</th><th class="num">Zeit</th><th class="num">S1</th><th class="num">S2</th><th class="num">S3</th><th class="num">Sprit</th><th class="num">Reifen</th></tr></thead>
+        <tbody id="laps"><tr><td colspan="8" class="empty">Noch keine Rundendaten</td></tr></tbody>
+      </table></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     SCHIRM 2 — ZEITEN & FELD
+     ============================================================ -->
+<section class="screen" id="s-tower">
+  <div class="grid tower-grid">
+    <div class="card">
+      <h2><span>Zeitentabelle · Feld</span><span id="tower-count" style="letter-spacing:0;text-transform:none">—</span></h2>
+      <div class="classbar" id="classbar"></div>
+      <div class="scroll" style="max-height:none">
+        <table>
+          <thead><tr>
+            <th class="num">Pos</th><th class="num">Kl.</th><th>Nr</th><th>Fahrer</th><th>Fahrzeug</th>
+            <th class="num">Rd</th><th class="num">Letzte</th><th class="num">Beste</th><th class="num">Ø 5 Rd</th>
+            <th class="num">Vorn</th><th class="num">Führender</th><th class="num">Δ Pace</th><th>Status</th>
+          </tr></thead>
+          <tbody id="tower"><tr><td colspan="13" class="empty">Warte auf Felddaten vom Client</td></tr></tbody>
+        </table>
+      </div>
+      <p class="note">Abstände sind Klassenabstände. „Ø 5 Rd“ ist der Schnitt der letzten fünf Runden ohne Boxenrunden — die Zahl sagt, was ein Auto <em>gerade</em> fährt, nicht was es einmal konnte. „Δ Pace“ vergleicht damit gegen dein eigenes Auto: negativ heißt, der ist schneller als du.</p>
+    </div>
+
+    <div>
+      <div class="card">
+        <h2>Boxenstopp · wo kommst du raus</h2>
+        <div class="inrow">
+          <div><label for="in-pitloss">Boxenverlust (s)</label><input type="number" id="in-pitloss" step="0.5" value="62"></div>
+          <div><label for="in-service">Service extra (s)</label><input type="number" id="in-service" step="0.5" value="0"></div>
+          <button class="btn sm" id="btn-pitauto" title="Wert aus gemessenen In-/Out-Laps übernehmen">gemessen übernehmen</button>
+        </div>
+        <div class="exit">
+          <div class="k" style="font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--muted)">Position nach dem Stopp</div>
+          <div class="big" id="pe-pos">—</div>
+          <div style="font-size:12px;color:var(--muted);margin-top:4px" id="pe-sub">—</div>
+        </div>
+        <div class="exitcars" id="pe-cars"></div>
+        <div class="rowline" style="margin-top:14px"><span>Verkehr beim Rauskommen</span><b id="pe-traffic">—</b></div>
+        <div class="rowline"><span>Gemessener Boxenverlust</span><b id="pe-measured">—</b></div>
+        <p class="note">Der Verkehr wird aus der echten Streckenposition gerechnet (Distanz auf der Runde), nicht aus dem Abstand zur Klassifikation — bei Rundenrückständen sind das zwei verschiedene Antworten. Die Positionsangabe oben zählt nur Fahrzeuge auf derselben Runde. Autos, die selbst in der Box sind, zählen nicht mit.</p>
+      </div>
+
+      <div class="card" style="margin-top:16px">
+        <h2>Wenn die Konkurrenz stoppt</h2>
+        <div id="pe-rivals"><div class="empty">Keine Klassengegner in Reichweite</div></div>
+        <p class="note">Für die Autos vor dir in der Klasse: wo die nach ihrem Stopp relativ zu dir rauskommen, wenn du draußen bleibst. Positive Zahl heißt, sie kommen hinter dir raus.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     SCHIRM 3 — WETTER
+     ============================================================ -->
+<section class="screen" id="s-weather">
+  <div class="wx" style="margin-top:18px">
+    <div class="wxtile"><div class="k">Streckentemperatur</div><div class="v" id="w-track">—<small> °C</small></div><div class="sub" id="w-track-tr" style="font-size:12px;color:var(--muted)">—</div></div>
+    <div class="wxtile"><div class="k">Lufttemperatur</div><div class="v" id="w-air">—<small> °C</small></div><div class="sub" id="w-air-tr" style="font-size:12px;color:var(--muted)">—</div></div>
+    <div class="wxtile"><div class="k">Niederschlag</div><div class="v" id="w-rain">—<small> %</small></div><div class="sub" id="w-rain-tr" style="font-size:12px;color:var(--muted)">—</div></div>
+    <div class="wxtile"><div class="k">Streckennässe Ø</div><div class="v" id="w-wet">—<small> %</small></div><div class="sub" id="w-wet-tr" style="font-size:12px;color:var(--muted)">—</div></div>
+    <div class="wxtile"><div class="k">Bewölkung</div><div class="v" id="w-cloud">—<small> %</small></div><div class="sub" style="font-size:12px;color:var(--muted)">Dunkelheit der Wolken</div></div>
+    <div class="wxtile"><div class="k">Wind</div><div class="v" id="w-wind">—<small> km/h</small></div><div class="sub" style="font-size:12px;color:var(--muted)">Betrag aus dem Windvektor</div></div>
+  </div>
+
+  <div class="grid two" style="grid-template-columns:2fr 1fr">
+    <div class="card">
+      <h2><span>Verlauf über das Rennen</span><span style="letter-spacing:0;text-transform:none" id="w-range">—</span></h2>
+      <svg class="chart" id="w-chart" viewBox="0 0 900 320" role="img" aria-label="Verlauf von Strecken- und Lufttemperatur sowie Streckennässe"></svg>
+      <div class="legend" style="justify-content:flex-start">
+        <span><i class="chip" style="background:var(--orange)"></i>Streckentemperatur</span>
+        <span><i class="chip" style="background:var(--turq)"></i>Lufttemperatur</span>
+        <span><i class="chip" style="background:var(--violet)"></i>Streckennässe</span>
+      </div>
+      <p class="note">Ein Punkt je fünf Minuten. Die Kurve der Streckentemperatur ist bei einem 24-Stunden-Rennen die Nachtkurve: fällt sie ab, wird der Grip anders, lange bevor jemand Regen meldet.</p>
+    </div>
+
+    <div class="card">
+      <h2>Empfehlung</h2>
+      <div class="rec" id="rec-box"><div class="ic" style="background:var(--green)"></div><div><div class="t" id="rec-t">—</div><div class="s" id="rec-s">—</div></div></div>
+      <div class="rowline" style="margin-top:16px"><span>Nässe minimal / maximal</span><b id="w-wetminmax">—</b></div>
+      <div class="rowline"><span>Streckentemp. letzte Stunde</span><b id="w-track1h">—</b></div>
+      <div class="rowline"><span>Nässe-Trend letzte 30 min</span><b id="w-wettrend">—</b></div>
+      <div class="rowline"><span>Reifendruck-Hinweis</span><b id="w-press">—</b></div>
+      <p class="note">Die Nässeschwellen sind Erfahrungswerte für LMU: unter 10 % läuft der Slick, 10 bis 40 % ist Intermediate-Fenster, darüber Regenreifen. Entscheidend bleibt, was der Fahrer meldet — die Zahl ist ein Streckenmittel und sagt nichts über die eine nasse Stelle in Indianapolis.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     SCHIRM 4 — STRECKE
+     ============================================================ -->
+<section class="screen" id="s-track">
+  <div class="trackstage">
+    <canvas id="trk-map"></canvas>
+    <div class="trk-note" id="trk-note" style="display:none"></div>
+    <div class="trk-legend" id="trk-legend"></div>
+    <div class="trk-hud" id="trk-hud"></div>
+  </div>
+</section>
+
+<section class="screen" id="s-damage">
+  <div class="dmg-wrap">
+    <div class="dmg-carbox">
+      <svg id="dmg-svg" viewBox="0 0 360 640" role="img" aria-label="Fahrzeugschaeden"></svg>
+      <div class="dmg-legend">
+        <span><i style="background:var(--green)"></i>intakt</span>
+        <span><i style="background:var(--amber)"></i>Schaden</span>
+        <span><i style="background:var(--red)"></i>kritisch</span>
+      </div>
+    </div>
+    <div class="dmg-side">
+      <div class="panel">
+        <h2><span>Reparatur</span><span id="dmg-when" style="letter-spacing:0;text-transform:none"></span></h2>
+        <div id="dmg-repair"></div>
+        <div class="dmg-total"><span>Geschaetzte Reparaturdauer</span><b id="dmg-eta">&mdash;</b></div>
+        <p class="note">Reparaturdauer ist eine grobe Schaetzung (Schaden x Faktor je Bauteil), keine echte Sim-Zeit &mdash; kalibrierbar in der config. Werte stammen aus der zuletzt uebertragenen Runde.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+</div>
+
+<script src="config.js" onerror="void 0"></script>
+<script type="module">
+  // Supabase Realtime: WebSocket-Push fuer field_state statt Polling. Laedt
+  // supabase-js vom ESM-CDN und stellt die Verbindungsfunktion global bereit.
+  // Faellt das CDN aus oder ist Realtime nicht aktiviert, bleibt
+  // __pitwallConnectRealtime undefiniert bzw. der Kanal nie SUBSCRIBED -> das
+  // Dashboard pollt field_state wie bisher weiter (nahtloser Fallback).
+  import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+  window.__pitwallConnectRealtime = (url, key, sid, onRow, onStatus) => {
+    const supa = createClient(url, key, { realtime:{ params:{ eventsPerSecond:10 } } });
+    return supa.channel("field_"+sid)
+      .on("postgres_changes",
+          { event:"*", schema:"public", table:"field_state", filter:"session_id=eq."+sid },
+          p => { if(p.new) onRow(p.new); })
+      .subscribe(st => onStatus && onStatus(st));
+  };
+  if(window.__pitwallRTReady) window.__pitwallRTReady();
+</script>
+<script>
+"use strict";
+/* =========================================================
+   JCM Pitwall — Kommandostand
+   Drei Schirme: Übersicht, Zeiten, Wetter.
+   Quelle: Supabase REST (Views aus 02_views.sql und 04_field.sql).
+   ========================================================= */
+
+const CFG = Object.assign({
+  supabaseUrl:"", supabaseKey:"", sessionId:"",
+  refreshMs:2000, stintMinutes:65, tyreFloorPct:20,
+  brakeLoadWarn:1500, brakeLoadCrit:3000,
+  pitLossDefault:62, ownCarNumber:"76",
+  dmgWarnPct:60, dmgCritPct:30, dmgRepairMinPct:5, repairAeroSecPerPct:0.35, repairSuspSecPerPct:0.6,
+  tyreThresholds:[70,50,30], flatspotWarnPct:15, flatspotCritPct:40, repairWingSecPerPct:0.35,
+  repairFrontWingSec:20, repairRearWingSec:50
+}, window.PITWALL_CONFIG || {});
+
+const S = { mode:"demo", screen:"overview", session:null, laps:[], drivers:[], stints:[],
+            field:null, pace:[], weather:[], classFilter:"ALLE", timer:null, pitLossMeasured:null,
+            trackMap:null, trackMapSid:null };
+
+const $ = id => document.getElementById(id);
+const clamp = (v,a,b) => Math.max(a, Math.min(b, v));
+function fmtLap(s){ if(!s||s<=0) return "—"; const m=Math.floor(s/60), r=(s%60).toFixed(3).padStart(6,"0"); return m?`${m}:${r}`:r; }
+function fmtDur(sec){ if(sec==null||!isFinite(sec)) return "—"; const s=Math.max(0,Math.round(sec));
+  return `${String(Math.floor(s/3600)).padStart(2,"0")}:${String(Math.floor(s%3600/60)).padStart(2,"0")}:${String(s%60).padStart(2,"0")}`; }
+function fmtGap(s){ if(s==null||!isFinite(s)) return "—"; return (s>0?"+":"") + (+s).toFixed(3); }
+function fmtDelta(s){ return (s>=0?"+":"") + s.toFixed(3); }
+const NS = "http://www.w3.org/2000/svg";
+function svgEl(tag, attrs){ const e=document.createElementNS(NS,tag); for(const k in attrs) e.setAttribute(k,attrs[k]); return e; }
+
+/* ---------- Netzwerk ---------- */
+async function rest(path){
+  const res = await fetch(CFG.supabaseUrl.replace(/\/$/,"") + "/rest/v1/" + path,
+    { headers:{ apikey:CFG.supabaseKey, Authorization:"Bearer "+CFG.supabaseKey }});
+  if(!res.ok) throw new Error(`${res.status} ${res.statusText}`);
+  return res.json();
+}
+// ---------- Realtime: field_state per WebSocket-Push (per Schalter) ----------
+let rtChannel=null, rtActive=false, curSid=null;
+let rtEnabled=true; try{ rtEnabled = localStorage.getItem("pw_rt")!=="0"; }catch(e){}
+
+// ---------- Heller/Dunkler Modus (per Schalter, gemerkt) ----------
+let lightMode=false; try{ lightMode = localStorage.getItem("pw_theme")==="light"; }catch(e){}
+function applyTheme(){
+  document.body.classList.toggle("light", lightMode);
+  const b=$("btn-theme"); if(b) b.textContent = lightMode ? "Dunkel" : "Hell";
+}
+
+function ensureRealtime(sid){
+  if(rtChannel || !rtEnabled || !CFG.supabaseUrl || !CFG.supabaseKey || !sid) return;
+  const connect=()=>{
+    if(!rtEnabled || !window.__pitwallConnectRealtime) return false;   // aus oder Modul noch nicht geladen
+    rtChannel = window.__pitwallConnectRealtime(CFG.supabaseUrl, CFG.supabaseKey, sid,
+      (row)=>{ S.field=row;
+               if(S.field?.pit_loss_s!=null) S.pitLossMeasured=+S.field.pit_loss_s;
+               if(S.mode!=="demo") render(); },
+      (st)=>{ rtActive=(st==="SUBSCRIBED");
+              if(S.mode!=="demo") setStatus("live",
+                (rtActive?"Live · Realtime · ":"Live · ")+`${S.laps.length} Runden`); });
+    return true;
+  };
+  if(!connect()) window.__pitwallRTReady=connect;        // nachholen, sobald das Modul geladen ist
+}
+
+function updateRtButton(){
+  const b=document.getElementById("btn-rt"); if(!b) return;
+  b.textContent = rtEnabled ? "Realtime: an" : "Standard";
+  b.classList.toggle("primary", rtEnabled);
+}
+function setRealtime(on){
+  rtEnabled = on;
+  try{ localStorage.setItem("pw_rt", on?"1":"0"); }catch(e){}
+  updateRtButton();
+  if(on){ ensureRealtime(curSid); }
+  else { // Kanal trennen, kein Push mehr -> loadLive pollt field_state wieder
+    window.__pitwallRTReady=null;
+    if(rtChannel){ try{ rtChannel.unsubscribe(); }catch(e){} rtChannel=null; }
+    rtActive=false;
+  }
+  if(S.mode!=="demo") tick();                            // sofort neu laden statt aufs Intervall warten
+}
+
+// Session hat gewechselt (neuer Client-Start = neue session_id). Realtime-Kanal
+// auf die neue Session umhaengen, veralteten Zustand leeren, Hinweis zeigen.
+function switchSession(sid){
+  const first = (curSid===null);              // Erststart bekommt keinen Wechsel-Hinweis
+  if(rtChannel){ try{ rtChannel.unsubscribe(); }catch(e){} rtChannel=null; }
+  rtActive=false; window.__pitwallRTReady=null;
+  curSid = sid;
+  S.laps=[]; S.stints=[]; S.field=null; S.pace=[]; S.weather=[]; S.pitLossMeasured=null;
+  S.trackMap=null; S.trackMapSid=null;        // Streckenkarte der neuen Session neu laden
+  ensureRealtime(sid);                        // neuen Push-Kanal fuer die neue Session
+  if(!first) flashSessionSwitch();
+}
+
+function flashSessionSwitch(){
+  let t=document.getElementById("sess-toast");
+  if(!t){
+    t=document.createElement("div"); t.id="sess-toast";
+    t.style.cssText="position:fixed;top:14px;left:50%;transform:translateX(-50%);z-index:9999;"
+      +"background:var(--orange);color:#0a0b0d;font-weight:700;padding:8px 16px;border-radius:8px;"
+      +"box-shadow:0 6px 24px rgba(0,0,0,.5);transition:opacity .4s;font-size:14px;letter-spacing:.02em;";
+    document.body.appendChild(t);
+  }
+  t.textContent="Neue Session — Anzeige umgeschaltet";
+  t.style.opacity="1";
+  clearTimeout(t._h); t._h=setTimeout(()=>{ t.style.opacity="0"; },4000);
+}
+
+// Bestimmt die anzuzeigende Session. "Immer das aktuelle Rennen":
+// NICHT ueber is_active filtern - eine alte Session bleibt beim Schliessen des
+// Clients oft is_active=true und wuerde die frische Session verdraengen. Stattdessen
+// streng die neueste per started_at (nullslast, falls started_at mal fehlt).
+// Ein fest gepinntes CFG.sessionId (config.js) hat weiterhin Vorrang.
+async function pickLatestSession(){
+  if(CFG.sessionId){
+    return (await rest(`sessions?id=eq.${CFG.sessionId}&limit=1`))[0] || null;
+  }
+  const rows = await rest("sessions?order=started_at.desc.nullslast&limit=1");
+  return rows[0] || null;
+}
+
+// Echte Streckenkontur (aus /rest/watch/trackmap, vom Client einmalig hochgeladen).
+// Einmal pro Session laden und in S.trackMap als {line,pit} in Welt-x/z ablegen.
+async function loadTrackMap(sid){
+  if(!sid || S.trackMapSid===sid) return;
+  S.trackMapSid=sid;                          // sofort markieren -> kein Doppelladen
+  try{
+    const rows = await rest(`session_trackmap?session_id=eq.${sid}&limit=1`);
+    const row = rows && rows[0];
+    if(row && Array.isArray(row.line) && row.line.length>10){
+      S.trackMap = {
+        line: row.line.map(p=>({x:+p[0], z:+p[1]})),
+        pit:  Array.isArray(row.pit) ? row.pit.map(p=>({x:+p[0], z:+p[1]})) : []
+      };
+    } else S.trackMap=null;
+  }catch(e){ S.trackMap=null; }
+}
+
+async function loadLive(){
+  const sess = await pickLatestSession();
+  if(!sess) throw new Error("Keine Session in der Datenbank");
+  const sid = sess.id;
+  S.session = sess;
+  if(sid !== curSid) switchSession(sid);   // Fahrerwechsel/Client-Neustart -> automatisch mitziehen
+  loadTrackMap(sid);                        // echte Streckenkarte (einmal pro Session)
+  const [laps, drivers, stints, field, pace, weather] = await Promise.all([
+    rest(`v_laps_full?session_id=eq.${sid}&order=lap_num.desc&limit=400`),
+    rest(`v_driver_summary?session_id=eq.${sid}`),
+    rest(`stints?session_id=eq.${sid}&order=started_at.asc`),
+    rtActive ? Promise.resolve(null) : rest(`field_state?session_id=eq.${sid}&limit=1`),
+    rest(`v_field_pace?session_id=eq.${sid}`),
+    rest(`v_weather_trend?session_id=eq.${sid}&order=bucket_s.asc`)
+  ]);
+  S.laps=laps; S.drivers=drivers; S.stints=stints;
+  if(field) S.field = field[0] || null;   // bei aktivem Realtime kommt field_state per Push
+  S.pace = pace; S.weather = weather;
+}
+
+/* ---------- Demo ---------- */
+const DEMO_DRIVERS = [
+  {driver_name:"Marcelinjo",short_name:"MAR",color:"#ff6a13"},{driver_name:"Koala",short_name:"KOA",color:"#1fd4c3"},
+  {driver_name:"Fuchs",short_name:"FUX",color:"#ffb020"},{driver_name:"Panda",short_name:"PAN",color:"#7c8cff"},
+  {driver_name:"Otter",short_name:"OTT",color:"#35d07f"},{driver_name:"Dachs",short_name:"DAX",color:"#ff5d9e"}];
+const DEMO_FIELD = [
+  ["HYPERCAR",7,"Toyota GR010","Conway / Kobayashi",208.0],["HYPERCAR",8,"Toyota GR010","Buemi / Hartley",208.4],
+  ["HYPERCAR",50,"Ferrari 499P","Fuoco / Molina",208.2],["HYPERCAR",6,"Porsche 963","Estre / Vanthoor",208.9],
+  ["HYPERCAR",2,"Cadillac V-LMDh","Bamber / Lynn",209.3],
+  ["LMP2",22,"Oreca 07","Jarvis / Hanson",215.6],["LMP2",23,"Oreca 07","Aubry / Dillmann",216.1],
+  ["LMP2",34,"Oreca 07","Smiechowski / Yoluc",217.0],["LMP2",41,"Oreca 07","Andrade / Kubica",215.9],
+  ["LMGT3",76,"Corvette Z06","Marcelinjo",224.0],["LMGT3",91,"Porsche 911","Lietz / Christensen",223.6],
+  ["LMGT3",46,"BMW M4","Rossi / Martin",224.3],["LMGT3",54,"Ferrari 296","Flohr / Castellacci",224.8],
+  ["LMGT3",77,"Aston Martin","Sorensen / Thiim",225.1],["LMGT3",88,"McLaren 720S","Barnicoat / Grunewald",224.5]];
+
+function buildDemo(){
+  const base=224, capacity=100, perLap=3.28, stintLaps=30, totalLaps=118;
+  const start = Date.now() - totalLaps*base*1000;
+  const et = totalLaps*base;
+  S.session = { track_name:"Circuit de la Sarthe", car_name:"Corvette Z06 LMGT3", car_class:"LMGT3",
+    planned_hours:24, fuel_capacity_l:capacity, track_temp_c:24.1, ambient_temp_c:17.6,
+    started_at:new Date(start).toISOString(), is_active:true };
+
+  const laps=[], stints=[]; let fuel=capacity, wear=[1,1,1,1], stintIdx=0;
+  for(let n=1;n<=totalLaps;n++){
+    const inStint=(n-1)%stintLaps, drv=DEMO_DRIVERS[Math.floor((n-1)/stintLaps)%6];
+    if(inStint===0){ fuel=capacity; wear=[1,1,1,1]; stintIdx++;
+      stints.push({stint_num:stintIdx,driver_name:drv.driver_name,color:drv.color,
+        started_at:new Date(start+(n-1)*base*1000).toISOString(),
+        ended_at:new Date(start+Math.min(totalLaps,(n-1+stintLaps))*base*1000).toISOString()}); }
+    const isIn=inStint===stintLaps-1, isOut=inStint===0;
+    const noise=(Math.sin(n*2.7)+Math.sin(n*0.9))*0.55;
+    const time=base+noise+(isIn?26:0)+(isOut?36:0)+inStint*0.035;
+    const used=perLap+noise*0.03;
+    fuel=Math.max(1.5,fuel-used); wear=wear.map((w,i)=>Math.max(.08,w-(i<2?0.0092:0.0078)));
+    laps.push({lap_num:n,driver_name:drv.driver_name,short_name:drv.short_name,driver_color:drv.color,
+      lap_time:+time.toFixed(3),s1:+(time*.29).toFixed(3),s2:+(time*.40).toFixed(3),s3:+(time*.31).toFixed(3),
+      is_valid:!isIn&&!isOut,is_inlap:isIn,is_outlap:isOut,under_fcy:false,position:10,
+      gap_to_leader:38.6+n*0.22,race_time_s:n*base,fuel_used_l:+used.toFixed(3),fuel_remaining_l:+fuel.toFixed(3),
+      wear_fl:+wear[0].toFixed(4),wear_fr:+wear[1].toFixed(4),wear_rl:+wear[2].toFixed(4),wear_rr:+wear[3].toFixed(4),
+      tyre_press_fl:172.4,tyre_press_fr:173.1,tyre_press_rl:169.8,tyre_press_rr:170.2,
+      max_brake_temp_c:+(560+Math.sin(n)*70).toFixed(1),
+      brake_thermal_load:+(760+inStint*22+Math.abs(noise)*140).toFixed(1),
+      brake_friction_work:+(4200+inStint*35).toFixed(1),
+      track_temp_c:24.1,ambient_temp_c:17.6,finished_at:new Date(start+n*base*1000).toISOString()});
+  }
+  S.laps=laps.slice().reverse(); S.stints=stints;
+  S.drivers=DEMO_DRIVERS.map(d=>{
+    const mine=laps.filter(l=>l.driver_name===d.driver_name), clean=mine.filter(l=>l.is_valid);
+    return {driver_name:d.driver_name,short_name:d.short_name,color:d.color,laps_done:mine.length,
+      max_total_min:840,max_stint_min:65,
+      best_lap:clean.length?Math.min(...clean.map(l=>l.lap_time)):null,
+      avg_lap:clean.length?clean.reduce((a,l)=>a+l.lap_time,0)/clean.length:null,
+      drive_time_min:+(mine.reduce((a,l)=>a+l.lap_time,0)/60).toFixed(1)};
+  });
+
+  // Feld
+  const vehicles = DEMO_FIELD.map(([cls,num,car,driver,pace],i)=>{
+    const wob=Math.sin(i*1.7)*160;
+    const totalTime=Math.max(0,et-i*9-wob);
+    const lapsDone=Math.floor(totalTime/pace);
+    return {id:100+i,driver,car:`#${num} ${car}`,car_class:cls,number:String(num),
+      laps:lapsDone,lap_dist:(totalTime%pace)/pace*13626,
+      best_lap:pace-1.6,last_lap:pace+Math.sin(i*3.1)*0.8,
+      in_pits:(i===3||i===11),pit_state:(i===3||i===11)?3:0,num_pitstops:Math.floor(lapsDone/34),
+      is_player:num===76};
+  });
+  vehicles.sort((a,b)=> (b.laps-a.laps) || (b.lap_dist-a.lap_dist));
+  vehicles.forEach((v,i)=>{ v.place=i+1; v.behind_leader = i===0?0: i*4.2+Math.abs(Math.sin(i*2.2))*9; });
+  annotateField(vehicles);
+  const wxNow = demoWeatherAt(et);
+  S.field = { vehicles, weather:wxNow, race_time_s:et, leader_laps:vehicles[0].laps, updated_at:new Date().toISOString() };
+  S.pace = vehicles.map(v=>({vehicle_id:v.id,driver_name:v.driver,car_class:v.car_class,car_number:v.number,
+    pace_samples:5,avg5:+(v.last_lap+0.35).toFixed(3),best_lap:+v.best_lap.toFixed(3),
+    last_lap:+v.last_lap.toFixed(3),laps_done:v.laps}));
+
+  S.weather=[]; for(let t=0;t<=et;t+=300) S.weather.push(Object.assign({bucket_s:t}, demoWeatherAt(t)));
+}
+function demoWeatherAt(t){
+  const night=Math.sin(t/43200*Math.PI);
+  const rain=Math.max(0,Math.sin(t/20000-1.2))*78;
+  return { track_temp_c:+(24+10*night).toFixed(2), ambient_temp_c:+(17+7*night).toFixed(2),
+    rain_pct:+rain.toFixed(2), wetness_avg_pct:+Math.max(0,Math.sin(t/20000-1.5)*62).toFixed(2),
+    wetness_min_pct:+Math.max(0,Math.sin(t/20000-1.6)*40).toFixed(2),
+    wetness_max_pct:+Math.max(0,Math.sin(t/20000-1.4)*85).toFixed(2),
+    cloud_pct:+(30+40*Math.max(0,Math.sin(t/18000))).toFixed(2),
+    wind_kmh:+(9+6*Math.sin(t/5000)).toFixed(2) };
+}
+
+/* Klassenpositionen und Klassenabstände (im Live-Betrieb macht das der Client,
+   in der Demo hier — damit beide Wege dieselbe Struktur liefern). */
+function annotateField(vehicles){
+  const byClass={};
+  vehicles.forEach(v=>{ (byClass[v.car_class||"?"] = byClass[v.car_class||"?"]||[]).push(v); });
+  Object.values(byClass).forEach(g=>{
+    g.sort((a,b)=>(a.place||999)-(b.place||999));
+    const lead=g[0];
+    g.forEach((v,i)=>{
+      v.class_position=i+1; v.class_size=g.length;
+      v.class_behind_leader = (v.behind_leader!=null&&lead.behind_leader!=null) ? +(v.behind_leader-lead.behind_leader).toFixed(3) : null;
+      v.class_behind_next = i===0?0:(v.behind_leader!=null&&g[i-1].behind_leader!=null ? +(v.behind_leader-g[i-1].behind_leader).toFixed(3) : null);
+      v.class_laps_behind_leader = Math.max(0,(lead.laps||0)-(v.laps||0));
+    });
+  });
+  return vehicles;
+}
+
+/* ---------- Strategie ---------- */
+function cleanLaps(n){ return S.laps.filter(l=>l.is_valid&&!l.is_inlap&&!l.is_outlap&&!l.under_fcy&&l.fuel_used_l>0).slice(0,n); }
+function currentStintLaps(){ const out=[]; for(const l of S.laps){ out.push(l); if(l.is_outlap) break; } return out.reverse(); }
+function CFG_stintLaps(lapAvg){ return lapAvg?Math.floor((CFG.stintMinutes*60)/lapAvg):30; }
+function fuelStrategy(){
+  const cl=cleanLaps(5); if(!cl.length) return null;
+  const avg=cl.reduce((a,l)=>a+l.fuel_used_l,0)/cl.length, worst=Math.max(...cl.map(l=>l.fuel_used_l));
+  const rem=(S.laps[0]||{}).fuel_remaining_l ?? 0;
+  const lt=cl.map(l=>l.lap_time).filter(Boolean);
+  const lapAvg=lt.length?lt.reduce((a,b)=>a+b,0)/lt.length:null;
+  const capacity=S.session?.fuel_capacity_l||100;
+  return {avg,worst,remaining:rem,samples:cl.length,lapAvg,capacity,
+    lapsLeft:rem/avg,lapsLeftSafe:rem/worst,timeLeft:lapAvg?(rem/avg)*lapAvg:null,stintNeed:avg*CFG_stintLaps(lapAvg)};
+}
+function tyreProjection(){
+  const stint=currentStintLaps().filter(l=>l.wear_fl!=null); if(stint.length<2) return null;
+  const keys=["wear_fl","wear_fr","wear_rl","wear_rr"], first=stint[0], last=stint[stint.length-1], n=stint.length-1;
+  const deg=keys.map(k=>Math.max(0,(first[k]-last[k])/n)), now=keys.map(k=>last[k]);
+  const fs=fuelStrategy(), lapsToGo=fs?Math.floor(fs.lapsLeft):0, floor=CFG.tyreFloorPct/100;
+  return {now,deg,lapsToGo,end:now.map((w,i)=>Math.max(0,w-deg[i]*lapsToGo)),
+    lapsToFloor:Math.min(...now.map((w,i)=>deg[i]>0?(w-floor)/deg[i]:999)),
+    press:[last.tyre_press_fl,last.tyre_press_fr,last.tyre_press_rl,last.tyre_press_rr],stintLaps:stint.length};
+}
+function brakeState(){
+  const last=S.laps[0]; if(!last) return null;
+  const stint=currentStintLaps().filter(l=>l.brake_thermal_load!=null), n=stint.length||1;
+  const load=stint.reduce((a,l)=>a+(l.brake_thermal_load||0),0)/n;
+  const work=stint.reduce((a,l)=>a+(l.brake_friction_work||0),0)/n;
+  const trend=stint.length>=6 ? stint.slice(-3).reduce((a,l)=>a+l.brake_thermal_load,0)/3
+                              - stint.slice(0,3).reduce((a,l)=>a+l.brake_thermal_load,0)/3 : 0;
+  return {peak:last.max_brake_temp_c,load,work,trend,laps:stint.length,
+    level: load>CFG.brakeLoadCrit?"crit": load>CFG.brakeLoadWarn?"warn":"ok"};
+}
+function raceProgress(){
+  const ses=S.session||{}, total=(ses.planned_hours||24)*3600;
+  const start=ses.started_at?new Date(ses.started_at).getTime():Date.now();
+  // Das Spiel kennt die echte Restzeit (mSessionTimeRemaining). Die zaehlt,
+  // nicht unsere Wanduhr - bei Pausen oder spaeterem Start liegt die daneben.
+  const fromSim=S.field?.session_remaining_s;
+  if(fromSim!=null && isFinite(+fromSim)){
+    const remaining=clamp(+fromSim,0,total);
+    return {total,elapsed:total-remaining,remaining,start};
+  }
+  const elapsed=clamp((Date.now()-start)/1000,0,total);
+  return {total,elapsed,remaining:total-elapsed,start};
+}
+
+/* ---------- Feld ---------- */
+function fieldVehicles(){
+  const v = S.field?.vehicles || [];
+  return Array.isArray(v) ? v.slice().sort((a,b)=>(a.place||999)-(b.place||999)) : [];
+}
+function ownVehicle(){
+  const v=fieldVehicles();
+  return v.find(x=>x.is_player) || v.find(x=>String(x.number)===String(CFG.ownCarNumber)) || null;
+}
+function paceOf(id){ return S.pace.find(p=>p.vehicle_id===id) || null; }
+function bestOf(p, v){
+  // Echte Session-Bestzeit (mBestLapTime aus dem Scoring = v.best_lap) hat Vorrang
+  // vor der aus erfassten Runden gerechneten (p.best_lap): letztere kennt nur
+  // Runden seit Client-Start und ist daher nie schneller als die echte. Minimum
+  // beider gueltigen Werte, damit auch bei fehlendem Scoring-Wert die schnellste
+  // bekannte Zeit steht.
+  const c=[p&&p.best_lap, v&&v.best_lap].filter(x=>typeof x==="number"&&x>0);
+  return c.length?Math.min(...c):null;
+}
+function classes(){
+  const set=[...new Set(fieldVehicles().map(v=>v.car_class||"?"))];
+  const order=["HYPERCAR","LMH","LMDH","LMP2","LMP3","LMGT3","GTE","GT3"];
+  set.sort((a,b)=>{ const ia=order.indexOf(a), ib=order.indexOf(b);
+    return (ia<0?99:ia)-(ib<0?99:ib) || a.localeCompare(b); });
+  return set;
+}
+
+/* Wo kommst du nach dem Stopp raus?
+
+   Wichtig: gerechnet wird mit der Position AUF DER STRECKE (mLapDist),
+   nicht mit dem Abstand zur Klassifikation. Bei einem 24h-Rennen mit
+   Rundenrueckstaenden sagt der Klassifikationsabstand nichts darueber,
+   wer beim Rauskommen tatsaechlich neben dir ist. */
+function trackLength(){
+  // Das Spiel liefert die Streckenlaenge selbst (scoringInfo.mLapDist).
+  // Die frueher hier benutzte Schaetzung aus dem groessten mLapDist war
+  // in der ersten Rennminute regelmaessig daneben.
+  if(S.field?.track_length_m) return +S.field.track_length_m;
+  const d=fieldVehicles().map(v=>+v.lap_dist).filter(isFinite);
+  return d.length ? Math.max(...d)*1.02 : null;
+}
+function ownLapTime(){
+  const p=ownVehicle()?paceOf(ownVehicle().id):null;
+  const fs=fuelStrategy();
+  return p?.avg5 || fs?.lapAvg || (S.laps[0]||{}).lap_time || null;
+}
+/* Abstand auf der Strecke in Sekunden. Positiv = das Auto ist hinter uns. */
+function trackGaps(){
+  const own=ownVehicle(), L=trackLength(), lap=ownLapTime();
+  if(!own||!L||!lap||own.lap_dist==null) return null;
+  return fieldVehicles().filter(v=>v.id!==own.id && v.lap_dist!=null).map(v=>{
+    let d=(+own.lap_dist)-(+v.lap_dist);
+    if(d<0) d+=L;
+    return {v, gap:+((d/L)*lap).toFixed(2)};
+  });
+}
+function pitExit(){
+  const own=ownVehicle(); if(!own) return null;
+  const loss=(+$("in-pitloss").value||0)+(+$("in-service").value||0);
+
+  // Klassifikation: wer springt vor uns, weil wir Zeit verlieren
+  const all=fieldVehicles().filter(v=>v.behind_leader!=null);
+  const ownGap=own.behind_leader||0;
+  const sameLap=all.filter(v=>v.id!==own.id && (v.laps||0)===(own.laps||0) && !v.in_pits);
+  const passingClass=sameLap.filter(v=>((v.behind_leader||0)-ownGap)>0 && ((v.behind_leader||0)-ownGap)<loss);
+  const sameClassPassing=passingClass.filter(v=>v.car_class===own.car_class).length;
+
+  // Verkehr: echte Streckenposition
+  const tg=trackGaps();
+  let carAhead=null, carBehind=null, passing=[], usable=false;
+  if(tg){
+    usable=true;
+    const behind=tg.filter(r=>!r.v.in_pits).sort((a,b)=>a.gap-b.gap);
+    passing=behind.filter(r=>r.gap<loss);
+    const aheadCand=passing.slice().sort((a,b)=>b.gap-a.gap)[0];
+    const behindCand=behind.filter(r=>r.gap>=loss)[0];
+    carAhead=aheadCand?{v:aheadCand.v, gap:-(loss-aheadCand.gap)}:null;
+    carBehind=behindCand?{v:behindCand.v, gap:behindCand.gap-loss}:null;
+  }
+  const lap=ownLapTime();
+  const overLap = lap ? loss >= lap : false;
+  return {own, loss, passing, usable, overLap, lapTime:lap,
+    newPos:(own.place||1)+passingClass.length,
+    newClassPos:(own.class_position||1)+sameClassPassing,
+    carAhead, carBehind,
+    trafficClasses:[...new Set(passing.map(r=>r.v.car_class))]};
+}
+
+/* ---------- Rendern ---------- */
+function render(){
+  const last=S.laps[0]||{}, ses=S.session||{}, rp=raceProgress();
+  $("m-track").textContent=ses.track_name||"—";
+  $("m-lap").textContent=last.lap_num??"—";
+  $("m-remaining").textContent=fmtDur(rp.remaining).slice(0,5);
+  if(S.screen==="overview"){ renderRing(); renderTiles(); renderFuel(); renderTyres(); renderBrakes(); renderDrivers(); renderLaps(); }
+  if(S.screen==="tower"){ renderClassbar(); renderTower(); renderPitExit(); }
+  if(S.screen==="weather"){ renderWeather(); }
+  if(S.screen==="track"){ renderTrack(); }
+  if(S.screen==="damage"){ renderDamage(); }
+}
+
+/* --- Schaeden --- */
+// Zustand in % (100 = intakt). Bremse ist Restprofil (direkt), Aero/Federung
+// sind Schaden -> 100 minus Schaden.
+function dmgState(v,isDamage){ return v==null?null:clamp(isDamage?100-v:v,0,100); }
+function dmgColor(c){ return c==null?"#3a3f47":c<CFG.dmgCritPct?"#ff4d4d":c<CFG.dmgWarnPct?"#ffb020":"#35d07f"; }
+function dmgTxt(c){ return c==null?"\u2014":Math.round(c)+"%"; }
+function dentColor(s){ return s==null?"#3a3f47":s>=2?"#ff4d4d":s>=1?"#ffb020":"#35d07f"; }
+function dentTxt(s){ return s==null?"\u2014":["intakt","leicht","schwer"][Math.min(s,2)]; }
+function renderDamage(){
+  const L=S.laps[0]||{};
+  const num=v=>v==null?null:+v;
+  const bool=v=>v===true||v==="true"||v===1||v==="1";
+  const P={
+    bfl:dmgState(L.brake_pad_fl,false), bfr:dmgState(L.brake_pad_fr,false),
+    brl:dmgState(L.brake_pad_rl,false), brr:dmgState(L.brake_pad_rr,false),
+    sfl:dmgState(L.suspension_fl,true), sfr:dmgState(L.suspension_fr,true),
+    srl:dmgState(L.suspension_rl,true), srr:dmgState(L.suspension_rr,true),
+    ffl:bool(L.flat_fl), ffr:bool(L.flat_fr), frl:bool(L.flat_rl), frr:bool(L.flat_rr),
+    df:num(L.dent_front), dr:num(L.dent_rear), detached:bool(L.detached), aero:num(L.aero_damage_pct) };
+  const op=c=>c==null?".22":".92";
+  // Rad = Bremsbelag; roter "PLATT"-Streifen bei mFlat (binaer).
+  const wheel=(cx,cy,c,flat)=>{
+    let s=`<rect x="${cx-20}" y="${cy-40}" width="40" height="80" rx="13" fill="${dmgColor(c)}" opacity="${op(c)}" stroke="#0a0b0d" stroke-width="2"/>`
+        +`<text x="${cx}" y="${cy+5}" text-anchor="middle" class="dmg-num">${dmgTxt(c)}</text>`;
+    if(flat) s+=`<rect x="${cx-20}" y="${cy-40}" width="40" height="14" rx="6" fill="#ff4d4d"/>`
+        +`<text x="${cx}" y="${cy-46}" text-anchor="middle" class="dmg-cap" style="fill:#ff4d4d">PLATT</text>`;
+    return s;
+  };
+  const chev=(x,y,dir,c)=>`<path d="M${x},${y-15} L${x+dir*16},${y} L${x},${y+15}" fill="none" stroke="${dmgColor(c)}" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" opacity="${op(c)}"/>`;
+  const snum=(x,y,c)=>`<text x="${x}" y="${y}" text-anchor="middle" class="dmg-num sm">${dmgTxt(c)}</text>`;
+  // Front-/Heckbalken = Schadensstufe aus mDentSeverity (intakt/leicht/schwer).
+  const endBar=(y,sev,capY,cap)=>
+    `<rect x="104" y="${y}" width="152" height="26" rx="10" fill="${dentColor(sev)}" opacity="${sev==null?'.35':'.92'}" stroke="#0a0b0d" stroke-width="2"/>`
+    +`<text x="180" y="${y+19}" text-anchor="middle" class="dmg-num">${dentTxt(sev)}</text>`
+    +`<text x="180" y="${capY}" text-anchor="middle" class="dmg-cap">${cap}</text>`;
+  const FY=214, RY=430;
+  $("dmg-svg").innerHTML=`
+    <rect x="86" y="70" width="188" height="500" rx="74" fill="#191c21" stroke="#3a4048" stroke-width="2.5"/>
+    ${endBar(44,P.df,34,'FRONT')}
+    ${endBar(576,P.dr,620,'HECK')}
+    ${wheel(104,FY,P.bfl,P.ffl)}${wheel(256,FY,P.bfr,P.ffr)}
+    ${wheel(104,RY,P.brl,P.frl)}${wheel(256,RY,P.brr,P.frr)}
+    ${chev(158,FY,1,P.sfl)}${chev(202,FY,-1,P.sfr)}${snum(158,FY-26,P.sfl)}${snum(202,FY-26,P.sfr)}
+    ${chev(158,RY,1,P.srl)}${chev(202,RY,-1,P.srr)}${snum(158,RY-26,P.srl)}${snum(202,RY-26,P.srr)}
+    <text x="180" y="310" text-anchor="middle" class="dmg-cap">RÄDER = BREMSBELAG</text>
+    <text x="180" y="330" text-anchor="middle" class="dmg-cap">&gt;-&lt; = FEDERUNG</text>
+    ${P.detached?`<text x="180" y="356" text-anchor="middle" class="dmg-cap" style="fill:#ff4d4d;font-size:13px;letter-spacing:1px">TEIL ABGERISSEN</text>`:''}`;
+  renderRepair(L,P);
+}
+function renderRepair(L,P){
+  const items=[];
+  if(P.df!=null && P.df>=1) items.push({name:`Frontflügel (${dentTxt(P.df)})`, sec:CFG.repairFrontWingSec});
+  if(P.dr!=null && P.dr>=1) items.push({name:`Heckflügel (${dentTxt(P.dr)})`, sec:CFG.repairRearWingSec});
+  const dmg=c=>c==null?null:100-c;
+  for(const [n,c] of [["Federung VL",P.sfl],["Federung VR",P.sfr],["Federung HL",P.srl],["Federung HR",P.srr]]){
+    const d=dmg(c); if(d!=null && d>=CFG.dmgRepairMinPct) items.push({name:n, dmgpct:d, sec:d*CFG.repairSuspSecPerPct}); }
+  const flats=[["VL",P.ffl],["VR",P.ffr],["HL",P.frl],["HR",P.frr]].filter(([n,v])=>v).map(b=>b[0]);
+  const lowBrakes=[["VL",P.bfl],["VR",P.bfr],["HL",P.brl],["HR",P.brr]].filter(([n,c])=>c!=null && c<CFG.dmgCritPct).map(b=>b[0]);
+  const warnings=[];
+  if(P.detached) warnings.push({txt:"Teil abgerissen", tag:"Boxenstopp"});
+  if(flats.length) warnings.push({txt:`Reifen platt (${flats.join(", ")})`, tag:"Reifenstopp"});
+  if(lowBrakes.length) warnings.push({txt:`Bremsbelag niedrig (${lowBrakes.join(", ")})`, tag:"Reifenstopp"});
+  $("dmg-when").textContent = L.lap_num ? `Runde ${L.lap_num}` : "";
+  const box=$("dmg-repair");
+  const pit=pitEstimateHtml(L);
+  if(!items.length && !warnings.length){ box.innerHTML=`<div class="dmg-ok">Keine Reparatur noetig &mdash; Auto intakt.</div>`+pit; $("dmg-eta").textContent="0 s"; return; }
+  let html=items.sort((a,b)=>b.sec-a.sec).map(it=>{
+    const right=it.dmgpct!=null?`${Math.round(it.dmgpct)}% Schaden`:"beschädigt";
+    return `<div class="dmg-row"><span>${it.name}</span><span class="dmg-rowpct">${right}</span><span class="dmg-rowsec">~${Math.round(it.sec)} s</span></div>`;
+  }).join("");
+  for(const w of warnings) html+=`<div class="dmg-row warn"><span>${w.txt}</span><span class="dmg-rowpct">&mdash;</span><span class="dmg-rowsec">${w.tag}</span></div>`;
+  box.innerHTML=html+pit;
+  $("dmg-eta").textContent = `~${Math.round(items.reduce((a,it)=>a+it.sec,0))} s`;
+}
+// Live geplante Boxenstoppdauer aus dem Spiel (aktuelle Pit-Menue-Auswahl).
+function pitEstimateHtml(L){
+  if(L.pit_estimate_s==null) return "";
+  const t=+L.pit_estimate_s;
+  const teile=[["Sprit",L.pit_est_fuel],["Reifen",L.pit_est_tires],["Schaden",L.pit_est_damage],["Fahrer",L.pit_est_driver]]
+    .filter(([n,v])=>v!=null && +v>0).map(([n,v])=>`${n} ${(+v).toFixed(1)}`);
+  return `<div class="dmg-row" style="margin-top:12px;border-top:1px solid var(--line);padding-top:12px">
+    <span>Boxenstopp lt. Spiel</span>
+    <span class="dmg-rowpct" style="color:var(--muted)">${teile.join(" · ")||"nur Durchfahrt"}</span>
+    <span class="dmg-rowsec" style="color:var(--turq)">${t.toFixed(1)} s</span></div>`;
+}
+
+/* --- Ring --- */
+function polar(cx,cy,r,f){ const a=f*Math.PI*2-Math.PI/2; return [cx+r*Math.cos(a), cy+r*Math.sin(a)]; }
+function arcPath(cx,cy,r,f0,f1){ const [x0,y0]=polar(cx,cy,r,f0),[x1,y1]=polar(cx,cy,r,f1);
+  return `M ${x0.toFixed(2)} ${y0.toFixed(2)} A ${r} ${r} 0 ${(f1-f0)>0.5?1:0} 1 ${x1.toFixed(2)} ${y1.toFixed(2)}`; }
+function renderRing(){
+  const {total,elapsed,remaining,start}=raceProgress();
+  const ticks=$("ring-ticks"), stintsG=$("ring-stints"), fuelG=$("ring-fuel"), needle=$("ring-needle");
+  ticks.innerHTML=stintsG.innerHTML=fuelG.innerHTML=needle.innerHTML="";
+  const hours=Math.round(total/3600);
+  for(let h=0;h<hours;h++){
+    const f=h/hours, major=h%3===0;
+    const [x0,y0]=polar(200,200,major?168:172,f), [x1,y1]=polar(200,200,178,f);
+    ticks.appendChild(svgEl("line",{x1:x0,y1:y0,x2:x1,y2:y1,stroke:major?"#4a515c":"#262a31","stroke-width":major?1.6:1}));
+    if(major){ const [tx,ty]=polar(200,200,190,f);
+      const t=svgEl("text",{x:tx,y:ty+3.5,"text-anchor":"middle",class:"ringmuted"});
+      t.textContent=String(h).padStart(2,"0"); ticks.appendChild(t); }
+  }
+  (S.stints||[]).forEach(st=>{
+    const f0=clamp((new Date(st.started_at).getTime()-start)/1000/total,0,1);
+    const f1=clamp(((st.ended_at?new Date(st.ended_at).getTime():Date.now())-start)/1000/total,0,1);
+    if(f1-f0<0.001) return;
+    const p=svgEl("path",{d:arcPath(200,200,150,f0,f1),stroke:st.color||"#ff6a13","stroke-width":26,fill:"none",opacity:.92});
+    const ti=svgEl("title",{}); ti.textContent=`${st.driver_name} · Stint ${st.stint_num}`; p.appendChild(ti);
+    stintsG.appendChild(p);
+  });
+  const fs=fuelStrategy();
+  if(fs&&fs.lapAvg){
+    const f=clamp((elapsed+fs.lapsLeft*fs.lapAvg)/total,0,1);
+    const [x0,y0]=polar(200,200,134,f),[x1,y1]=polar(200,200,166,f);
+    fuelG.appendChild(svgEl("line",{x1:x0,y1:y0,x2:x1,y2:y1,stroke:"#1fd4c3","stroke-width":2.4,"stroke-dasharray":"4 3"}));
+  }
+  const f=elapsed/total;
+  const [nx0,ny0]=polar(200,200,128,f),[nx1,ny1]=polar(200,200,172,f),[cx,cy]=polar(200,200,150,f);
+  needle.appendChild(svgEl("line",{x1:nx0,y1:ny0,x2:nx1,y2:ny1,stroke:"#e9ecf1","stroke-width":2.6}));
+  needle.appendChild(svgEl("circle",{cx,cy,r:5,fill:"#e9ecf1"}));
+  $("ring-remaining").textContent=fmtDur(remaining).slice(0,5);
+  $("ring-elapsed").textContent=`${fmtDur(elapsed)} GEFAHREN`;
+  $("ring-legend").innerHTML=(S.drivers||[]).map(d=>`<span><i class="chip" style="background:${d.color||"#ff6a13"}"></i>${d.driver_name}</span>`).join("");
+}
+
+function renderTiles(){
+  const last=S.laps[0]||{}, fs=fuelStrategy(), own=ownVehicle();
+  $("t-driver").textContent=last.driver_name||"—";
+  const stint=currentStintLaps(), stintMin=stint.reduce((a,l)=>a+(l.lap_time||0),0)/60;
+  $("t-driver-sub").textContent=stint.length?`Stint ${stint.length} Rd · ${stintMin.toFixed(0)} von ${CFG.stintMinutes} min`:"—";
+  if(own){
+    $("t-pos").textContent=`P${own.place}`;
+    $("t-gap").textContent=`Klasse P${own.class_position} von ${own.class_size} · ${fmtGap(own.class_behind_leader)} s`;
+  }else{
+    $("t-pos").textContent=last.position??"—";
+    $("t-gap").textContent=last.gap_to_leader!=null?`${fmtDelta(+last.gap_to_leader)} s auf Führenden`:"—";
+  }
+  if(fs){
+    $("t-fuel").innerHTML=`${fs.remaining.toFixed(1)}<small>l</small>`;
+    $("t-fuel-sub").textContent=`${(100*fs.remaining/fs.capacity).toFixed(0)} % im Tank · ${fs.avg.toFixed(2)} l/Rd`;
+    $("tile-fuel").className="tile "+(fs.lapsLeft<3?"crit":fs.lapsLeft<6?"warn":"");
+    const l=Math.floor(fs.lapsLeftSafe);
+    $("t-window").textContent=`in ${l} Rd`;
+    $("t-window-sub").textContent=fs.timeLeft?`≈ ${fmtDur(fs.timeLeft)} · sicher gerechnet`:"—";
+    $("tile-window").className="tile "+(l<=2?"crit":l<=5?"warn":"turq");
+  }
+  $("t-last").textContent=fmtLap(last.lap_time);
+  const clean=S.laps.filter(l=>l.is_valid&&l.lap_time), best=clean.length?Math.min(...clean.map(l=>l.lap_time)):null;
+  $("t-last-sub").textContent=(best&&last.lap_time)?`${fmtDelta(last.lap_time-best)} s auf Teambestzeit`:"—";
+  $("t-best").textContent=fmtLap(best);
+  const h=best?clean.find(l=>l.lap_time===best):null;
+  $("t-best-sub").textContent=h?`${h.driver_name} · Runde ${h.lap_num}`:"—";
+}
+function renderFuel(){
+  const fs=fuelStrategy();
+  if(!fs){ ["f-avg","f-worst","f-laps","f-time","f-refuel"].forEach(i=>$(i).textContent="—"); return; }
+  $("f-avg").textContent=`${fs.avg.toFixed(3)} l  (${fs.samples} Rd)`;
+  $("f-worst").textContent=`${fs.worst.toFixed(3)} l`;
+  $("f-laps").textContent=`${fs.lapsLeft.toFixed(1)}  ·  sicher ${fs.lapsLeftSafe.toFixed(1)}`;
+  $("f-time").textContent=fs.timeLeft?fmtDur(fs.timeLeft):"—";
+  $("f-bar").style.width=`${clamp(100*fs.remaining/fs.capacity,0,100)}%`;
+  $("f-bar").style.background=fs.lapsLeft<3?"var(--red)":fs.lapsLeft<6?"var(--amber)":"var(--orange)";
+  $("f-refuel").textContent=`${clamp(fs.stintNeed,0,fs.capacity).toFixed(1)} l für ${CFG_stintLaps(fs.lapAvg)} Runden`;
+}
+function renderTyres(){
+  const t=tyreProjection(), box=$("tyres"), names=["VORNE LINKS","VORNE RECHTS","HINTEN LINKS","HINTEN RECHTS"];
+  if(!t){ box.innerHTML=`<div class="empty" style="grid-column:1/-1">Stint zu kurz für eine Projektion</div>`;
+    $("ty-deg").textContent="—"; $("ty-limit").textContent="—"; return; }
+  box.innerHTML=names.map((n,i)=>{
+    const now=t.now[i]*100, end=t.end[i]*100, cls=end<20?"critc":end<35?"warnc":"good";
+    return `<div class="wheel"><div class="k">${n}</div>
+      <div class="v ${cls}">${now.toFixed(1)}<span style="font-size:13px;color:var(--muted)"> %</span></div>
+      <div class="bar"><i style="width:${clamp(now,0,100)}%;background:${end<20?"var(--red)":end<35?"var(--amber)":"var(--turq)"}"></i></div>
+      <div class="p">Stintende ≈ ${end.toFixed(1)} % · ${t.press[i]!=null?(+t.press[i]).toFixed(0)+" kPa":"—"}</div></div>`;
+  }).join("");
+  $("ty-deg").textContent=`${(t.deg.reduce((a,b)=>a+b,0)/4*100).toFixed(3)} % · über ${t.stintLaps} Runden`;
+  // Restrunden bis zu jeder Schwelle: die am schnellsten verschleissende Ecke bestimmt.
+  const thr=(CFG.tyreThresholds||[70,50,30]).map(p=>{
+    const f=p/100, laps=Math.min(...t.now.map((w,i)=>t.deg[i]>0?(w-f)/t.deg[i]:Infinity));
+    return {p,laps};
+  });
+  if(!thr.some(x=>isFinite(x.laps))){ $("ty-limit").innerHTML="kein messbarer Abbau"; }
+  else $("ty-limit").innerHTML = thr.map(x=>{
+    const cls=!isFinite(x.laps)?"":(x.laps<5?"critc":x.laps<12?"warnc":"");
+    const val=!isFinite(x.laps)?"—":(x.laps<=0?"erreicht":x.laps.toFixed(0));
+    return `<span class="${cls}">${x.p}\u2009%: ${val}</span>`;
+  }).join('<span style="color:var(--muted)">  ·  </span>');
+}
+function renderBrakes(){
+  const b=brakeState();
+  if(!b){ $("b-verdict").textContent="—"; $("b-bar").style.width="0%"; return; }
+  $("b-bar").style.width=clamp(100*b.load/CFG.brakeLoadCrit,0,100)+"%";
+  $("b-bar").style.background=b.level==="crit"?"var(--red)":b.level==="warn"?"var(--amber)":"var(--green)";
+  const v=$("b-verdict");
+  v.textContent=b.level==="crit"?"Fading möglich — Fahrer informieren":b.level==="warn"?"erhöht — Bremspunkte beobachten":"im Fenster";
+  v.className=b.level==="crit"?"critc":b.level==="warn"?"warnc":"good";
+}
+function renderDrivers(){
+  const tb=$("drivers");
+  if(!S.drivers.length){ tb.innerHTML=`<tr><td colspan="5" class="empty">Noch keine Rundendaten</td></tr>`; return; }
+  const cur=(S.laps[0]||{}).driver_name;
+  tb.innerHTML=S.drivers.map(d=>{
+    const limit=d.max_total_min||840, pct=clamp(100*(d.drive_time_min||0)/limit,0,100);
+    const col=pct>92?"var(--red)":pct>75?"var(--amber)":(d.color||"var(--orange)");
+    return `<tr><td><div class="name"><i style="background:${d.color||"var(--orange)"}"></i>
+      <div>${d.driver_name}${d.driver_name===cur?' <span class="tag now">am Steuer</span>':""}</div></div></td>
+      <td class="num">${d.laps_done??0}</td><td class="num">${fmtLap(d.best_lap)}</td><td class="num">${fmtLap(d.avg_lap)}</td>
+      <td style="min-width:150px"><div style="font-family:var(--mono);font-size:12px">${Math.round(d.drive_time_min||0)} / ${limit} min</div>
+      <div class="bar"><i style="width:${pct}%;background:${col}"></i></div></td></tr>`;
+  }).join("");
+}
+function renderLaps(){
+  const tb=$("laps");
+  if(!S.laps.length){ tb.innerHTML=`<tr><td colspan="8" class="empty">Noch keine Rundendaten</td></tr>`; return; }
+  const clean=S.laps.filter(l=>l.is_valid&&l.lap_time), best=clean.length?Math.min(...clean.map(l=>l.lap_time)):null;
+  tb.innerHTML=S.laps.slice(0,80).map(l=>{
+    const flag=l.is_inlap?'<span class="tag">In</span>':l.is_outlap?'<span class="tag">Out</span>':l.under_fcy?'<span class="tag">FCY</span>':"";
+    return `<tr><td class="num" style="color:var(--muted)">${l.lap_num}</td>
+      <td><div class="name"><i style="background:${l.driver_color||"var(--orange)"};height:14px"></i>${l.short_name||l.driver_name||"—"} ${flag}</div></td>
+      <td class="num" style="${best&&l.lap_time===best?"color:var(--turq);font-weight:600":""}">${fmtLap(l.lap_time)}</td>
+      <td class="num">${l.s1?(+l.s1).toFixed(3):"—"}</td><td class="num">${l.s2?(+l.s2).toFixed(3):"—"}</td>
+      <td class="num">${l.s3?(+l.s3).toFixed(3):"—"}</td>
+      <td class="num">${l.fuel_used_l?(+l.fuel_used_l).toFixed(2):"—"}</td>
+      <td class="num">${l.wear_fl!=null?(l.wear_fl*100).toFixed(1)+" %":"—"}</td></tr>`;
+  }).join("");
+}
+
+/* --- Schirm 2 --- */
+function renderClassbar(){
+  const cls=classes(), bar=$("classbar");
+  const all=["ALLE",...cls];
+  if(!cls.length){ bar.innerHTML=""; return; }
+  bar.innerHTML=all.map(c=>`<button data-class="${c}" aria-pressed="${S.classFilter===c}">${c}</button>`).join("");
+  bar.querySelectorAll("button").forEach(b=>b.addEventListener("click",()=>{
+    S.classFilter=b.dataset.class; renderClassbar(); renderTower(); }));
+}
+function renderTower(){
+  const tb=$("tower"), veh=fieldVehicles();
+  if(!veh.length){ tb.innerHTML=`<tr><td colspan="13" class="empty">Warte auf Felddaten vom Client — läuft <code>run_client.py</code>?</td></tr>`;
+    $("tower-count").textContent="—"; return; }
+  const own=ownVehicle(), ownPace=own?paceOf(own.id):null;
+  const filtered=S.classFilter==="ALLE"?veh:veh.filter(v=>(v.car_class||"?")===S.classFilter);
+  $("tower-count").textContent=`${veh.length} Fahrzeuge · ${classes().length} Klassen`;
+
+  const rows=[]; let lastClass=null;
+  const list=S.classFilter==="ALLE"
+    ? [...filtered].sort((a,b)=>{ const ci=classes().indexOf(a.car_class)-classes().indexOf(b.car_class);
+        return ci||((a.class_position||99)-(b.class_position||99)); })
+    : [...filtered].sort((a,b)=>(a.class_position||99)-(b.class_position||99));
+
+  list.forEach(v=>{
+    if(S.classFilter==="ALLE" && v.car_class!==lastClass){
+      lastClass=v.car_class;
+      rows.push(`<tr class="classhead"><td colspan="13">${v.car_class||"ohne Klasse"} · ${v.class_size||""} Fahrzeuge</td></tr>`);
+    }
+    const p=paceOf(v.id);
+    const avg5=p?.avg5 ?? null;
+    const dPace=(avg5&&ownPace?.avg5)? avg5-ownPace.avg5 : null;
+    const isMe=own&&v.id===own.id;
+    const status=v.in_pits?'<span class="tag pit">Box</span>'
+      :(v.laps_behind_leader>0?`<span class="tag">${v.class_laps_behind_leader||v.laps_behind_leader} Rd</span>`:'');
+    rows.push(`<tr class="${isMe?"me":""} ${v.in_pits?"pitting":""}">
+      <td class="num"><span class="pos">${v.place??"—"}</span></td>
+      <td class="num"><span class="clspos">${v.class_position??"—"}</span></td>
+      <td><span class="numplate">${v.number??"—"}</span></td>
+      <td>${v.driver||"—"}${isMe?' <span class="tag now">wir</span>':""}</td>
+      <td style="color:var(--muted)">${(v.car||"").replace(/^#\d+\s*/,"")}</td>
+      <td class="num">${v.laps??"—"}</td>
+      <td class="num">${fmtLap(p?.last_lap ?? v.last_lap)}</td>
+      <td class="num turqc">${fmtLap(bestOf(p,v))}</td>
+      <td class="num">${avg5?fmtLap(avg5):"—"}</td>
+      <td class="num">${v.class_position===1?"—":fmtGap(v.class_behind_next)}</td>
+      <td class="num">${v.class_position===1?"—":fmtGap(v.class_behind_leader)}</td>
+      <td class="num ${dPace==null?"":dPace<0?"critc":"good"}">${dPace==null?"—":fmtDelta(dPace)}</td>
+      <td>${status}</td></tr>`);
+  });
+  tb.innerHTML=rows.join("");
+}
+function renderPitExit(){
+  const pe=pitExit();
+  $("pe-measured").textContent=S.pitLossMeasured!=null?`${S.pitLossMeasured.toFixed(1)} s`:"noch kein Stopp gemessen";
+  if(!pe){ $("pe-pos").textContent="—"; $("pe-sub").textContent="Kein eigenes Fahrzeug im Feld gefunden";
+    $("pe-cars").innerHTML=""; $("pe-traffic").textContent="—"; $("pe-rivals").innerHTML=`<div class="empty">—</div>`; return; }
+
+  $("pe-pos").textContent=`P${pe.newPos}  ·  Klasse P${pe.newClassPos}`;
+  const lost=pe.newPos-(pe.own.place||pe.newPos);
+  $("pe-sub").textContent = lost>0
+    ? `${lost} Position${lost>1?"en":""} verloren bei ${pe.loss.toFixed(0)} s Boxenverlust`
+    : `keine Position verloren bei ${pe.loss.toFixed(0)} s Boxenverlust`;
+
+  const row=(v,gap,cls="")=>`<div class="exitcar ${cls}">
+      <span class="numplate">${v?.number??"—"}</span>
+      <span>${v?.driver??"—"}</span>
+      <span class="tag">${v?.car_class??""}</span>
+      <span class="g">${gap}</span></div>`;
+  const parts=[];
+  if(!pe.usable) parts.push(`<div class="empty">Streckenposition fehlt — Verkehr nicht berechenbar</div>`);
+  if(pe.carAhead) parts.push(row(pe.carAhead.v, `${Math.abs(pe.carAhead.gap).toFixed(1)} s vor dir`));
+  parts.push(`<div class="exitcar slot"><span class="numplate">${pe.own.number??"—"}</span>
+    <span>hier kommst du raus</span><span class="g">P${pe.newPos}</span></div>`);
+  if(pe.carBehind) parts.push(row(pe.carBehind.v, `${pe.carBehind.gap.toFixed(1)} s hinter dir`));
+  $("pe-cars").innerHTML=parts.join("");
+
+  $("pe-traffic").textContent = pe.overLap ? "Boxenverlust länger als eine Runde — volle Runde weg"
+    : !pe.usable ? "keine Streckenposition im Datensatz"
+    : pe.passing.length ? `${pe.passing.length} Auto${pe.passing.length>1?"s":""} · ${pe.trafficClasses.join(", ")}`
+    : "freie Strecke";
+
+  const own=pe.own;
+  const rivals=fieldVehicles().filter(v=>v.car_class===own.car_class
+    && (v.class_position||99)<(own.class_position||99) && (v.laps||0)===(own.laps||0));
+  $("pe-rivals").innerHTML = rivals.length ? rivals.map(v=>{
+    const gapToUs=(own.behind_leader||0)-(v.behind_leader||0);       // positiv = er ist vor uns
+    const after=pe.loss-gapToUs;                                      // positiv = kommt hinter uns raus
+    return `<div class="exitcar"><span class="numplate">${v.number}</span><span>${v.driver}</span>
+      <span class="g ${after>0?"good":"critc"}">${after>0?"+":""}${after.toFixed(1)} s ${after>0?"hinter":"vor"} dir</span></div>`;
+  }).join("") : `<div class="empty">Keine Klassengegner vor dir</div>`;
+}
+
+/* --- Schirm 3 --- */
+function renderWeather(){
+  const w=(S.field&&S.field.weather)||{};
+  const set=(id,val,dec=1)=>{ const el=$(id); const n=(val==null||!isFinite(val))?null:+val;
+    el.innerHTML = n==null ? "—"+el.innerHTML.replace(/^[^<]*/,"") : n.toFixed(dec)+el.innerHTML.replace(/^[^<]*/,""); };
+  set("w-track",w.track_temp_c); set("w-air",w.ambient_temp_c);
+  set("w-rain",w.rain_pct,0); set("w-wet",w.wetness_avg_pct,0);
+  set("w-cloud",w.cloud_pct??w.dark_cloud,0); set("w-wind",w.wind_kmh,1);
+
+  const tr=S.weather||[];
+  const trend=(key,label,unit="°C")=>{
+    if(tr.length<2) return "—";
+    const cut=tr.filter(p=>p.bucket_s>=(tr[tr.length-1].bucket_s-3600));
+    if(cut.length<2) return "—";
+    const d=(cut[cut.length-1][key]??0)-(cut[0][key]??0);
+    return `${d>=0?"+":""}${d.toFixed(1)} ${unit} in 1 h`;
+  };
+  $("w-track-tr").textContent=trend("track_temp_c");
+  $("w-air-tr").textContent=trend("ambient_temp_c");
+  $("w-rain-tr").textContent=trend("rain_pct","","%");
+  $("w-wet-tr").textContent=trend("wetness_avg_pct","","%");
+
+  $("w-wetminmax").textContent = (w.wetness_min_pct!=null&&w.wetness_max_pct!=null)
+    ? `${(+w.wetness_min_pct).toFixed(0)} % / ${(+w.wetness_max_pct).toFixed(0)} %` : "—";
+  $("w-track1h").textContent=trend("track_temp_c");
+  const last30=tr.filter(p=>p.bucket_s>=((tr[tr.length-1]?.bucket_s||0)-1800));
+  $("w-wettrend").textContent = last30.length>=2
+    ? `${(((last30[last30.length-1].wetness_avg_pct||0)-(last30[0].wetness_avg_pct||0))).toFixed(1)} %` : "—";
+  const tt=+w.track_temp_c;
+  $("w-press").textContent = isFinite(tt)
+    ? (tt<18?"kalt — Druck eher hoch ansetzen":tt>34?"heiß — Kaltdruck absenken":"im normalen Fenster") : "—";
+
+  const wet=+(w.wetness_avg_pct??0);
+  const rec=$("rec-box").querySelector(".ic");
+  if(wet<10){ rec.style.background="var(--green)"; $("rec-t").textContent="Slick"; $("rec-s").textContent="Strecke trocken, Streckenmittel unter 10 % Nässe"; }
+  else if(wet<40){ rec.style.background="var(--amber)"; $("rec-t").textContent="Intermediate"; $("rec-s").textContent="Übergangsfenster — Fahrerrückmeldung entscheidet"; }
+  else { rec.style.background="var(--violet)"; $("rec-t").textContent="Regenreifen"; $("rec-s").textContent="Strecke nass, stehendes Wasser möglich"; }
+
+  drawWeatherChart();
+}
+function drawWeatherChart(){
+  const svg=$("w-chart"), W=900, H=320, L=44, R=44, T=16, B=30;
+  svg.innerHTML="";
+  const d=S.weather||[];
+  if(d.length<2){ const t=svgEl("text",{x:W/2,y:H/2,"text-anchor":"middle",class:"axis"});
+    t.textContent="Noch keine Wetterhistorie — der Client schreibt eine Zeile pro Minute"; svg.appendChild(t); return; }
+
+  const xs=d.map(p=>+p.bucket_s), x0=Math.min(...xs), x1=Math.max(...xs);
+  const temps=d.flatMap(p=>[+p.track_temp_c,+p.ambient_temp_c]).filter(isFinite);
+  const tMin=Math.floor(Math.min(...temps)-2), tMax=Math.ceil(Math.max(...temps)+2);
+  const X=v=>L+(v-x0)/Math.max(1,(x1-x0))*(W-L-R);
+  const Y=v=>T+(tMax-v)/Math.max(1,(tMax-tMin))*(H-T-B);
+  const Yp=v=>T+(100-v)/100*(H-T-B);
+
+  $("w-range").textContent=`${fmtDur(x0).slice(0,5)} – ${fmtDur(x1).slice(0,5)} Rennzeit`;
+
+  // Nachtband: dort wo die Lufttemperatur unter dem Mittel liegt
+  const avgAir=d.reduce((a,p)=>a+(+p.ambient_temp_c||0),0)/d.length;
+  let bandStart=null;
+  d.forEach((p,i)=>{
+    const cold=(+p.ambient_temp_c||0)<avgAir;
+    if(cold&&bandStart===null) bandStart=+p.bucket_s;
+    if((!cold||i===d.length-1)&&bandStart!==null){
+      svg.appendChild(svgEl("rect",{x:X(bandStart),y:T,width:Math.max(1,X(+p.bucket_s)-X(bandStart)),height:H-T-B,class:"nightband"}));
+      bandStart=null;
+    }
+  });
+  for(let i=0;i<=4;i++){
+    const v=tMin+(tMax-tMin)*i/4, y=Y(v);
+    svg.appendChild(svgEl("line",{x1:L,y1:y,x2:W-R,y2:y,class:"gridline"}));
+    const t=svgEl("text",{x:L-8,y:y+3.5,"text-anchor":"end",class:"axis"}); t.textContent=v.toFixed(0)+"°"; svg.appendChild(t);
+    const t2=svgEl("text",{x:W-R+8,y:Yp(100*i/4)+3.5,class:"axis"}); t2.textContent=(100*i/4).toFixed(0)+"%"; svg.appendChild(t2);
+  }
+  const hours=Math.ceil((x1-x0)/3600);
+  for(let h=0;h<=hours;h+=Math.max(1,Math.round(hours/8))){
+    const x=X(x0+h*3600); if(x>W-R) break;
+    const t=svgEl("text",{x,y:H-8,"text-anchor":"middle",class:"axis"}); t.textContent=h+"h"; svg.appendChild(t);
+  }
+  const line=(key,scale,color,width=2)=>{
+    const pts=d.filter(p=>isFinite(+p[key])).map(p=>`${X(+p.bucket_s).toFixed(1)},${scale(+p[key]).toFixed(1)}`);
+    if(pts.length<2) return;
+    svg.appendChild(svgEl("polyline",{points:pts.join(" "),fill:"none",stroke:color,"stroke-width":width,
+      "stroke-linejoin":"round","stroke-linecap":"round"}));
+  };
+  // Nässe als Fläche unter der Kurve
+  const wetPts=d.filter(p=>isFinite(+p.wetness_avg_pct));
+  if(wetPts.length>1){
+    const path=[`M ${X(+wetPts[0].bucket_s)} ${H-B}`]
+      .concat(wetPts.map(p=>`L ${X(+p.bucket_s).toFixed(1)} ${Yp(+p.wetness_avg_pct).toFixed(1)}`))
+      .concat([`L ${X(+wetPts[wetPts.length-1].bucket_s)} ${H-B} Z`]).join(" ");
+    svg.appendChild(svgEl("path",{d:path,fill:"rgba(124,140,255,.18)",stroke:"none"}));
+  }
+  line("wetness_avg_pct",Yp,"#7c8cff",1.6);
+  line("ambient_temp_c",Y,"#1fd4c3");
+  line("track_temp_c",Y,"#ff6a13",2.4);
+}
+
+/* ---------- Schirm 4: Live-Streckenkarte ----------
+   Quelle: S.field.vehicles (dieselbe wie die Zeitentabelle).
+   Liegen x/z (mPos) vor -> echte Streckenform. Sonst werden dieselben
+   Autos ueber ihre lap_dist auf einer Ersatz-Schleife platziert, damit
+   der Schirm sofort konsistent ist. */
+const TRK = (()=>{
+  const cv=$("trk-map"), ctx=cv.getContext("2d");
+  const cssv=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+  function classColor(c){
+    const k=String(c||"").toUpperCase();
+    if(k.includes("HYPER")||k==="LMH"||k==="LMDH") return cssv("--orange");
+    if(k.includes("LMP2")||k==="P2")               return cssv("--violet");
+    if(k.includes("GT"))                            return cssv("--turq");
+    return cssv("--muted");
+  }
+
+  // Ersatz-Schleife: geschlossene Bahn, Punkt je Rundenbruchteil
+  const LOOP=(()=>{
+    const C=[[0,0],[1500,60],[3400,-140],[4200,-1100],[3600,-2050],[2300,-2250],[1700,-1500],
+             [900,-1700],[200,-2500],[-700,-2300],[-1000,-1300],[-600,-600],[-1200,-100],[-700,700],[300,600]];
+    const cr=(p0,p1,p2,p3,t)=>{const t2=t*t,t3=t2*t;return[
+      .5*((2*p1[0])+(-p0[0]+p2[0])*t+(2*p0[0]-5*p1[0]+4*p2[0]-p3[0])*t2+(-p0[0]+3*p1[0]-3*p2[0]+p3[0])*t3),
+      .5*((2*p1[1])+(-p0[1]+p2[1])*t+(2*p0[1]-5*p1[1]+4*p2[1]-p3[1])*t2+(-p0[1]+3*p1[1]-3*p2[1]+p3[1])*t3)];};
+    const L=[],n=C.length;
+    for(let i=0;i<n;i++){const a=C[(i-1+n)%n],b=C[i],c=C[(i+1)%n],d=C[(i+2)%n];
+      for(let s=0;s<24;s++)L.push(cr(a,b,c,d,s/24));}
+    const cum=[0];let tot=0;
+    for(let i=1;i<L.length;i++){tot+=Math.hypot(L[i][0]-L[i-1][0],L[i][1]-L[i-1][1]);cum.push(tot);}
+    const total=tot+Math.hypot(L[0][0]-L[L.length-1][0],L[0][1]-L[L.length-1][1]);cum.push(total);
+    return {LINE:L,total,at(f){let d=(((f%1)+1)%1)*total,lo=0,hi=cum.length-1;
+      while(lo<hi){const m=(lo+hi)>>1;if(cum[m]<d)lo=m+1;else hi=m;}
+      const i=Math.max(1,lo),a=cum[i-1],b=cum[i],k=(d-a)/Math.max(1e-6,b-a);
+      const p=L[(i-1)%L.length],q=L[i%L.length];return [p[0]+(q[0]-p[0])*k,p[1]+(q[1]-p[1])*k];}};
+  })();
+
+  let raf=null,DPR=1,cw=0,ch=0;
+  let breadcrumb=[],refId=null,mode=null,brkNext=false;
+  const eased={};
+
+  function resize(){ DPR=Math.min(2,Math.max(1,window.devicePixelRatio||1));
+    cw=cv.clientWidth;ch=cv.clientHeight; cv.width=Math.floor(cw*DPR);cv.height=Math.floor(ch*DPR); }
+
+  function targets(){
+    const vs=(S.field&&S.field.vehicles)||[];
+    const withXZ=vs.filter(v=>Number.isFinite(v.x)&&Number.isFinite(v.z));
+    const m=withXZ.length>=3?"world":"synth";
+    if(m!==mode){ mode=m;breadcrumb=[];refId=null;for(const k in eased)delete eased[k]; }
+    const len=(S.field&&S.field.track_length_m)||13626;
+    const srcv=m==="world"?withXZ:vs;
+    return srcv.map(v=>{
+      let x,z;
+      if(m==="world"){ x=+v.x;z=+v.z; } else { const p=LOOP.at((v.lap_dist||0)/len);x=p[0];z=p[1]; }
+      const own=v.is_player===true||String(v.number)===String(CFG.ownCarNumber);
+      return {id:v.id,number:v.number,car_class:v.car_class||"?",x,z,
+              in_pits:!!v.in_pits,under_yellow:!!v.under_yellow,is_player:own,place:v.place};
+    });
+  }
+
+  function trimTrail(maxLen){
+    // Spur auf gut eine Runde begrenzen. Ohne das legen sich viele Umlaeufe
+    // leicht versetzt uebereinander -> das Band wirkt doppelt/dreifach.
+    let tot=0;
+    for(let i=breadcrumb.length-1;i>0;i--){
+      tot+=Math.hypot(breadcrumb[i].x-breadcrumb[i-1].x,breadcrumb[i].z-breadcrumb[i-1].z);
+      if(tot>maxLen){ breadcrumb.splice(0,i); if(breadcrumb[0])breadcrumb[0].gap=true; return; }
+    }
+  }
+
+  function feedBreadcrumb(cars){
+    if(mode!=="world"||!cars.length) return;
+    // Referenz fuer die Streckenspur: das EIGENE Auto. Es faehrt lueckenlos die
+    // ganze Runde ab und wechselt nie die Identitaet.
+    if(refId==null){ const own=cars.find(c=>c.is_player);
+                     refId=(own||cars.find(c=>c.place===1)||cars[0]).id; }
+    let c=cars.find(v=>v.id===refId);
+    if(!c) return;   // Referenzauto kurz nicht im Feld -> warten, NICHT zuruecksetzen
+    const len=(S.field&&S.field.track_length_m)||13626;
+    // In der Boxengasse KEINE Spur sammeln: die Boxlinie weicht von der Rennlinie
+    // ab und zog sonst eine Querstrebe quer durchs Band. Der naechste Streckenpunkt
+    // startet einen neuen Subpath (gap), wird also nicht mit der Box verbunden.
+    if(c.in_pits){ brkNext=true; return; }
+    const last=breadcrumb.length?breadcrumb[breadcrumb.length-1]:null;
+    if(!last){ breadcrumb.push({x:c.x,z:c.z,gap:true}); return; }
+    const d=Math.hypot(c.x-last.x,c.z-last.z);
+    if(d>len*0.25) brkNext=true;          // grosser Sprung (Reset/Teleport) -> trennen
+    if(d>4){
+      breadcrumb.push({x:c.x,z:c.z,gap:brkNext}); brkNext=false;
+      if(breadcrumb.length>6000)breadcrumb.shift();
+      trimTrail(len*1.2);
+    }
+  }
+
+  function step(){
+    const tg=targets(); feedBreadcrumb(tg);
+    const ids=new Set();
+    for(const t of tg){ ids.add(t.id);
+      const e=eased[t.id];
+      if(!e){ eased[t.id]={x:t.x,z:t.z,car_class:t.car_class,number:t.number,in_pits:t.in_pits,under_yellow:t.under_yellow,is_player:t.is_player}; }
+      else{ e.x+=(t.x-e.x)*0.14;e.z+=(t.z-e.z)*0.14;
+            e.car_class=t.car_class;e.number=t.number;e.in_pits=t.in_pits;e.under_yellow=t.under_yellow;e.is_player=t.is_player; } }
+    for(const k in eased) if(!ids.has(+k)) delete eased[k];
+    return Object.values(eased);
+  }
+
+  // Echte Streckenkarte vom Client (Welt-x/z), sonst Ersatzschleife/Krümel.
+  function realMap(){ return (S.trackMap && S.trackMap.line && S.trackMap.line.length>10 && mode==="world") ? S.trackMap : null; }
+
+  function fitOf(cars){
+    const tm=realMap();
+    const pts = tm ? tm.line : (mode==="synth" ? LOOP.LINE.map(p=>({x:p[0],z:p[1]})) : (breadcrumb.length>10?breadcrumb:cars));
+    if(!pts.length) return null;
+    let minX=1e18,maxX=-1e18,minZ=1e18,maxZ=-1e18;
+    for(const p of pts){ if(p.x<minX)minX=p.x;if(p.x>maxX)maxX=p.x;if(p.z<minZ)minZ=p.z;if(p.z>maxZ)maxZ=p.z; }
+    const w=cv.width,h=cv.height,pad=Math.min(w,h)*0.08+24*DPR;
+    const sx=Math.max(1,maxX-minX),sz=Math.max(1,maxZ-minZ);
+    const s=Math.min((w-2*pad)/sx,(h-2*pad)/sz);
+    const ox=(w-s*sx)/2,oz=(h-s*sz)/2;
+    return {X:x=>ox+(x-minX)*s,Y:z=>h-(oz+(z-minZ)*s),s};
+  }
+
+  function smooth(fit,pts,close){
+    if(pts.length<2) return;
+    ctx.beginPath();
+    let i=0;
+    while(i<pts.length){
+      let j=i+1; while(j<pts.length&&!pts[j].gap) j++;   // Segment bis zum naechsten gap
+      const seg=pts.slice(i,j);
+      if(seg.length>=2){
+        ctx.moveTo(fit.X(seg[0].x),fit.Y(seg[0].z));
+        for(let k=1;k<seg.length-1;k++){ const mx=(seg[k].x+seg[k+1].x)/2,mz=(seg[k].z+seg[k+1].z)/2;
+          ctx.quadraticCurveTo(fit.X(seg[k].x),fit.Y(seg[k].z),fit.X(mx),fit.Y(mz)); }
+        const last=seg[seg.length-1]; ctx.lineTo(fit.X(last.x),fit.Y(last.z));
+        if(close&&j>=pts.length) ctx.closePath();
+      }
+      i=j;
+    }
+    ctx.stroke();
+  }
+
+  function draw(cars){
+    ctx.clearRect(0,0,cv.width,cv.height);
+    // Boxenautos raus aus der Streckendarstellung: sie liegen neben der Rennlinie
+    // (Boxengasse) und werden separat in einer Leiste unten gesammelt. Damit
+    // verzerren sie auch das Auto-Fit nicht mehr.
+    const onTrack=cars.filter(c=>!c.in_pits);
+    const inPit=cars.filter(c=>c.in_pits);
+    const fit=fitOf(onTrack); if(!fit){ drawPitlane(inPit); return; }
+    const r=Math.max(13*DPR,fit.s*10), wRoad=r*2.4, wEdge=wRoad+8*DPR;
+    const tm=realMap();
+    const ribbon = tm ? tm.line : (mode==="synth" ? LOOP.LINE.map(p=>({x:p[0],z:p[1]})) : breadcrumb);
+    const closed = tm ? true : (mode==="synth");
+    if(ribbon.length>10){
+      ctx.lineJoin="round";ctx.lineCap="round";
+      ctx.strokeStyle="#000";ctx.globalAlpha=.6;ctx.lineWidth=wEdge;smooth(fit,ribbon,closed);
+      ctx.globalAlpha=1;ctx.strokeStyle="#23272f";ctx.lineWidth=wRoad;smooth(fit,ribbon,closed);
+      ctx.strokeStyle="#333944";ctx.lineWidth=Math.max(1,1.4*DPR);ctx.setLineDash([7*DPR,12*DPR]);smooth(fit,ribbon,closed);ctx.setLineDash([]);
+    }
+    // Boxengasse (nur bei echter Karte, offener dünner Strich).
+    if(tm && tm.pit && tm.pit.length>2){
+      ctx.globalAlpha=.5;ctx.strokeStyle="#2a2f37";ctx.lineWidth=Math.max(2,r*0.9);smooth(fit,tm.pit,false);ctx.globalAlpha=1;
+    }
+    for(const c of onTrack){
+      const x=fit.X(c.x),y=fit.Y(c.z),col=classColor(c.car_class);
+      ctx.globalAlpha=1;
+      if(c.under_yellow){ctx.beginPath();ctx.arc(x,y,r+4*DPR,0,7);ctx.strokeStyle=cssv("--amber");ctx.lineWidth=2.4*DPR;ctx.stroke();}
+      if(c.is_player){ctx.beginPath();ctx.arc(x,y,r+6*DPR,0,7);ctx.strokeStyle="#fff";ctx.lineWidth=2.6*DPR;ctx.stroke();}
+      ctx.beginPath();ctx.arc(x,y,r,0,7);ctx.fillStyle=col;ctx.fill();
+      ctx.lineWidth=1.5*DPR;ctx.strokeStyle="rgba(0,0,0,.6)";ctx.stroke();
+      ctx.fillStyle="#0a0b0d";ctx.font="700 "+Math.round(r*0.82)+"px "+cssv("--mono");
+      ctx.textAlign="center";ctx.textBaseline="middle";ctx.fillText(String(c.number),x,y+0.5*DPR);
+    }
+    ctx.globalAlpha=1;
+    drawPitlane(inPit);
+  }
+
+  function drawPitlane(list){
+    if(!list.length) return;
+    const n=list.length, pad=14*DPR, avail=cv.width-2*pad;
+    let r=12*DPR, gap=r*2+6*DPR;
+    // Bei vielen Boxenautos Radius schrumpfen, damit alles in eine Reihe passt.
+    if(n*gap>avail){ gap=avail/n; r=Math.max(6*DPR,gap/2-3*DPR); }
+    const y=cv.height-pad-r;
+    ctx.globalAlpha=1;ctx.fillStyle=cssv("--muted");
+    ctx.font="700 "+Math.round(9*DPR)+"px "+cssv("--mono");
+    ctx.textAlign="left";ctx.textBaseline="alphabetic";
+    ctx.fillText("BOXENGASSE",pad,y-r-6*DPR);
+    ctx.globalAlpha=.10;ctx.fillStyle=cssv("--muted");
+    ctx.fillRect(pad-6*DPR,y-r-3*DPR,Math.min(avail+12*DPR,n*gap+6*DPR),r*2+6*DPR);
+    ctx.globalAlpha=1;
+    let x=pad+r;
+    for(const c of list){
+      const col=classColor(c.car_class);
+      ctx.beginPath();ctx.arc(x,y,r,0,7);ctx.globalAlpha=.6;ctx.fillStyle=col;ctx.fill();
+      ctx.globalAlpha=1;ctx.lineWidth=1.4*DPR;ctx.strokeStyle="rgba(0,0,0,.6)";ctx.stroke();
+      if(c.is_player){ctx.beginPath();ctx.arc(x,y,r+3*DPR,0,7);ctx.strokeStyle="#fff";ctx.lineWidth=2*DPR;ctx.stroke();}
+      ctx.fillStyle="#0a0b0d";ctx.font="700 "+Math.round(r*0.8)+"px "+cssv("--mono");
+      ctx.textAlign="center";ctx.textBaseline="middle";ctx.fillText(String(c.number),x,y+0.5*DPR);
+      x+=gap;
+    }
+  }
+
+  function hud(cars){
+    const pits=cars.filter(c=>c.in_pits).length;
+    const echt=realMap()?"echte Streckenkarte":"Karte skaliert automatisch";
+    $("trk-hud").innerHTML="<b>"+cars.length+"</b> Fahrzeuge \u00b7 <b>"+pits+"</b> in der Box<br>"+echt;
+    const classes=[...new Set(cars.map(c=>c.car_class))];
+    $("trk-legend").innerHTML=classes.map(c=>'<span class="k"><b style="background:'+classColor(c)+'"></b>'+c+"</span>").join("")
+      +'<span class="k"><b style="background:#fff"></b>Eigenes Auto</span>';
+    const note=$("trk-note");
+    if(mode==="synth"){ note.style.display="block";
+      note.textContent="Positionen aus Rundendistanz \u2014 echte Streckenform, sobald der Client x/z sendet"; }
+    else note.style.display="none";
+  }
+
+  function loop(){
+    if(S.screen!=="track"){ raf=null; return; }
+    if(cv.clientWidth!==cw||cv.clientHeight!==ch) resize();
+    const cars=step(); draw(cars); hud(cars);
+    raf=requestAnimationFrame(loop);
+  }
+  function render(){ if(cv.clientWidth===0) return; if(cw===0) resize(); if(!raf) loop(); }
+  window.addEventListener("resize",()=>{ if(S.screen==="track") resize(); });
+  return { render };
+})();
+function renderTrack(){ TRK.render(); }
+
+/* ---------- Schirme, Status, Steuerung ---------- */
+const SCREENS={overview:"uebersicht",tower:"zeiten",weather:"wetter",track:"strecke",damage:"schaden"};
+function showScreen(name){
+  if(!SCREENS[name]) name="overview";
+  S.screen=name;
+  document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));
+  $("s-"+name).classList.add("active");
+  document.querySelectorAll(".tabs button").forEach(b=>b.setAttribute("aria-selected",String(b.dataset.screen===name)));
+  if(location.hash.slice(1)!==SCREENS[name]) history.replaceState(null,"","#"+SCREENS[name]);
+  render();
+}
+function screenFromHash(){
+  const h=location.hash.slice(1).toLowerCase();
+  return Object.keys(SCREENS).find(k=>SCREENS[k]===h) || "overview";
+}
+function setStatus(mode,text){
+  $("dot").className="dot "+(mode==="live"?"live":mode==="demo"?"demo":"err");
+  $("statustext").textContent=text;
+}
+async function tick(){
+  if(S.mode==="demo"){ render(); return; }
+  try{
+    await loadLive();
+    if(S.field?.pit_loss_s!=null) S.pitLossMeasured=+S.field.pit_loss_s;
+    setStatus("live",`Live · ${S.laps.length} Runden · ${new Date().toLocaleTimeString("de-DE")}`);
+    render();
+  }catch(err){ setStatus("err","Keine Verbindung: "+err.message); }
+}
+function start(mode){
+  S.mode=mode; clearInterval(S.timer);
+  if(mode==="demo"){ buildDemo(); setStatus("demo","Demo-Daten · nicht mit der Datenbank verbunden");
+    render(); S.timer=setInterval(render,1000); }
+  else { setStatus("live","Verbinde …"); tick(); S.timer=setInterval(tick,CFG.refreshMs); }
+}
+
+document.querySelectorAll(".tabs button").forEach(b=>b.addEventListener("click",()=>showScreen(b.dataset.screen)));
+window.addEventListener("hashchange",()=>showScreen(screenFromHash()));
+document.addEventListener("keydown",e=>{
+  if(/^(INPUT|SELECT|TEXTAREA)$/.test(e.target.tagName)) return;
+  if(e.key==="1") showScreen("overview");
+  if(e.key==="2") showScreen("tower");
+  if(e.key==="3") showScreen("weather");
+  if(e.key==="4") showScreen("track");
+  if(e.key==="5") showScreen("damage");
+  if(e.key.toLowerCase()==="f") toggleFull();
+});
+function toggleFull(){ if(document.fullscreenElement) document.exitFullscreen(); else document.documentElement.requestFullscreen?.(); }
+$("btn-full").addEventListener("click",toggleFull);
+$("btn-rt").addEventListener("click",()=>setRealtime(!rtEnabled));
+updateRtButton();
+$("btn-pop").addEventListener("click",()=>{
+  window.open(location.pathname+"#"+SCREENS[S.screen],"_blank","width=1600,height=1000");
+});
+$("btn-setup").addEventListener("click",()=>{
+  const open=$("setup").classList.toggle("open");
+  $("btn-setup").setAttribute("aria-expanded",String(open));
+  if(open) $("in-url").focus();
+});
+$("btn-connect").addEventListener("click",()=>{
+  CFG.supabaseUrl=$("in-url").value.trim(); CFG.supabaseKey=$("in-key").value.trim();
+  if(!CFG.supabaseUrl||!CFG.supabaseKey){ setStatus("err","URL und Key eintragen, dann erneut verbinden"); return; }
+  $("setup").classList.remove("open"); start("live");
+});
+$("btn-demo").addEventListener("click",()=>{ $("setup").classList.remove("open"); start("demo"); });
+$("btn-theme").addEventListener("click",()=>{
+  lightMode=!lightMode;
+  try{ localStorage.setItem("pw_theme", lightMode?"light":"dark"); }catch(e){}
+  applyTheme();
+});
+applyTheme();   // gemerkten Modus beim Laden anwenden
+$("btn-pitauto").addEventListener("click",()=>{
+  if(S.pitLossMeasured!=null){ $("in-pitloss").value=S.pitLossMeasured.toFixed(1); renderPitExit(); }
+});
+["in-pitloss","in-service"].forEach(id=>$(id).addEventListener("input",()=>{ if(S.screen==="tower") renderPitExit(); }));
+$("in-pitloss").value = CFG.pitLossDefault;
+
+showScreen(screenFromHash());
+if(CFG.supabaseUrl&&CFG.supabaseKey){ $("in-url").value=CFG.supabaseUrl; start("live"); } else { start("demo"); }
+</script>
+</body>
+</html>
