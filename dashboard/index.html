@@ -295,12 +295,8 @@ input[type=number]{width:92px}
 
     <div class="card">
       <h2>Bremsen · thermische Last</h2>
-      <div class="rowline"><span>Spitzentemperatur letzte Runde</span><b id="b-peak">—</b></div>
-      <div class="rowline"><span>Hitzeintegral je Runde</span><b id="b-load">—</b></div>
       <div class="bar"><i id="b-bar" style="width:0%;background:var(--green)"></i></div>
-      <div class="rowline"><span>Reibarbeit (Index)</span><b id="b-work">—</b></div>
       <div class="rowline"><span>Bewertung</span><b id="b-verdict">—</b></div>
-      <p class="note">LMU liefert keinen Belagverschleiß. Was hier steht, ist das Hitzeintegral über 500 °C plus die Reibarbeit — ein Modell zur Fading-Warnung, kein Wert aus dem Sim.</p>
     </div>
   </div>
 
@@ -1069,10 +1065,7 @@ function renderTyres(){
 }
 function renderBrakes(){
   const b=brakeState();
-  if(!b){ ["b-peak","b-load","b-work","b-verdict"].forEach(i=>$(i).textContent="—"); return; }
-  $("b-peak").textContent=b.peak!=null?`${(+b.peak).toFixed(0)} °C`:"—";
-  $("b-load").textContent=`${b.load.toFixed(0)} °C·s pro Runde`;
-  $("b-work").textContent=`${b.work.toFixed(0)} ${b.trend>60?"↗":b.trend<-60?"↘":"→"}`;
+  if(!b){ $("b-verdict").textContent="—"; $("b-bar").style.width="0%"; return; }
   $("b-bar").style.width=clamp(100*b.load/CFG.brakeLoadCrit,0,100)+"%";
   $("b-bar").style.background=b.level==="crit"?"var(--red)":b.level==="warn"?"var(--amber)":"var(--green)";
   const v=$("b-verdict");
